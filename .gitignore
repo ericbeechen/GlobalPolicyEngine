@@ -3,3 +3,5 @@ CLAUDE.md
 /.venv
 src/policypath/__pycache__/*
 src/policypath/sources/__pycache__/*
+notes/decisions.md
+config/meetings/fomc.csv
