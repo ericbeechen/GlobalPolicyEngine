@@ -1,6 +1,5 @@
 CLAUDE.md
 /databento
 /.venv
-/__pycache__/
 src/policypath/__pycache__/*
-src/policypath/sources/__pycache__/
+src/policypath/sources/__pycache__/*
