@@ -22,7 +22,7 @@ from policypath.sources import rates
 HERE = __import__("pathlib").Path(__file__).resolve().parent
 START, END = "2020-12-01", "2026-09-21"
 # Sessions worth keeping a full strip for. Each is a day the near meeting was live.
-STRIP_DATES = ["2022-06-01", "2022-06-13", "2023-06-13", "2024-09-17"]
+STRIP_DATES = ["2022-06-01", "2022-06-13", "2023-06-13", "2024-09-17", "2026-09-21"]
 
 NY_FED = "https://markets.newyorkfed.org/api/rates/unsecured/effr/search.json"
 

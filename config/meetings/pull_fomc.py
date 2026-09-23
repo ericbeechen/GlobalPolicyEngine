@@ -9,6 +9,8 @@ from pandas.tseries.offsets import CustomBusinessDay
 
 # URL targeting the 2020s decade directory
 url = "https://fraser.stlouisfed.org/title/federal-open-market-committee-meeting-minutes-transcripts-documents-677?browse=2020s"
+# FRASER only lists meetings that already happened; this has the scheduled ones.
+FED_CALENDAR = "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm"
 headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
 }
@@ -53,12 +55,64 @@ def parse_slug(slug):
     return pd.Timestamp(year, month, day), tags
 
 
+def scheduled_from_fed_calendar():
+    """Scheduled meetings from the Fed's own calendar page, including future ones.
+
+    FRASER indexes minutes and transcripts, so it only ever knows about meetings
+    that have already happened. Every meeting the market is currently pricing is
+    therefore missing from it, and without those pillars the path solver has
+    nothing to solve for. The Fed publishes the calendar about two years ahead.
+
+    Dates render as ('January', '28-29'), ('Jan/Feb', '31-1') for a meeting that
+    straddles month end, and ('March', '18-19*') where the asterisk marks a
+    Summary of Economic Projections. The announcement is the last day.
+    """
+    r = requests.get(FED_CALENDAR, headers=headers)
+    r.raise_for_status()
+    soup = BeautifulSoup(r.text, "html.parser")
+
+    for panel in soup.select("div.panel.panel-default"):
+        heading = panel.select_one(".panel-heading")
+        year_match = re.search(r"(\d{4})", heading.get_text() if heading else "")
+        if not year_match:
+            continue
+        year = int(year_match.group(1))
+
+        for block in panel.select("div.fomc-meeting"):
+            month_el = block.select_one(".fomc-meeting__month")
+            date_el = block.select_one(".fomc-meeting__date")
+            if not (month_el and date_el):
+                continue
+            raw_date = date_el.get_text(strip=True)
+            # "22 (notation vote)" carries no rate decision, same as in FRASER.
+            if "notation" in raw_date.lower() or "cancel" in raw_date.lower():
+                continue
+
+            months = [m.strip() for m in month_el.get_text(strip=True).split("/")]
+            days = re.findall(r"\d+", raw_date)
+            if not days:
+                continue
+            # last day of the meeting, in the later month where it straddles one
+            month_name = months[-1].lower()
+            month = next(n for m, n in MONTHS.items() if m.startswith(month_name[:3]))
+            day = int(days[-1])
+            # "31-1" rolls into January of the next year
+            cal_year = year + 1 if len(months) > 1 and month == 1 else year
+
+            announcement = pd.Timestamp(cal_year, month, day)
+            yield {
+                "announcement_date": announcement,
+                "effective_date": announcement + us_bday,
+                "scheduled": True,
+            }
+
+
 try:
     response = requests.get(url, headers=headers)
     response.raise_for_status()
 
     soup = BeautifulSoup(response.text, "html.parser")
-    meetings_data = []
+    meetings_data = list(scheduled_from_fed_calendar())
 
     for item in soup.find_all("a", href=True):
         match = re.search(
