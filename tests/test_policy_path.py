@@ -167,6 +167,17 @@ def test_expired_contracts_settle_to_realized_effr(effr_monthly_avg):
 FEDWATCH = DATA / "fedwatch"
 
 
+def read_fedwatch(path, **kwargs):
+    """Read a FedWatch capture.
+
+    Every capture opens with a one-line provenance note in plain prose, not a
+    commented block, so it is skipped by position: the header is always line two.
+    A capture saved without that note will fail loudly on a missing column here
+    rather than silently mis-parse.
+    """
+    return pd.read_csv(path, skiprows=1, **kwargs)
+
+
 def strip_sessions():
     """Every session with a committed strip, from either source."""
     databento = (p.name.removeprefix("zq_strip_").removesuffix(".csv")
@@ -188,7 +199,7 @@ def load_strip(day):
     """
     fw = FEDWATCH / f"{day}_futures.csv"
     if fw.exists():
-        strip = pd.read_csv(fw, comment="#")
+        strip = read_fedwatch(fw)
         rates = 100.0 - strip["price"].to_numpy()
     else:
         strip = pd.read_csv(DATA / f"zq_strip_{day}.csv")
@@ -290,8 +301,8 @@ def test_path_reprices_the_strip_it_was_solved_from(day, meetings):
 
 def fedwatch_expected_midpoint(day):
     """Probability-weighted target midpoint at each meeting, from a capture."""
-    pr = pd.read_csv(FEDWATCH / f"{day}_probabilities.csv", comment="#",
-                     parse_dates=["meeting"])
+    pr = read_fedwatch(FEDWATCH / f"{day}_probabilities.csv",
+                       parse_dates=["meeting"])
     buckets = [c for c in pr.columns if c != "meeting"]
     mids = pd.Series({c: sum(int(x) for x in c.split("-")) / 200.0 for c in buckets})
     weights = pr[buckets].fillna(0.0) / 100.0
