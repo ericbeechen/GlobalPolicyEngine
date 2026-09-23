@@ -1,7 +1,7 @@
 CLAUDE.md
 /databento
+/data
 /.venv
-src/policypath/__pycache__/*
-src/policypath/sources/__pycache__/*
+__pycache__/
 notes/decisions.md
 config/meetings/fomc.csv
