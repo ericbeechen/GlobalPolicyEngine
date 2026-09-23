@@ -14,7 +14,7 @@ FED_CALENDAR = "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm"
 headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
 }
-out_path = Path(__file__).with_name("fomc.csv")
+out_path = Path(__file__).resolve().parents[3] / "config" / "meetings" / "fomc.csv"
 
 MONTHS = {
     m: i
@@ -146,6 +146,7 @@ try:
             .drop_duplicates(subset=["announcement_date"])
             .sort_values("announcement_date")
         )
+        out_path.parent.mkdir(parents=True, exist_ok=True)
         df.to_csv(out_path, index=False, date_format="%Y-%m-%d")
         print(df.to_string(index=False))
     else:
