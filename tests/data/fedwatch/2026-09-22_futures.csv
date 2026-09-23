@@ -1,20 +1,15 @@
-# Fed funds futures as shown on the CME FedWatch tool, captured 2026-09-22.
-# These are FedWatch's own inputs, not CME settles -- the front contract is a
-# blend of realized and expected EFFR and does not sit on a 0.0025 tick. Paired
-# with 2026-09-22_probabilities.csv from the same screen, so comparing the two
-# tests this repo's bootstrap against FedWatch's with no timing drift between
-# them. The 2026-09-21 settles had already moved 2.5bp in ZQZ6 by this capture.
+Fed funds futures as shown on the CME FedWatch tool  captured 2026-09-22. These are FedWatch's own inputs not CME settles -- the front contract is a blend of realized and expected EFFR and does not sit on a 0.0025 tick. Paired with 2026-09-22_probabilities.csv from the same screen  so comparing the two tests this repo's bootstrap against FedWatch's with no timing drift between them. The 2026-09-21 settles had already moved 2.5bp in ZQZ6 by this capture.,,
 contract,month,price
 ZQU6,2026-09,96.2538
 ZQV6,2026-10,96.1025
-ZQX6,2026-11,95.9800
-ZQZ6,2026-12,95.8600
-ZQF7,2027-01,95.7750
-ZQG7,2027-02,95.6800
-ZQH7,2027-03,95.6050
+ZQX6,2026-11,95.98
+ZQZ6,2026-12,95.86
+ZQF7,2027-01,95.775
+ZQG7,2027-02,95.68
+ZQH7,2027-03,95.605
 ZQJ7,2027-04,95.5175
-ZQK7,2027-05,95.4300
-ZQM7,2027-06,95.3850
-ZQN7,2027-07,95.3550
-ZQQ7,2027-08,95.3350
-ZQU7,2027-09,95.3250
+ZQK7,2027-05,95.43
+ZQM7,2027-06,95.385
+ZQN7,2027-07,95.355
+ZQQ7,2027-08,95.335
+ZQU7,2027-09,95.325

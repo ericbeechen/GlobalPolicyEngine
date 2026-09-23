@@ -5,6 +5,7 @@
 import sys
 from pathlib import Path
 import pandas as pd
+from policypath.calendars import label_path
 from policypath.curves.policy_path import implied_path
 from policypath.sources import rates
 
@@ -29,5 +30,13 @@ implied_avg = implied_avg[implied_avg.index <= day.to_period("M") + HORIZON_MONT
 meetings = pd.read_csv(Path(__file__).parents[1] / "config/meetings/fomc.csv",
                        parse_dates=["announcement_date", "effective_date"])
 
+path = implied_path(implied_avg, meetings["effective_date"])
+labelled = label_path(path, meetings)
+
 print(implied_avg.to_string())
-print(implied_path(implied_avg, meetings["effective_date"]).to_string())
+print()
+print(labelled.to_string(index=False, na_rep="-",
+                         formatters={"announced": lambda d: "-" if pd.isna(d) else f"{d:%Y-%m-%d}",
+                                     "effective": lambda d: f"{d:%Y-%m-%d}",
+                                     "rate": "{:.4f}".format,
+                                     "move_bp": lambda v: "-" if pd.isna(v) else f"{v:+.1f}"}))

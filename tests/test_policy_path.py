@@ -1,15 +1,3 @@
-"""Canary for the policy-path solver. Invariant 4: this passes on every commit.
-
-Three layers, cheapest first.
-
-1. **Algebra.** Build ZQ prices from a known path, solve, recover the path. Catches sign errors, off-by-one-month errors and bad day weighting in seconds.
-2. **Identity.** An expired ZQ contract settles to 100 minus the realized average EFFR over its contract month. That is the contract's definition, not a modelling choice, so it is external ground truth in the strict sense -- and it exercises the whole chain (`sources/rates.py`, the contract-to-month mapping, the calendar-day
-   weighting) against numbers nobody in this repo picked.
-3. **Published pricing.** The solved path on a real session, checked against the realized EFFR it must start from, and against captured market pricing.
-
-Every layer reads committed fixtures only, so the suite runs for anyone who clones the repo without the (paid, gitignored) Databento archive. Regenerate the fixtures with `uv run python tests/data/build_fixtures.py`.
-"""
-
 from pathlib import Path
 import pandas as pd
 import pytest
