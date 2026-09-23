@@ -17,4 +17,11 @@ packages = ["src/policypath"]
 [dependency-groups]
 dev = [
     "pytest>=8.0",
+    # used by config/meetings/pull_fomc.py and tests/data/build_fixtures.py,
+    # neither of which runs in the test suite
+    "requests>=2.31",
+    "beautifulsoup4>=4.12",
 ]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

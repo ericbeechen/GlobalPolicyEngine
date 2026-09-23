@@ -61,21 +61,29 @@ def read_statistics(start=None, end=None, root=DATABENTO_DIR):
               "price", "quantity", "stat_flags", "update_action"]]
 
 
-def settlements(start=None, end=None, final_only=True, root=DATABENTO_DIR):
+def settlements(start=None, end=None, prefer_final=True, root=DATABENTO_DIR):
     """Daily settlement prices of outright contracts, one row per (trade_date, contract).
 
-    If a settle was published more than once, the last publication is kept.
+    A session's settle is normally republished in the evening with the FINAL bit
+    set. On a contract's own expiry session it is not: the last record CME sends
+    carries ACTUAL only. So prefer the FINAL record where one exists and fall
+    back to the latest record where none does, rather than dropping the row --
+    filtering on the bit throws away the expiring contract's settle, which is
+    the one tied to realized fixings. ``is_final`` reports which was used.
+
     ``implied_rate`` is 100 - price, in percent.
     """
     s = read_statistics(start, end, root)
-    s = s[s["stat_type"] == db.StatType.SETTLEMENT_PRICE.value]
-    if final_only:
-        s = s[(s["stat_flags"] & FINAL) != 0]
-    s = s.sort_values("published").drop_duplicates(["trade_date", "instrument_id"], keep="last")
+    s = s[(s["stat_type"] == db.StatType.SETTLEMENT_PRICE.value) & s["trade_date"].notna()]
+    s = s.assign(is_final=(s["stat_flags"] & FINAL) != 0)
+    order = ["is_final", "published"] if prefer_final else ["published"]
+    s = s.sort_values(order).drop_duplicates(["trade_date", "instrument_id"], keep="last")
 
     defs = read_definitions(start, end, root)
     s = s.merge(defs[["instrument_id", "asset", "expiration"]], on="instrument_id")  # drops spreads
+    # CME keeps sending a settle for a day or two after expiry; it is not a live contract.
+    s = s[s["trade_date"].dt.normalize() <= s["expiration"].dt.normalize()]
     s["implied_rate"] = 100.0 - s["price"]
     cols = ["trade_date", "published", "asset", "symbol", "instrument_id", "expiration",
-            "price", "implied_rate", "stat_flags"]
+            "price", "implied_rate", "stat_flags", "is_final"]
     return s[cols].sort_values(["trade_date", "asset", "expiration"]).reset_index(drop=True)

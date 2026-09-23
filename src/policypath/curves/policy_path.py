@@ -10,8 +10,7 @@ def implied_path(implied_avg: pd.Series, effective_dates: pd.Series) -> pd.Serie
     start, end = months[0].start_time, months[-1].end_time.normalize()
     eff = pd.DatetimeIndex(sorted(effective_dates))
     eff = eff[(eff > start) & (eff <= end)]
-
-    # Regime k runs from eff[k-1] up to the day before eff[k]; regime 0 from `start`.
+    
     days = pd.date_range(start, end, freq="D")
     regime = eff.searchsorted(days, side="right")
     weights = pd.crosstab(days.to_period("M"), regime, normalize="index")
