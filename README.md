@@ -48,14 +48,6 @@ uv run python scripts/show_databento.py 2024-03-15
 
 A ZQ contract settles to the arithmetic average of EFFR over every *calendar *day of its delivery month. So each contract month is one linear equation in the regime rates, with coefficients equal to the share of the month's days that each regime covers. The solver builds that weight matrix (months x regimes) and solves all months jointly by least squares.
 
-Three consequences worth knowing:
-
-- **The starting rate is an unknown**, backed out of the front contract, not supplied. Nothing in the solve is told what the current policy rate is, which is what makes the tests against published EFFR meaningful.
-- **Joint least squares, not forward chaining.** Chaining month by month divides by the days remaining after an effective date, so a meeting on day 30 of 31 multiplies price noise ~15x and carries the error into every later meeting. On simulated 0.25bp price noise the median worst-meeting error was 0.8bp jointly versus 15bp chained.
-- **It raises instead of guessing.** If the strip cannot identify the pillars (e.g. two meetings inside the only contract month), the weight matrix is rank-deficient and `implied_path` raises `ValueError` rather than returning a plausible-looking path.
-
-Pillars are **effective** dates, one US business day after the announcement, because that is when the futures start averaging the new rate. CME, the Fed calendar and the press all label decisions by **announcement** date, so the two look off by one against each other. They are labels for different things; this was verified against all 20 published target-range changes since 2019.
-
 ## Data
 
 - **`databento/`** is gitignored and not distributed: it is a paid batch archive, ~705 MB, one definition and one statistics file per day from 2020-12-31 to 2026-09-21 (1,795 days each). Only `sources/rates.py` reads it, and only the two demo scripts and `tests/data/build_fixtures.py` need it.
