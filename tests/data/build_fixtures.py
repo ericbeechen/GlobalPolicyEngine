@@ -13,6 +13,8 @@ Outputs, all in this directory:
                         expiry session, which must equal 100 - the realized
                         average EFFR for the contract month.
   zq_strip_<date>.csv   The whole ZQ strip on a few chosen sessions.
+  sr3_strip_<date>.csv  The SR3 strip on the same sessions, for the curve tests.
+  sofr.csv              SOFR from FRED, one row per fixing, with its publication day.
 """
 
 import pandas as pd
@@ -62,9 +64,25 @@ def build_strips():
         )[["month", "symbol", "price", "implied_rate"]].sort_values("month")
         zq.to_csv(HERE / f"zq_strip_{day}.csv", index=False)
 
+        sr3 = s[(s["asset"] == "SR3") & (s["trade_date"].dt.date == d.date())]
+        sr3 = pd.DataFrame({
+            "contract": sr3["symbol"],
+            "expiration": sr3["expiration"].dt.tz_convert(rates.LOCAL_TZ).dt.date,
+            "price": sr3["price"],
+        }).sort_values("expiration")
+        sr3.to_csv(HERE / f"sr3_strip_{day}.csv", index=False)
+
+
+def build_sofr():
+    s = fred.observations("SOFR", START, END)
+    s = s.assign(date=s["date"].dt.date, published=s["published"].dt.date)
+    s[["date", "value", "published"]].to_csv(HERE / "sofr.csv", index=False)
+    return s
+
 
 if __name__ == "__main__":
     print(build_effr().tail(3).to_string(index=False))
+    print(build_sofr().tail(3).to_string(index=False))
     print(build_expiry_settles().tail(3).to_string(index=False))
     build_strips()
     print("wrote fixtures to", HERE)
