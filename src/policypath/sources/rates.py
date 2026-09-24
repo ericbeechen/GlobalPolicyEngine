@@ -7,15 +7,25 @@ Expected layout, one file per day as delivered by a Databento batch job:
 Every observation keeps two dates: ``trade_date`` (the session the value
 belongs to, Databento's ``ts_ref``) and ``published`` (when it reached us,
 ``ts_recv``).
+
+CME sends a preliminary settle around 16:00 ET and the final that evening,
+or on the Sunday for a Friday session. `Settlements` caches every distinct
+record as its own vintage, so a point-in-time read on the trade date sees the
+preliminary and anything later sees the final.
 """
 
 from pathlib import Path
 import databento as db
 import pandas as pd
+from policypath.sources.base import Source
 
 DATABENTO_DIR = Path(__file__).resolve().parents[3] / "databento"
 FINAL = 1
 ACTUAL = 2
+LOCAL_TZ = "America/New_York"
+# Definitions are read this far back from a chunk's start, so a final settle
+# arriving in the first file of a chunk still finds its (expired) contract.
+DEFINITION_LOOKBACK = pd.Timedelta(days=7)
 
 
 def _files(schema, start=None, end=None, root=DATABENTO_DIR):
@@ -60,21 +70,73 @@ def read_statistics(start=None, end=None, root=DATABENTO_DIR):
               "price", "quantity", "stat_flags", "update_action"]]
 
 
-def settlements(start=None, end=None, prefer_final=True, root=DATABENTO_DIR):
-    """Daily settlement prices of outright contracts, one row per (trade_date, contract).
-    ``implied_rate`` is 100 - price, in percent.
+def settlement_records(start=None, end=None, root=DATABENTO_DIR, definitions_from=None):
+    """Every settlement record for an outright contract, preliminary and final.
+
+    Only records a live contract could carry survive: calendar spreads are
+    dropped by the join to definitions, and so are settles stamped after the
+    contract's expiry and non-positive prices.
     """
     s = read_statistics(start, end, root)
     s = s[(s["stat_type"] == db.StatType.SETTLEMENT_PRICE.value) & s["trade_date"].notna()]
     s = s.assign(is_final=(s["stat_flags"] & FINAL) != 0)
-    order = ["is_final", "published"] if prefer_final else ["published"]
-    s = s.sort_values(order).drop_duplicates(["trade_date", "instrument_id"], keep="last")
 
-    defs = read_definitions(start, end, root)
+    defs = read_definitions(start if definitions_from is None else definitions_from, end, root)
     s = s.merge(defs[["instrument_id", "asset", "expiration"]], on="instrument_id")  # drops spreads
     # CME keeps sending a settle for a day or two after expiry; it is not a live contract.
     s = s[s["trade_date"].dt.normalize() <= s["expiration"].dt.normalize()]
-    s["implied_rate"] = 100.0 - s["price"]
+    # The archive holds a single settle on Good Friday 2022, ZQJ7 at 0.0 -- not a price.
+    return s[s["price"] > 0]
+
+
+def settlements(start=None, end=None, prefer_final=True, root=DATABENTO_DIR):
+    """Daily settlement prices of outright contracts, one row per (trade_date, contract).
+    ``implied_rate`` is 100 - price, in percent.
+    """
+    s = settlement_records(start, end, root)
+    order = ["is_final", "published"] if prefer_final else ["published"]
+    s = s.sort_values(order).drop_duplicates(["trade_date", "instrument_id"], keep="last")
+    s = s.assign(implied_rate=100.0 - s["price"])
     cols = ["trade_date", "published", "asset", "symbol", "instrument_id", "expiration",
             "price", "implied_rate", "stat_flags", "is_final"]
     return s[cols].sort_values(["trade_date", "asset", "expiration"]).reset_index(drop=True)
+
+
+class Settlements(Source):
+    """Settlement vintages for one futures root (the `series`), from the archive on disk.
+
+    Keyed by (date, contract): ``date`` is the trade date, ``contract`` the CME
+    symbol, ``value`` the settle price, ``published`` the local (New York)
+    time the record reached Databento. The archive is complete for every day
+    it has a file for, so a fetched range is covered to its end.
+    """
+
+    name = "databento"
+    keys = ("date", "contract")
+    chunk = "MS"
+
+    def __init__(self, root=DATABENTO_DIR):
+        self.root = root
+
+    def archive_days(self):
+        days = [pd.Timestamp(p.name.split("-")[2].split(".")[0]) for p in _files("statistics", root=self.root)]
+        if not days:
+            raise FileNotFoundError(f"no statistics files under {self.root}")
+        return min(days), max(days)
+
+    def fetch(self, series, start, end):
+        if not _files("statistics", start, end, self.root):
+            return pd.DataFrame(columns=["date", "contract", "value", "published"])
+        s = settlement_records(start, end, self.root, definitions_from=start - DEFINITION_LOOKBACK)
+        s = s[s["asset"] == series]
+        return pd.DataFrame({
+            "date": s["trade_date"].dt.tz_localize(None).dt.normalize(),
+            "contract": s["symbol"],
+            "expiration": s["expiration"].dt.tz_convert(LOCAL_TZ).dt.tz_localize(None).dt.normalize(),
+            "value": s["price"].astype(float),
+            "is_final": s["is_final"],
+            "published": s["published"].dt.tz_convert(LOCAL_TZ).dt.tz_localize(None),
+        }).reset_index(drop=True)
+
+    def covered_through(self, obs, start, end):
+        return end
