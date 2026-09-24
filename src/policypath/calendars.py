@@ -24,6 +24,25 @@ class FedHolidayCalendar(AbstractHolidayCalendar):
 US_BDAY = CustomBusinessDay(calendar=FedHolidayCalendar())
 
 
+def known_daily(fixings, as_of, bday=US_BDAY):
+    """The overnight rate for every calendar day already known at the end of `as_of`.
+
+    `fixings` has ``date``, ``value`` and ``published``; only rows published by
+    `as_of` count. A fixing for business day b is the rate for every calendar
+    day until the next business day (weekends and holidays carry the last
+    fixing, as in the ZQ and SR1 settlement rules), so once the latest fixing b
+    is published, the days through next_bday(b) - 1 are known and nothing after
+    is. On an ordinary session t that is t - 1: the NY Fed publishes t - 1's
+    fixing on the morning of t, and t's own fixing only on the next business day.
+    """
+    f = fixings[fixings["published"] < pd.Timestamp(as_of).normalize() + pd.Timedelta(days=1)]
+    if f.empty:
+        raise ValueError(f"no fixings published by {pd.Timestamp(as_of).date()}")
+    f = f.sort_values("date").drop_duplicates("date", keep="last").set_index("date")["value"]
+    through = f.index[-1] + bday - pd.Timedelta(days=1)
+    return f.reindex(pd.date_range(f.index[0], through, freq="D")).ffill()
+
+
 def label_path(path, meetings):
     """Join a solved policy path to the meeting calendar.
     """
