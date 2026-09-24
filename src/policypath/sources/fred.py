@@ -14,7 +14,7 @@ import numpy as np
 import pandas as pd
 import requests
 from policypath.calendars import US_BDAY
-from policypath.sources.base import require_published
+from policypath.sources.base import Source, require_published
 
 BASE = "https://api.stlouisfed.org/fred/"
 PAGE = 100_000  
@@ -114,3 +114,21 @@ def check_publication_lag(series_id, start=None, end=None, lag_bdays=1):
 def effr(start=None, end=None):
     """Realized effective fed funds rate, in percent. The NY Fed publishes it the next business day."""
     return observations("EFFR", start, end, lag_bdays=1)
+
+
+class Fred(Source):
+    """Current-vintage FRED series, cached as observations keyed by date.
+
+    EFFR, SOFR and the target-range bounds are all published the next business
+    day. A week is fetched again on every update: SOFR can be revised on the
+    day it is published, and the refetch costs one small request per series.
+    """
+
+    name = "fred"
+    refetch_days = 7
+
+    def __init__(self, lag_bdays=1):
+        self.lag_bdays = lag_bdays
+
+    def fetch(self, series, start, end):
+        return observations(series, start, end, self.lag_bdays)
