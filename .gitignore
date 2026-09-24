@@ -7,4 +7,3 @@ notes/run.md
 /files/*
 .env
 .vscode/settings.json
-/tests/data/*
