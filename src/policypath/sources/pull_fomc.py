@@ -1,15 +1,12 @@
 import re
 from pathlib import Path
-
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 from pandas.tseries.holiday import USFederalHolidayCalendar
 from pandas.tseries.offsets import CustomBusinessDay
 
-# URL targeting the 2020s decade directory
 url = "https://fraser.stlouisfed.org/title/federal-open-market-committee-meeting-minutes-transcripts-documents-677?browse=2020s"
-# FRASER only lists meetings that already happened; this has the scheduled ones.
 FED_CALENDAR = "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm"
 headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"

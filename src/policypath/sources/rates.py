@@ -14,9 +14,8 @@ import databento as db
 import pandas as pd
 
 DATABENTO_DIR = Path(__file__).resolve().parents[3] / "databento"
-# CME settlement flags (stat_flags on SETTLEMENT_PRICE records).
-FINAL = 1   # bit 0: final rather than preliminary
-ACTUAL = 2  # bit 1: actual rather than theoretical
+FINAL = 1
+ACTUAL = 2
 
 
 def _files(schema, start=None, end=None, root=DATABENTO_DIR):
@@ -63,14 +62,6 @@ def read_statistics(start=None, end=None, root=DATABENTO_DIR):
 
 def settlements(start=None, end=None, prefer_final=True, root=DATABENTO_DIR):
     """Daily settlement prices of outright contracts, one row per (trade_date, contract).
-
-    A session's settle is normally republished in the evening with the FINAL bit
-    set. On a contract's own expiry session it is not: the last record CME sends
-    carries ACTUAL only. So prefer the FINAL record where one exists and fall
-    back to the latest record where none does, rather than dropping the row --
-    filtering on the bit throws away the expiring contract's settle, which is
-    the one tied to realized fixings. ``is_final`` reports which was used.
-
     ``implied_rate`` is 100 - price, in percent.
     """
     s = read_statistics(start, end, root)

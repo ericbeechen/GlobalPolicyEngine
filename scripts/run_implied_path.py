@@ -5,11 +5,11 @@
 import sys
 from pathlib import Path
 import pandas as pd
-from policypath.calendars import label_path
+from policypath.calendars import label_path, next_meetings
 from policypath.curves.policy_path import implied_path
 from policypath.sources import rates
 
-HORIZON_MONTHS = 12
+N_MEETINGS = 8
 
 day = pd.Timestamp(sys.argv[1] if len(sys.argv) > 1 else "2022-06-01")
 
@@ -23,15 +23,25 @@ if session != day.date():
     print(f"No ZQ session on {day.date()}; using last session {session}")
 zq = s[sessions == session]
 
-month = zq["expiration"].dt.tz_localize(None).dt.to_period("M")
-implied_avg = pd.Series(zq["implied_rate"].values, index=month).sort_index()
-implied_avg = implied_avg[implied_avg.index <= day.to_period("M") + HORIZON_MONTHS]
-
 meetings = pd.read_csv(Path(__file__).parents[1] / "config/meetings/fomc.csv",
                        parse_dates=["announcement_date", "effective_date"])
+upcoming = next_meetings(day, meetings, N_MEETINGS)
+if len(upcoming) < N_MEETINGS:
+    sys.exit(f"fomc.csv has only {len(upcoming)} meetings after {day.date()}")
+last_effective = upcoming["effective_date"].iloc[-1]
+# One month past the last meeting's, so its new rate is pinned by a whole contract.
+horizon = last_effective.to_period("M") + 1
+
+month = zq["expiration"].dt.tz_localize(None).dt.to_period("M")
+implied_avg = pd.Series(zq["implied_rate"].values, index=month).sort_index()
+if implied_avg.index.max() < horizon:
+    sys.exit(f"ZQ strip on {session} ends {implied_avg.index.max()}, "
+             f"short of {horizon} needed for {N_MEETINGS} meetings")
+implied_avg = implied_avg[implied_avg.index <= horizon]
 
 path = implied_path(implied_avg, meetings["effective_date"])
 labelled = label_path(path, meetings)
+labelled = labelled[labelled["effective"] <= last_effective]
 
 print(implied_avg.to_string())
 print()
