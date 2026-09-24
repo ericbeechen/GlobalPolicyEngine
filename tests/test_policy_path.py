@@ -1,6 +1,8 @@
 from pathlib import Path
 import pandas as pd
 import pytest
+from policypath import config
+from policypath.calendars import US_BDAY, known_daily
 from policypath.curves.policy_path import implied_path
 
 DATA = Path(__file__).parent / "data"
@@ -9,14 +11,32 @@ BP = 0.01
 HORIZON_MONTHS = 12
 
 
-def zq_prices_from_path(start_rate, changes, months):
-    """changes: {effective_date: new_rate}. Returns {Period('YYYY-MM'): price}."""
-    days = pd.date_range(months[0].start_time, months[-1].end_time, freq="D")
+def daily_path(start_rate, changes, months):
+    """The overnight rate on every calendar day of `months`, from {effective_date: new_rate}."""
+    days = pd.date_range(months[0].start_time, months[-1].end_time.normalize(), freq="D")
     rate = pd.Series(start_rate, index=days)
     for eff, r in sorted(changes.items()):
         rate[rate.index >= eff] = r
+    return rate
+
+
+def zq_prices_from_path(start_rate, changes, months, daily=None):
+    """changes: {effective_date: new_rate}. Returns {Period('YYYY-MM'): price}.
+
+    `daily` overrides the step function on the days it covers, for building
+    prices off a realized history that is not a clean step.
+    """
+    rate = daily_path(start_rate, changes, months)
+    if daily is not None:
+        rate.loc[daily.index] = daily
     avg = rate.groupby(rate.index.to_period("M")).mean()
     return 100.0 - avg
+
+
+def realized_before(start_rate, changes, months, as_of):
+    """The step path on every day before `as_of`: what is already known on `as_of`."""
+    rate = daily_path(start_rate, changes, months)
+    return rate[rate.index < pd.Timestamp(as_of)]
 
 
 def path_at(start_rate, changes, dates):
@@ -140,6 +160,176 @@ def test_survives_tick_rounding():
     assert (got - expected).abs().max() < 1 * BP
 
 
+# --------------------------------------------------------------------------
+# 1b. algebra, mid-month -- elapsed days are known, not solved for
+# --------------------------------------------------------------------------
+
+JUL23_PILLARS = pd.Series(pd.to_datetime(
+    ["2023-07-27", "2023-09-21", "2023-11-02", "2023-12-14", "2024-02-01"]))
+
+
+def test_mid_month_path_starts_on_the_first_unknown_day():
+    months = months_between("2023-07", "2024-03")
+    start, changes = 5.08, {pd.Timestamp("2023-07-27"): 5.33}
+    as_of = pd.Timestamp("2023-07-12")
+    prices = zq_prices_from_path(start, changes, months)
+
+    got = implied_path(100.0 - prices, JUL23_PILLARS,
+                       realized=realized_before(start, changes, months, as_of))
+
+    assert got.index[0] == as_of
+    expected = path_at(start, changes, got.index)
+    pd.testing.assert_series_equal(got, expected, check_names=False, atol=1e-9)
+
+
+def test_evaluation_date_after_a_meeting_in_the_same_month():
+    """On 28 July the hike of the 27th is history: July's forward part is all new rate."""
+    months = months_between("2023-07", "2024-03")
+    start, changes = 5.08, {pd.Timestamp("2023-07-27"): 5.33}
+    as_of = pd.Timestamp("2023-07-28")
+    prices = zq_prices_from_path(start, changes, months)
+
+    got = implied_path(100.0 - prices, JUL23_PILLARS,
+                       realized=realized_before(start, changes, months, as_of))
+
+    assert got.index[0] == as_of
+    assert pd.Timestamp("2023-07-27") not in got.index
+    assert got.iloc[0] == pytest.approx(5.33, abs=1e-9)
+    expected = path_at(start, changes, got.index)
+    pd.testing.assert_series_equal(got, expected, check_names=False, atol=1e-9)
+
+
+def test_realized_days_absorb_what_a_step_function_cannot():
+    """Realized fixings wander inside the range; the forward path does not see that.
+
+    Build July's price off a first half that printed a basis point soft. Solved
+    from futures alone, that leaks into the current regime. With the realized
+    days substituted, the forward path comes back exact.
+    """
+    months = months_between("2023-07", "2024-03")
+    start, changes = 5.08, {pd.Timestamp("2023-07-27"): 5.33}
+    as_of = pd.Timestamp("2023-07-15")
+    known = realized_before(start, changes, months, as_of) - 0.01
+    prices = zq_prices_from_path(start, changes, months, daily=known)
+
+    blind = implied_path(100.0 - prices, JUL23_PILLARS)
+    got = implied_path(100.0 - prices, JUL23_PILLARS, realized=known)
+
+    assert abs(blind.iloc[0] - start) > 0.1 * BP, "the noise should have leaked in"
+    expected = path_at(start, changes, got.index)
+    pd.testing.assert_series_equal(got, expected, check_names=False, atol=1e-9)
+
+
+def test_front_contract_dropped_near_expiry_anchors_on_the_next():
+    months = months_between("2023-07", "2024-03")
+    start, changes = 5.08, {pd.Timestamp("2023-07-27"): 5.33}
+    as_of = pd.Timestamp("2023-07-29")  # 29, 30, 31 left
+    prices = zq_prices_from_path(start, changes, months)
+    # Garbage in the front contract must not reach the path once it is dropped.
+    prices[pd.Period("2023-07")] += 0.05
+
+    got = implied_path(100.0 - prices, JUL23_PILLARS, min_forward_days=5,
+                       realized=realized_before(start, changes, months, as_of))
+
+    assert got.attrs["front_dropped"] and not got.attrs["pinned"]
+    expected = path_at(start, changes, got.index)
+    pd.testing.assert_series_equal(got, expected, check_names=False, atol=1e-9)
+
+
+def test_first_regime_pinned_when_its_only_contract_is_dropped():
+    """July 2025: decision announced the 30th, effective the 31st.
+
+    On the 29th only three July days are unknown, so July is dropped -- and with
+    it the only contract that sees the 29th and 30th. That regime is pinned to
+    the last known fixing; the post-meeting rate still comes from August.
+    """
+    months = months_between("2025-07", "2026-02")
+    start, changes = 4.33, {pd.Timestamp("2025-07-31"): 4.08}
+    pillars = pd.Series(pd.to_datetime(["2025-07-31", "2025-09-18", "2025-10-30", "2025-12-11"]))
+    as_of = pd.Timestamp("2025-07-29")
+    known = realized_before(start, changes, months, as_of)
+    known.iloc[-1] = 4.31  # a stray last fixing, so pinning is visible
+    prices = zq_prices_from_path(start, changes, months, daily=known)
+
+    got = implied_path(100.0 - prices, pillars, realized=known, min_forward_days=5)
+
+    assert got.attrs["pinned"]
+    assert got.iloc[0] == 4.31
+    assert got[pd.Timestamp("2025-07-31")] == pytest.approx(4.08, abs=1e-9)
+
+
+def test_short_first_regime_pinned_rather_than_amplified():
+    """17 September 2024: the cut is effective on the 19th, two days away.
+
+    Only September sees those two days, at 2/30 weight, so half a basis point of
+    price noise in September becomes 7.5bp in the current rate and in the size
+    of the cut. Pinned to the last fixing, the cut comes back from October.
+    """
+    months = months_between("2024-09", "2025-06")
+    start, changes = 5.33, {pd.Timestamp("2024-09-19"): 4.83}
+    pillars = pd.Series(pd.to_datetime(["2024-09-19", "2024-11-08", "2024-12-19",
+                                        "2025-01-30", "2025-03-20", "2025-05-08"]))
+    as_of = pd.Timestamp("2024-09-17")
+    known = realized_before(start, changes, months, as_of)
+    prices = zq_prices_from_path(start, changes, months)
+    prices[pd.Period("2024-09")] += 0.005  # half a basis point
+
+    free = implied_path(100.0 - prices, pillars, realized=known)
+    got = implied_path(100.0 - prices, pillars, realized=known, min_regime_days=5)
+
+    assert abs(free.iloc[0] - start) > 5 * BP, "the noise should have been amplified"
+    assert got.attrs["pinned"] and got.iloc[0] == start
+    assert got[pd.Timestamp("2024-09-19")] == pytest.approx(4.83, abs=0.5 * BP)
+
+
+def test_meeting_announced_at_month_end_steps_in_the_next_contract():
+    """Announced 31 January 2024, effective 1 February: January never sees the new rate."""
+    months = months_between("2024-01", "2024-08")
+    start, changes = 5.33, {pd.Timestamp("2024-02-01"): 5.08}
+    pillars = pd.Series(pd.to_datetime(["2024-02-01", "2024-03-21", "2024-05-02", "2024-06-13"]))
+    prices = zq_prices_from_path(start, changes, months)
+    assert 100.0 - prices[pd.Period("2024-01")] == pytest.approx(start, abs=1e-12)
+
+    got = implied_path(100.0 - prices, pillars,
+                       realized=realized_before(start, changes, months, "2024-01-17"))
+
+    expected = path_at(start, changes, got.index)
+    pd.testing.assert_series_equal(got, expected, check_names=False, atol=1e-9)
+
+
+def test_realized_with_a_gap_is_refused():
+    months = months_between("2023-07", "2024-03")
+    known = realized_before(5.08, {}, months, "2023-07-12").drop(pd.Timestamp("2023-07-04"))
+    prices = zq_prices_from_path(5.08, {}, months)
+    with pytest.raises(ValueError, match="no gaps"):
+        implied_path(100.0 - prices, JUL23_PILLARS, realized=known)
+
+
+# --------------------------------------------------------------------------
+# 1c. the publication boundary -- on date t, fixings are known through t - 1
+# --------------------------------------------------------------------------
+
+def fixings_for(first, last):
+    """One fixing per Fed business day, valued by date so each is recognisable,
+    published the next business day as the NY Fed does."""
+    dates = pd.date_range(first, last, freq=US_BDAY)
+    return pd.DataFrame({"date": dates, "value": dates.day / 100.0,
+                         "published": [d + US_BDAY for d in dates]})
+
+
+@pytest.mark.parametrize("as_of, known_through, carried", [
+    ("2023-10-04", "2023-10-03", "2023-10-03"),  # ordinary Wednesday: Tuesday's fixing
+    ("2023-10-02", "2023-10-01", "2023-09-29"),  # Monday: Friday's fixing covers the weekend
+    ("2023-10-09", "2023-10-05", "2023-10-05"),  # Columbus Day: Friday is published Tuesday
+    ("2023-10-10", "2023-10-09", "2023-10-06"),  # and then covers Friday through the holiday
+])
+def test_fixings_known_through_the_day_before(as_of, known_through, carried):
+    fixings = fixings_for("2023-09-01", "2023-10-31")
+    daily = known_daily(fixings, as_of)
+    assert daily.index[-1] == pd.Timestamp(known_through)
+    assert daily.iloc[-1] == pd.Timestamp(carried).day / 100.0
+
+
 def test_expired_contracts_settle_to_realized_effr(effr_monthly_avg):
     """100 - settle == average realized EFFR over the contract month.
 
@@ -207,28 +397,44 @@ def load_strip(day):
     return pd.Series(rates, index=pd.PeriodIndex(strip["month"], freq="M")).sort_index()
 
 
-def solve_session(day, meetings):
-    """The implied path from the committed strip fixture for one session."""
+def fixings_known_on(effr, day):
+    """The EFFR fixture as it stood on `day`: every calendar day known by then."""
+    fixings = effr.reset_index().rename(columns={"effr": "value"})
+    return known_daily(fixings, day)
+
+
+def solve_session(day, meetings, effr=None):
+    """The implied path from the committed strip fixture for one session.
+
+    With `effr`, days already fixed by `day` are substituted as known and the
+    configured cutoffs apply, as in the panel. Without it the whole strip is
+    solved from futures alone.
+    """
     implied_avg = load_strip(day)
     horizon = pd.Timestamp(day).to_period("M") + HORIZON_MONTHS
-    return implied_path(implied_avg[implied_avg.index <= horizon], meetings["effective_date"])
+    implied_avg = implied_avg[implied_avg.index <= horizon]
+    if effr is None:
+        return implied_path(implied_avg, meetings["effective_date"])
+    spec = config.currency("USD")["path"]
+    return implied_path(implied_avg, meetings["effective_date"], fixings_known_on(effr, day),
+                        spec["min_forward_days"], spec["min_regime_days"])
 
 
 @pytest.mark.parametrize("day", strip_sessions())
 def test_path_matches_the_prevailing_effr(day, meetings, effr):
-    """The regime covering today holds the rate in force today, which is published.
+    """The rate from today to the next meeting is the rate in force today.
 
-    The solver is told nothing about the current policy rate -- it backs the whole
-    path out of futures prices -- so this catches a level error of any kind. Note
-    it is the regime containing `day`, not the first one: on 2026-09-22 the front
-    contract month already contains a meeting, so the first regime is September's
-    *pre*-meeting rate and only the second one is current.
+    The solver is told nothing about the current policy rate beyond the fixings
+    already published -- which enter only as the elapsed part of the front
+    month -- so the level of the forward path still comes from futures, and
+    this catches a level error of any kind.
     """
-    path = solve_session(day, meetings)
+    path = solve_session(day, meetings, effr)
     prevailing = effr["effr"].asof(pd.Timestamp(day))
 
-    assert path.asof(pd.Timestamp(day)) == pytest.approx(prevailing, abs=3 * BP), (
-        f"{day}: solved {path.asof(pd.Timestamp(day)):.4f} vs realized EFFR {prevailing:.4f}"
+    assert path.index[0] == pd.Timestamp(day)
+    assert path.iloc[0] == pytest.approx(prevailing, abs=1 * BP), (
+        f"{day}: solved {path.iloc[0]:.4f} vs realized EFFR {prevailing:.4f}"
     )
 
 
@@ -237,9 +443,10 @@ def test_regimes_already_in_the_past_match_realized_effr(day, meetings, effr):
     """A regime that has entirely happened is no longer a forecast.
 
     Its rate is published, so the solver must reproduce it from futures alone.
-    Tolerance is 2bp rather than a fraction of one because elapsed days of the
-    front contract are still solved as unknowns -- see the decisions log. Tighten
-    this once they are pinned to realized fixings.
+    This is the futures-only solve, deliberately: with realized days substituted
+    no past regime is solved at all, so this is the check that the extraction
+    itself gets history right. Tolerance is 2bp because a futures-only solve
+    lets front-contract pricing noise into the elapsed days.
     """
     path = solve_session(day, meetings)
     as_of = pd.Timestamp(day)
@@ -263,15 +470,15 @@ def test_regimes_already_in_the_past_match_realized_effr(day, meetings, effr):
 
 
 @pytest.mark.parametrize("day", strip_sessions())
-def test_path_is_monotone_in_time_order_and_finite(day, meetings):
-    path = solve_session(day, meetings)
+def test_path_is_monotone_in_time_order_and_finite(day, meetings, effr):
+    path = solve_session(day, meetings, effr)
     assert path.index.is_monotonic_increasing
     assert path.notna().all()
     assert (path.abs() < 25).all(), "a policy rate this size means the solve blew up"
 
 
 @pytest.mark.parametrize("day", strip_sessions())
-def test_path_reprices_the_strip_it_was_solved_from(day, meetings):
+def test_path_reprices_the_strip_it_was_solved_from(day, meetings, effr):
     """Average the solved step function back over each month and recover the input.
 
     Deliberately loose. The residual is not solver error -- the system is
@@ -287,10 +494,10 @@ def test_path_reprices_the_strip_it_was_solved_from(day, meetings):
     """
     avg = load_strip(day)
     avg = avg[avg.index <= pd.Timestamp(day).to_period("M") + HORIZON_MONTHS]
-    path = solve_session(day, meetings)
+    path = solve_session(day, meetings, effr)
 
     days = pd.date_range(avg.index[0].start_time, avg.index[-1].end_time.normalize(), freq="D")
-    step = pd.Series(float("nan"), index=days)
+    step = fixings_known_on(effr, day).reindex(days)
     for pillar in path.index:
         step[step.index >= pillar] = path[pillar]
     assert step.notna().all(), "the solved path does not cover the whole strip"
@@ -328,7 +535,7 @@ def test_implied_meeting_moves_match_fedwatch(day, meetings, effr):
     therefore about as tight as this can be; the fixture is a frozen snapshot, so
     there is no flakiness to absorb, only genuine methodology difference.
     """
-    path = solve_session(day, meetings)
+    path = solve_session(day, meetings, effr)
     steps = path.diff().dropna() * 100.0
     eff = meetings.set_index("announcement_date")["effective_date"]
 
