@@ -1,62 +1,182 @@
 """Parquet cache under ``data/cache/``, keyed by (source, series, currency).
 
-Each key is one append-only log: rows are added, never rewritten or removed.
-A row is (date, value, published, retrieved). Re-fetching an unchanged value
-adds nothing. A changed value for a date already in the log is a revision: it
-is stored with ``published`` = the day we retrieved it, since that is the
-earliest it could have been known here. Reads are point-in-time through `as_of`.
+Each key is a vintage log. A row is one value of one observation as it stood
+from ``published`` on. A value that changes is a new row (a revision), not an
+edit of the old one, so `read` can answer "what was knowable at `as_of`" while
+the latest vintage still wins for any later date. That is how the cache
+overwrites a revised value without forgetting what it replaced: a preliminary
+CME settle and its final both stay in the log, and a read after the final was
+published sees only the final.
 
-Only `sources/` writes here. Everything downstream reads through `read`.
+A source that cannot date a revision (it reports the original publication date
+for a changed value, as FRED's current-vintage API does) gets the revision
+stamped with the day we retrieved it, since that is the earliest we can vouch
+for it.
+
+``manifest.json`` records, per key, the reference-date ranges already covered
+and the columns that identify an observation. The ranges are what make
+`Source.update` incremental and idempotent.
+
+Only `sources/` writes here. Everything downstream reads through `read` or `log`.
 """
 
+import json
 from pathlib import Path
 import pandas as pd
 from policypath.sources.base import require_published
 
 CACHE_DIR = Path(__file__).resolve().parents[3] / "data" / "cache"
-COLS = ["date", "value", "published", "retrieved"]
+MANIFEST = "manifest.json"
+DAY = pd.Timedelta(days=1)
 
 
 def _path(source, series, currency, root):
     return root / source / currency / f"{series}.parquet"
 
 
-def _log(path):
-    return pd.read_parquet(path) if path.exists() else pd.DataFrame(columns=COLS)
+def _key(source, series, currency):
+    return f"{source}/{currency}/{series}"
 
 
-def append(df, source, series, currency, root=CACHE_DIR):
-    """Add new or revised observations to the log. Returns the number of rows added."""
-    require_published(df)
+def _now():
+    return pd.Timestamp.now("America/New_York").tz_localize(None)
+
+
+# --------------------------------------------------------------------------
+# manifest
+# --------------------------------------------------------------------------
+
+def _manifest(root):
+    path = root / MANIFEST
+    return json.loads(path.read_text()) if path.exists() else {}
+
+
+def _save_manifest(manifest, root):
+    root.mkdir(parents=True, exist_ok=True)
+    tmp = root / (MANIFEST + ".tmp")
+    tmp.write_text(json.dumps(manifest, indent=2, sort_keys=True))
+    tmp.replace(root / MANIFEST)
+
+
+def merge_ranges(ranges):
+    """Sort (lo, hi) date ranges and merge any that overlap or touch."""
+    out = []
+    for lo, hi in sorted((pd.Timestamp(a), pd.Timestamp(b)) for a, b in ranges):
+        if out and lo <= out[-1][1] + DAY:
+            out[-1] = (out[-1][0], max(out[-1][1], hi))
+        else:
+            out.append((lo, hi))
+    return out
+
+
+def fetched(source, series, currency, root=CACHE_DIR):
+    """Reference-date ranges already covered for this key, merged and sorted."""
+    entry = _manifest(root).get(_key(source, series, currency), {})
+    return merge_ranges(entry.get("ranges", []))
+
+
+def last_covered(source, series, currency, root=CACHE_DIR):
+    ranges = fetched(source, series, currency, root)
+    return ranges[-1][1] if ranges else None
+
+
+def missing(source, series, currency, start, end, root=CACHE_DIR):
+    """Sub-ranges of [start, end] not yet covered for this key."""
+    lo, hi = pd.Timestamp(start), pd.Timestamp(end)
+    gaps, cursor = [], lo
+    for a, b in fetched(source, series, currency, root):
+        if b < cursor or a > hi:
+            continue
+        if a > cursor:
+            gaps.append((cursor, a - DAY))
+        cursor = max(cursor, b + DAY)
+    if cursor <= hi:
+        gaps.append((cursor, hi))
+    return gaps
+
+
+def mark_fetched(source, series, currency, start, end, root=CACHE_DIR):
+    manifest = _manifest(root)
+    entry = manifest.setdefault(_key(source, series, currency), {})
+    ranges = merge_ranges([*entry.get("ranges", []), (start, end)])
+    entry["ranges"] = [[a.strftime("%Y-%m-%d"), b.strftime("%Y-%m-%d")] for a, b in ranges]
+    entry["updated"] = _now().isoformat(timespec="seconds")
+    _save_manifest(manifest, root)
+
+
+def _keys(source, series, currency, root):
+    entry = _manifest(root).get(_key(source, series, currency), {})
+    return entry.get("keys", ["date"])
+
+
+# --------------------------------------------------------------------------
+# vintage log
+# --------------------------------------------------------------------------
+
+def append(df, source, series, currency, keys=("date",), root=CACHE_DIR):
+    """Add new observations and revisions to the log. Returns the number of rows added.
+
+    A row is added when its value differs from the vintage before it for the
+    same observation, so re-appending what is already cached adds nothing.
+    """
+    keys = list(keys)
+    require_published(df, keys)
+    if df.empty:
+        return 0
     path = _path(source, series, currency, root)
-    log = _log(path)
-    now = pd.Timestamp.now("UTC").tz_localize(None)
+    old = pd.read_parquet(path) if path.exists() else None
+    now = _now()
 
-    new = df[["date", "value", "published"]].assign(retrieved=now)
-    new = new.merge(log[["date", "value"]].drop_duplicates(), on=["date", "value"],
-                    how="left", indicator=True)
-    new = new[new["_merge"] == "left_only"].drop(columns="_merge")
-    revised = new["date"].isin(log["date"])
-    new.loc[revised, "published"] = new.loc[revised, "published"].clip(lower=now.normalize())
-    if new.empty:
+    new = df.assign(retrieved=now, _new=True)
+    both = new if old is None else pd.concat([old.assign(_new=False), new], ignore_index=True)
+    # Old rows sort before new rows published at the same moment, so an
+    # unchanged re-fetch lands right behind the row it duplicates.
+    both = both.sort_values([*keys, "published", "_new"], kind="stable")
+    changed = both["value"].ne(both.groupby(keys, sort=False)["value"].shift())
+    add = both[both["_new"] & changed].drop(columns="_new")
+    if add.empty:
         return 0
 
+    if old is not None:
+        # A changed value claiming to be no newer than what it replaces is an
+        # undated revision: it is knowable from when we saw it, not before.
+        seen = old.groupby(keys)["published"].max().rename("_seen")
+        add = add.join(seen, on=keys)
+        undated = add["_seen"].notna() & (add["published"] <= add["_seen"])
+        add.loc[undated, "published"] = add.loc[undated, "published"].clip(lower=now.normalize())
+        add = add.drop(columns="_seen")
+
     path.parent.mkdir(parents=True, exist_ok=True)
-    out = pd.concat([log, new], ignore_index=True) if len(log) else new
-    out[COLS].to_parquet(path, index=False)
-    return len(new)
+    out = add if old is None else pd.concat([old, add], ignore_index=True)
+    out.to_parquet(path, index=False)
+
+    manifest = _manifest(root)
+    manifest.setdefault(_key(source, series, currency), {})["keys"] = keys
+    _save_manifest(manifest, root)
+    return len(add)
 
 
-def read(source, series, currency, as_of, root=CACHE_DIR):
-    """The series as it was knowable at the end of `as_of`: one value per date, latest vintage.
+def log(source, series, currency, root=CACHE_DIR):
+    """Every vintage recorded for the key, for callers that need point-in-time by row.
 
-    Columns: date, value, published. Raises if nothing is cached for the key.
+    Raises if nothing is cached. Most callers want `read`.
     """
     path = _path(source, series, currency, root)
     if not path.exists():
-        raise FileNotFoundError(f"nothing cached for {source}/{currency}/{series} at {path}")
-    log = _log(path)
-    cutoff = pd.Timestamp(as_of).normalize() + pd.Timedelta(days=1)
-    known = log[log["published"] < cutoff]
-    known = known.sort_values(["published", "retrieved"]).drop_duplicates("date", keep="last")
-    return known[["date", "value", "published"]].sort_values("date").reset_index(drop=True)
+        raise FileNotFoundError(f"nothing cached for {_key(source, series, currency)} at {path}; "
+                                "run scripts/update_data.py")
+    return pd.read_parquet(path)
+
+
+def view(vintages, as_of, keys=("date",)):
+    """The latest vintage of each observation published by the end of `as_of`."""
+    keys = list(keys)
+    cutoff = pd.Timestamp(as_of).normalize() + DAY
+    known = vintages[vintages["published"] < cutoff]
+    known = known.sort_values(["published", "retrieved"]).drop_duplicates(keys, keep="last")
+    return known.drop(columns="retrieved").sort_values(keys).reset_index(drop=True)
+
+
+def read(source, series, currency, as_of, root=CACHE_DIR):
+    """The series as it was knowable at the end of `as_of`: one row per observation."""
+    return view(log(source, series, currency, root), as_of, _keys(source, series, currency, root))
