@@ -4,8 +4,11 @@ version = "0.1.0"
 requires-python = ">=3.11"
 dependencies = [
     "databento>=0.86.0",
+    "matplotlib>=3.10",
     "pandas>=3.0.6",
     "pyarrow>=25.0.1",
+    "pyyaml>=6.0",
+    "quantlib==1.42.1",
     "requests>=2.34.2",
 ]
 
@@ -19,7 +22,7 @@ packages = ["src/policypath"]
 [dependency-groups]
 dev = [
     "pytest>=8.0",
-    # used by config/meetings/pull_fomc.py, which does not run in the test suite
+    # used by src/policypath/sources/pull_fomc.py, which does not run in the test suite
     "beautifulsoup4>=4.12",
 ]
 
