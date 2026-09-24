@@ -958,26 +958,28 @@ source = { editable = "." }
 dependencies = [
     { name = "databento" },
     { name = "pandas" },
+    { name = "pyarrow" },
+    { name = "requests" },
 ]
 
 [package.dev-dependencies]
 dev = [
     { name = "beautifulsoup4" },
     { name = "pytest" },
-    { name = "requests" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "databento", specifier = ">=0.86.0" },
     { name = "pandas", specifier = ">=3.0.6" },
+    { name = "pyarrow", specifier = ">=25.0.1" },
+    { name = "requests", specifier = ">=2.34.2" },
 ]
 
 [package.metadata.requires-dev]
 dev = [
     { name = "beautifulsoup4", specifier = ">=4.12" },
     { name = "pytest", specifier = ">=8.0" },
-    { name = "requests", specifier = ">=2.31" },
 ]
 
 [[package]]

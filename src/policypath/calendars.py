@@ -1,4 +1,27 @@
 import pandas as pd
+from pandas.tseries.holiday import (AbstractHolidayCalendar, Holiday,
+                                    USFederalHolidayCalendar, nearest_workday,
+                                    sunday_to_monday)
+from pandas.tseries.offsets import CustomBusinessDay
+
+
+class FedHolidayCalendar(AbstractHolidayCalendar):
+    """US federal holidays as the Federal Reserve observes them.
+
+    Same days as pandas' federal calendar, except a holiday falling on a
+    Saturday is not moved to the Friday: the Fed stays open, and the NY Fed
+    publishes rates, on e.g. 2021-06-18 and 2023-11-10.
+    """
+    rules = [
+        Holiday(h.name, year=h.year, month=h.month, day=h.day, offset=h.offset,
+                start_date=h.start_date, end_date=h.end_date,
+                observance=sunday_to_monday if h.observance is nearest_workday else h.observance)
+        for h in USFederalHolidayCalendar.rules
+    ]
+
+
+# Fed business days: the calendar FOMC effective dates and NY Fed fixings follow.
+US_BDAY = CustomBusinessDay(calendar=FedHolidayCalendar())
 
 
 def label_path(path, meetings):

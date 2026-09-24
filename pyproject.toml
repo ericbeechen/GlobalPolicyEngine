@@ -5,6 +5,8 @@ requires-python = ">=3.11"
 dependencies = [
     "databento>=0.86.0",
     "pandas>=3.0.6",
+    "pyarrow>=25.0.1",
+    "requests>=2.34.2",
 ]
 
 [build-system]
@@ -17,9 +19,7 @@ packages = ["src/policypath"]
 [dependency-groups]
 dev = [
     "pytest>=8.0",
-    # used by config/meetings/pull_fomc.py and tests/data/build_fixtures.py,
-    # neither of which runs in the test suite
-    "requests>=2.31",
+    # used by config/meetings/pull_fomc.py, which does not run in the test suite
     "beautifulsoup4>=4.12",
 ]
 

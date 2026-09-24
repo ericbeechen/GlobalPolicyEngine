@@ -4,10 +4,11 @@ Not run by the test suite. It needs the Databento archive (paid, gitignored) and
 the network, which is exactly what the fixtures exist to keep out of `pytest`.
 Everything it writes is small enough to read in a diff.
 
-    uv run python tests/data/build_fixtures.py
+    uv run --env-file .env python tests/data/build_fixtures.py
 
 Outputs, all in this directory:
-  effr.csv              NY Fed EFFR and prevailing target range, one row per day.
+  effr.csv              EFFR and prevailing target range from FRED, one row per
+                        fixing, with the day the fixing was published.
   zq_expiry_settles.csv One row per expired ZQ contract: its settle on its own
                         expiry session, which must equal 100 - the realized
                         average EFFR for the contract month.
@@ -15,24 +16,22 @@ Outputs, all in this directory:
 """
 
 import pandas as pd
-import requests
 
-from policypath.sources import rates
+from policypath.sources import fred, rates
 
 HERE = __import__("pathlib").Path(__file__).resolve().parent
 START, END = "2020-12-01", "2026-09-21"
 # Sessions worth keeping a full strip for. Each is a day the near meeting was live.
 STRIP_DATES = ["2022-06-01", "2022-06-13", "2023-06-13", "2024-09-17", "2026-09-21"]
 
-NY_FED = "https://markets.newyorkfed.org/api/rates/unsecured/effr/search.json"
-
 
 def build_effr():
-    j = requests.get(NY_FED, params={"startDate": START, "endDate": END}, timeout=60).json()
-    e = pd.DataFrame(j["refRates"])
-    e = e.rename(columns={"effectiveDate": "date", "percentRate": "effr",
-                          "targetRateFrom": "target_low", "targetRateTo": "target_high"})
-    e = e[["date", "effr", "target_low", "target_high"]].sort_values("date")
+    e = fred.effr(START, END).rename(columns={"value": "effr"})
+    for col, series in [("target_low", "DFEDTARL"), ("target_high", "DFEDTARU")]:
+        t = fred.observations(series, START, END)[["date", "value"]]
+        e = e.merge(t.rename(columns={"value": col}), on="date", how="left")
+    e = e.assign(date=e["date"].dt.date, published=e["published"].dt.date)
+    e = e[["date", "effr", "target_low", "target_high", "published"]].sort_values("date")
     e.to_csv(HERE / "effr.csv", index=False)
     return e
 

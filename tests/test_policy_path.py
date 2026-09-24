@@ -37,8 +37,8 @@ def months_between(first, last):
 
 @pytest.fixture(scope="module")
 def effr():
-    """Realized EFFR and prevailing target range, indexed by date."""
-    e = pd.read_csv(DATA / "effr.csv", parse_dates=["date"]).set_index("date").sort_index()
+    """Realized EFFR, prevailing target range and publication date, indexed by date."""
+    e = pd.read_csv(DATA / "effr.csv", parse_dates=["date", "published"]).set_index("date").sort_index()
     return e
 
 

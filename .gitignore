@@ -1,8 +1,9 @@
-CLAUDE.md
 /databento
 /data
 /.venv
 __pycache__/
 notes/decisions.md
 notes/run.md
+/files/*
 .env
+.vscode/settings.json

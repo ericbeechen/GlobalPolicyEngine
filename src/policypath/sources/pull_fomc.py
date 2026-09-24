@@ -3,8 +3,8 @@ from pathlib import Path
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
-from pandas.tseries.holiday import USFederalHolidayCalendar
-from pandas.tseries.offsets import CustomBusinessDay
+
+from policypath.calendars import US_BDAY
 
 url = "https://fraser.stlouisfed.org/title/federal-open-market-committee-meeting-minutes-transcripts-documents-677?browse=2020s"
 FED_CALENDAR = "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm"
@@ -27,8 +27,6 @@ ANNOUNCEMENT_OVERRIDES = {
     # Conference call held Mar 2; 50bp cut announced Mar 3.
     pd.Timestamp("2020-03-02"): pd.Timestamp("2020-03-03"),
 }
-# Policy changes take effect the US business day after the announcement.
-us_bday = CustomBusinessDay(calendar=USFederalHolidayCalendar())
 
 
 def parse_slug(slug):
@@ -99,7 +97,7 @@ def scheduled_from_fed_calendar():
             announcement = pd.Timestamp(cal_year, month, day)
             yield {
                 "announcement_date": announcement,
-                "effective_date": announcement + us_bday,
+                "effective_date": announcement + US_BDAY,
                 "scheduled": True,
             }
 
@@ -132,7 +130,7 @@ try:
         meetings_data.append(
             {
                 "announcement_date": announcement_date,
-                "effective_date": announcement_date + us_bday,
+                "effective_date": announcement_date + US_BDAY,
                 "scheduled": "unscheduled" not in tags,
             }
         )
