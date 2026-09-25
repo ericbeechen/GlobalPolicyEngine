@@ -45,6 +45,7 @@ USD:
              PCEPILFE, CPILFESL, CES0500000003]
     validation: [CPILFENS, GDPNOW, UNRATEMDLR]   # pulled and tested, never a nowcast input
     projections: [NROU]           # published ahead of the dates they describe
+    start: "2021-01-01"           # first as_of the nowcast panel is built for
     inflation:
       target: PCEPILFE            # what the rule reacts to
       bridge: CPILFESL            # prints ~2 weeks earlier; stands in until the target arrives
@@ -53,8 +54,10 @@ USD:
     gap:
       unemployment: UNRATE
       natural_rate: NROU          # CBO, vintaged; see notes/macro.md
+      longer_run: UNRATEMDLR      # FOMC SEP median: reported as a sensitivity, never the input
     activity:
       series: [PAYEMS, INDPRO, RSAFS, NEWORDER]   # first sets the quarter: it prints first
       deflate: {RSAFS: CPIAUCSL}  # real retail sales built as-of, not FRED's RRSFS
       moments_start: "1993-01-01" # NEWORDER starts 1992-02; first complete q/q is 1993Q1
       min_series: 3
+      benchmark: GDPNOW           # validation only: the composite is correlated with it, never fitted to it
