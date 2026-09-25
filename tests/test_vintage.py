@@ -6,29 +6,16 @@ of D: nothing published later, and nothing that betrays a later revision.
 
 import inspect
 import re
-from pathlib import Path
 import pandas as pd
 import pytest
 from policypath import config
 from policypath.macro.vintage import VintagePanel
 
-DATA = Path(__file__).parent / "data" / "alfred"
 T = pd.Timestamp
 PROJECTIONS = config.currency("USD")["macro"]["projections"]
 # Just before a benchmark, around the pandemic, and inside the shutdown's ragged edge.
 CUTOFFS = ["2020-04-02", "2023-06-30", "2025-02-06", "2025-12-17"]
-
-
-@pytest.fixture(scope="module")
-def raw():
-    frames = [pd.read_csv(p, parse_dates=["date", "realtime_start", "realtime_end"]).assign(series=p.stem)
-              for p in sorted(DATA.glob("*.csv"))]
-    return pd.concat(frames, ignore_index=True)
-
-
-@pytest.fixture(scope="module")
-def panel(raw):
-    return VintagePanel(raw, PROJECTIONS)
+# `raw` and `panel` (every committed ALFRED vintage) come from conftest.py.
 
 
 def days_up_to(cutoff, span=400, step=6):
