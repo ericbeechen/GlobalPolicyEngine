@@ -16,6 +16,7 @@ from policypath.sources import cache, fred, rates
 
 parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
 parser.add_argument("--ccy", default="USD")
+parser.add_argument("--macro-only", action="store_true", help="pull ALFRED only; no archive needed")
 args = parser.parse_args()
 cfg = config.currency(args.ccy)
 today = pd.Timestamp.today().normalize()
@@ -42,3 +43,13 @@ for root in cfg["futures_roots"]:
     print(f"databento/{root:<4} +{added:>6} rows   covered {report('databento', root)}")
 
 print(f"done in {time.perf_counter() - t0:.1f}s")
+
+
+macro = cfg["macro"]
+for series in [*macro["series"], *macro["validation"]]:
+    meta = {**fred.series_info(series), "first_vintage": f"{fred.vintage_dates(series).iloc[0]:%Y-%m-%d}"}
+    added = cache.write_vintages(fred.vintages(series, macro["history_start"]), macro["source"],
+                                 series, args.ccy, meta=meta)
+    print(f"alfred/{series:<14} +{added:>6} rows")
+if args.macro_only:
+    raise SystemExit(f"done in {time.perf_counter() - t0:.1f}s")
