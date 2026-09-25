@@ -1,11 +1,13 @@
-"""Bring the cache under data/cache/ up to date, from FRED and the Databento archive.
+"""Bring the cache under data/cache/ up to date, from FRED, the Databento archive and ALFRED.
 
 Incremental and idempotent: the manifest records what is already covered, so a
 second run fetches only the last week of each FRED series again (to catch
-revisions) and reads no archive files. Deleting data/ and running this rebuilds
-everything.
+revisions) and reads no archive files. ALFRED series are pulled whole each
+time and checked against what is cached. Deleting data/ and running this
+rebuilds everything.
 
     uv run --env-file .env python scripts/update_data.py
+    uv run --env-file .env python scripts/update_data.py --macro-only
 """
 
 import argparse
@@ -29,21 +31,19 @@ def report(source, series):
 
 
 t0 = time.perf_counter()
-source = fred.Fred()
-for series in cfg["fred_series"]:
-    added = source.update(series, args.ccy, cfg["history_start"], today, cache)
-    print(f"fred/{series:<9} +{added:>6} rows   covered {report('fred', series)}")
+if not args.macro_only:
+    source = fred.Fred()
+    for series in cfg["fred_series"]:
+        added = source.update(series, args.ccy, cfg["history_start"], today, cache)
+        print(f"fred/{series:<9} +{added:>6} rows   covered {report('fred', series)}")
 
-source = rates.Settlements()
-first, last = source.archive_days()
-for root in cfg["futures_roots"]:
-    def progress(lo, hi, n, root=root):
-        print(f"  {root} {lo.date()} .. {hi.date()}: +{n}", flush=True)
-    added = source.update(root, args.ccy, first, last, cache, on_chunk=progress)
-    print(f"databento/{root:<4} +{added:>6} rows   covered {report('databento', root)}")
-
-print(f"done in {time.perf_counter() - t0:.1f}s")
-
+    source = rates.Settlements()
+    first, last = source.archive_days()
+    for root in cfg["futures_roots"]:
+        def progress(lo, hi, n, root=root):
+            print(f"  {root} {lo.date()} .. {hi.date()}: +{n}", flush=True)
+        added = source.update(root, args.ccy, first, last, cache, on_chunk=progress)
+        print(f"databento/{root:<4} +{added:>6} rows   covered {report('databento', root)}")
 
 macro = cfg["macro"]
 for series in [*macro["series"], *macro["validation"]]:
@@ -51,5 +51,5 @@ for series in [*macro["series"], *macro["validation"]]:
     added = cache.write_vintages(fred.vintages(series, macro["history_start"]), macro["source"],
                                  series, args.ccy, meta=meta)
     print(f"alfred/{series:<14} +{added:>6} rows")
-if args.macro_only:
-    raise SystemExit(f"done in {time.perf_counter() - t0:.1f}s")
+
+print(f"done in {time.perf_counter() - t0:.1f}s")
