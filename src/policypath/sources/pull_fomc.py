@@ -1,3 +1,10 @@
+"""Regenerate config/meetings/fomc.csv from the Fed's calendar page and FRASER.
+
+Needs the network and overwrites the committed CSV. Run as a script, never imported:
+
+    uv run python src/policypath/sources/pull_fomc.py
+"""
+
 import re
 from pathlib import Path
 import pandas as pd
@@ -6,12 +13,12 @@ from bs4 import BeautifulSoup
 
 from policypath.calendars import US_BDAY
 
-url = "https://fraser.stlouisfed.org/title/federal-open-market-committee-meeting-minutes-transcripts-documents-677?browse=2020s"
+FRASER = "https://fraser.stlouisfed.org/title/federal-open-market-committee-meeting-minutes-transcripts-documents-677?browse=2020s"
 FED_CALENDAR = "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm"
-headers = {
+HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
 }
-out_path = Path(__file__).resolve().parents[3] / "config" / "meetings" / "fomc.csv"
+OUT_PATH = Path(__file__).resolve().parents[3] / "config" / "meetings" / "fomc.csv"
 
 MONTHS = {
     m: i
@@ -62,7 +69,7 @@ def scheduled_from_fed_calendar():
     straddles month end, and ('March', '18-19*') where the asterisk marks a
     Summary of Economic Projections. The announcement is the last day.
     """
-    r = requests.get(FED_CALENDAR, headers=headers)
+    r = requests.get(FED_CALENDAR, headers=HEADERS, timeout=60)
     r.raise_for_status()
     soup = BeautifulSoup(r.text, "html.parser")
 
@@ -102,50 +109,56 @@ def scheduled_from_fed_calendar():
             }
 
 
-try:
-    response = requests.get(url, headers=headers)
-    response.raise_for_status()
+def main():
+    """Fed-calendar rows come first, so they win on collision and keep ``scheduled`` right."""
+    try:
+        response = requests.get(FRASER, headers=HEADERS, timeout=60)
+        response.raise_for_status()
 
-    soup = BeautifulSoup(response.text, "html.parser")
-    meetings_data = list(scheduled_from_fed_calendar())
+        soup = BeautifulSoup(response.text, "html.parser")
+        meetings_data = list(scheduled_from_fed_calendar())
 
-    for item in soup.find_all("a", href=True):
-        match = re.search(
-            r"/(?:meeting|conference|telephone-conference)-(.*?)-\d+$",
-            item["href"],
-            re.IGNORECASE,
-        )
-        if not match:
-            continue
+        for item in soup.find_all("a", href=True):
+            match = re.search(
+                r"/(?:meeting|conference|telephone-conference)-(.*?)-\d+$",
+                item["href"],
+                re.IGNORECASE,
+            )
+            if not match:
+                continue
 
-        announcement_date, tags = parse_slug(match.group(1))
-        announcement_date = ANNOUNCEMENT_OVERRIDES.get(
-            announcement_date, announcement_date
-        )
+            announcement_date, tags = parse_slug(match.group(1))
+            announcement_date = ANNOUNCEMENT_OVERRIDES.get(
+                announcement_date, announcement_date
+            )
 
-        # Cancelled meetings and notation votes carry no rate decision.
-        if "cancelled" in tags or "notation" in tags:
-            continue
+            # Cancelled meetings and notation votes carry no rate decision.
+            if "cancelled" in tags or "notation" in tags:
+                continue
 
-        meetings_data.append(
-            {
-                "announcement_date": announcement_date,
-                "effective_date": announcement_date + US_BDAY,
-                "scheduled": "unscheduled" not in tags,
-            }
-        )
+            meetings_data.append(
+                {
+                    "announcement_date": announcement_date,
+                    "effective_date": announcement_date + US_BDAY,
+                    "scheduled": "unscheduled" not in tags,
+                }
+            )
 
-    if meetings_data:
-        df = (
-            pd.DataFrame(meetings_data)
-            .drop_duplicates(subset=["announcement_date"])
-            .sort_values("announcement_date")
-        )
-        out_path.parent.mkdir(parents=True, exist_ok=True)
-        df.to_csv(out_path, index=False, date_format="%Y-%m-%d")
-        print(df.to_string(index=False))
-    else:
-        print("No meetings found. The page layout may have changed entirely.")
+        if meetings_data:
+            df = (
+                pd.DataFrame(meetings_data)
+                .drop_duplicates(subset=["announcement_date"])
+                .sort_values("announcement_date")
+            )
+            OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
+            df.to_csv(OUT_PATH, index=False, date_format="%Y-%m-%d")
+            print(df.to_string(index=False))
+        else:
+            print("No meetings found. The page layout may have changed entirely.")
 
-except requests.exceptions.RequestException as e:
-    print(f"Network error pulling data from FRASER: {e}")
+    except requests.exceptions.RequestException as e:
+        print(f"Network error pulling data from FRASER: {e}")
+
+
+if __name__ == "__main__":
+    main()
