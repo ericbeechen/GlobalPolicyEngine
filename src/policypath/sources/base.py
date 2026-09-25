@@ -16,6 +16,10 @@ from abc import ABC, abstractmethod
 import pandas as pd
 
 
+# The columns of a real-time vintage: the value, and the days it was the current estimate.
+VINTAGE_COLUMNS = ["date", "value", "realtime_start", "realtime_end"]
+
+
 def require_published(df, keys=("date",)):
     """No series leaves `sources/` indexed by reference date alone.
 
