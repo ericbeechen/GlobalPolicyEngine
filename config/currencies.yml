@@ -36,3 +36,25 @@ USD:
     futures: SR3
     day_count: Actual360
     curve_years: 3              # SR3 contracts used out to this many years
+      # Real-time macro inputs. Every series is pulled with its full ALFRED vintage
+  # history; reports/vintages_USD.md says what each one covers.
+  macro:
+    source: alfred
+    history_start: "1990-01-01"   # reference dates pulled: moments and bridge fits need history
+    series: [PAYEMS, INDPRO, RSAFS, CPIAUCSL, NEWORDER, UNRATE, NROU,
+             PCEPILFE, CPILFESL, CES0500000003]
+    validation: [CPILFENS, GDPNOW, UNRATEMDLR]   # pulled and tested, never a nowcast input
+    projections: [NROU]           # published ahead of the dates they describe
+    inflation:
+      target: PCEPILFE            # what the rule reacts to
+      bridge: CPILFESL            # prints ~2 weeks earlier; stands in until the target arrives
+      bridge_window: 60           # months of overlap the bridge is fitted on
+      wages: CES0500000003
+    gap:
+      unemployment: UNRATE
+      natural_rate: NROU          # CBO, vintaged; see notes/macro.md
+    activity:
+      series: [PAYEMS, INDPRO, RSAFS, NEWORDER]   # first sets the quarter: it prints first
+      deflate: {RSAFS: CPIAUCSL}  # real retail sales built as-of, not FRED's RRSFS
+      moments_start: "1993-01-01" # NEWORDER starts 1992-02; first complete q/q is 1993Q1
+      min_series: 3
