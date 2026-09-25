@@ -82,7 +82,7 @@ def implied_paths(sessions, meetings, effr, path, theme="light"):
     top.legend(handles=[Line2D([], [], color=t["ink"], lw=2, label="Realized EFFR"),
                         Line2D([], [], color=t["series"][0], lw=1.5,
                                label="Implied path, first session of each month (next 8 meetings)")],
-               loc="lower right", fontsize=9, labelcolor=t["secondary"])
+               loc="upper left", fontsize=9, labelcolor=t["secondary"])
 
     # The one annotation: what the market priced a year out, just before 2022.
     day, dates, rates = next(p for p in paths if p[0] >= pd.Timestamp("2021-12-01"))
@@ -94,7 +94,7 @@ def implied_paths(sessions, meetings, effr, path, theme="light"):
                  xy=(target, priced), xytext=(12, -2), textcoords="offset points",
                  va="center", fontsize=9, color=t["secondary"])
     top.plot([target], [priced], "o", ms=6, color=t["series"][0], mec=t["surface"], mew=2)
-    _title(top, "The fed funds path implied by ZQ futures, 2021-2026",
+    _title(top, f"The fed funds path implied by ZQ futures, {paths[0][0].year}-{paths[-1][0].year}",
            "Each blue step is one session's solved path; the heavy line is what the rate then did.", t)
 
     grid = meetings.pivot(index="k", columns="session", values="cum_bp")
@@ -123,12 +123,12 @@ def implied_paths(sessions, meetings, effr, path, theme="light"):
     plt.close(fig)
 
 
-def sr3_basis(nq, path, theme="light"):
-    """The SOFR - EFFR basis implied by SR3 against the ZQ path, and what then printed."""
+def sofr_basis(nq, root, path, theme="light"):
+    """The SOFR - EFFR basis implied by `root` against the ZQ path, and what then printed."""
     t = _style(theme)
     fig, ax = plt.subplots(figsize=(11, 4.4))
     ax.axhline(0, color=t["axis"], lw=1)
-    ax.plot(nq.index, nq["basis_bp"], color=t["series"][0], lw=1.5, label="Implied by SR3 and ZQ")
+    ax.plot(nq.index, nq["basis_bp"], color=t["series"][0], lw=1.5, label=f"Implied by {root} and ZQ")
     ax.plot(nq.index, nq["realized_bp"], color=t["series"][1], lw=2,
             label="Realized over the same days, ex post")
     ax.set_ylabel("bp")
@@ -139,20 +139,20 @@ def sr3_basis(nq, path, theme="light"):
     ax.xaxis.set_major_locator(mdates.YearLocator())
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
     ax.tick_params(axis="both", length=0)
-    _title(ax, "SOFR minus EFFR: what SR3 implies against the ZQ path",
-           "First SR3 quarter wholly ahead of each session. A wrong ZQ path would show up as noise here.", t)
+    _title(ax, f"SOFR minus EFFR: what {root} implies against the ZQ path",
+           f"First {root} contract wholly ahead of each session. A wrong ZQ path would show up as noise here.", t)
     fig.savefig(path, dpi=150, bbox_inches="tight")
     plt.close(fig)
 
 
-def write_all(sessions, meetings, effr, nq, out_dir, ccy):
+def write_all(sessions, meetings, effr, nq, root, out_dir, ccy):
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     written = []
     for theme in THEMES:
         p = out_dir / f"implied_paths_{ccy}_{theme}.png"
         implied_paths(sessions, meetings, effr, p, theme)
-        q = out_dir / f"sr3_basis_{ccy}_{theme}.png"
-        sr3_basis(nq, q, theme)
+        q = out_dir / f"sofr_basis_{ccy}_{theme}.png"
+        sofr_basis(nq, root, q, theme)
         written += [p, q]
     return written

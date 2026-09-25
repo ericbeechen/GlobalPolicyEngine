@@ -1,7 +1,7 @@
-"""Solve the implied path on every session in the cache, check it against SR3, report.
+"""Solve the implied path on every session in the cache, check it against SOFR futures, report.
 
 Reads only the cache (run scripts/update_data.py first). Writes the panel and
-the SR3 cross-check to data/panel/, the coverage and cross-check reports and
+the SOFR cross-check (SR1, per config) to data/panel/, the coverage and cross-check reports and
 the README figures to reports/, and prints the coverage headline, solver
 failures included.
 
@@ -35,16 +35,20 @@ reports = ROOT / "reports"
 reports.mkdir(exist_ok=True)
 (reports / f"coverage_{args.ccy}.md").write_text(coverage.markdown(args.ccy, headline, tables, start, end))
 
-# The SR3 cross-check: the SOFR - EFFR basis implied by SR3 against the ZQ path.
+# The cross-check: the SOFR - EFFR basis implied by SOFR futures against the ZQ path.
+check = cfg["sofr"]["crosscheck"]
+shape = cfg["contract_shapes"][check]
 as_of = sessions["session"].max()
 sofr = cache.read(cfg["sofr"]["source"], cfg["sofr"]["series"], args.ccy, as_of)
 effr = cache.read(cfg["overnight"]["source"], cfg["overnight"]["series"], args.ccy, as_of)
-implied = basis.build(sessions, meetings, config.meetings(args.ccy),
-                      cache.log("databento", cfg["sofr"]["futures"], args.ccy), sofr, effr)
-implied.to_parquet(out / f"{args.ccy}_sr3_basis.parquet", index=False)
+futures = cache.log("databento", check, args.ccy)
+futures = futures[futures["date"] >= cfg.get("first_sessions", {}).get(check, futures["date"].min())]
+implied = basis.build(sessions, meetings, config.meetings(args.ccy), futures, sofr, effr, shape)
+implied.to_parquet(out / f"{args.ccy}_sofr_basis.parquet", index=False)
 by_year, jumps, nq = crosscheck.summary(implied, sofr, effr)
-(reports / f"sr3_check_{args.ccy}.md").write_text(crosscheck.markdown(args.ccy, by_year, jumps, nq))
-drawn = figures.write_all(sessions, meetings, effr[effr["date"] >= start], nq,
+(reports / f"sofr_check_{args.ccy}.md").write_text(
+    crosscheck.markdown(args.ccy, check, shape, by_year, jumps, nq))
+drawn = figures.write_all(sessions, meetings, effr[effr["date"] >= start], nq, check,
                           reports / "figures", args.ccy)
 
 for key, value in headline.items():
@@ -55,6 +59,6 @@ failures = tables["Solver failures"]
 if len(failures):
     print("\nsolver failures:")
     print(failures.to_string(index=False))
-print("\nSR3 cross-check, first quarter wholly ahead of each session:")
+print(f"\n{check} cross-check, first contract wholly ahead of each session:")
 print(by_year.round(2).to_string(index=False))
 print(f"\nwrote {out}, {reports} and {len(drawn)} figures")

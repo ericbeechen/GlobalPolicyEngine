@@ -38,11 +38,12 @@ if not args.macro_only:
         print(f"fred/{series:<9} +{added:>6} rows   covered {report('fred', series)}")
 
     source = rates.Settlements()
-    first, last = source.archive_days()
     for root in cfg["futures_roots"]:
         def progress(lo, hi, n, root=root):
             print(f"  {root} {lo.date()} .. {hi.date()}: +{n}", flush=True)
-        added = source.update(root, args.ccy, first, last, cache, on_chunk=progress)
+        # Each root only over the days a job holding it covers, so a gap between jobs stays missing.
+        added = sum(source.update(root, args.ccy, first, last, cache, on_chunk=progress)
+                    for first, last in source.archive_ranges(root))
         print(f"databento/{root:<4} +{added:>6} rows   covered {report('databento', root)}")
 
 macro = cfg["macro"]

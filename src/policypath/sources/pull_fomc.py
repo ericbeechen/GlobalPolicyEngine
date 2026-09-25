@@ -13,7 +13,9 @@ from bs4 import BeautifulSoup
 
 from policypath.calendars import US_BDAY
 
-FRASER = "https://fraser.stlouisfed.org/title/federal-open-market-committee-meeting-minutes-transcripts-documents-677?browse=2020s"
+FRASER = "https://fraser.stlouisfed.org/title/federal-open-market-committee-meeting-minutes-transcripts-documents-677?browse={decade}"
+# FRASER lists one decade per page. The 2010s reach back past the first ZQ session in the archive (2010-06).
+DECADES = ["2010s", "2020s"]
 FED_CALENDAR = "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm"
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
@@ -33,6 +35,19 @@ MONTHS = {
 ANNOUNCEMENT_OVERRIDES = {
     # Conference call held Mar 2; 50bp cut announced Mar 3.
     pd.Timestamp("2020-03-02"): pd.Timestamp("2020-03-03"),
+}
+# Unscheduled meetings FRASER lists that decided nothing about the rate. Like
+# notation votes they would be spurious pillars, and ones the market could not
+# have known about in advance. The target range is unchanged across each.
+NO_RATE_DECISION = {
+    pd.Timestamp("2010-05-09"),  # conference call: dollar swap lines reopened
+    pd.Timestamp("2019-10-04"),  # reserve-management bill purchases
+}
+# A scheduled meeting that was called off stays in the calendar with the day it
+# was: until then the market priced a decision there, so it is a pillar for every
+# session before (`calendars.known_meetings`). FRASER tags it but gives no date.
+CANCELLED_ON = {
+    pd.Timestamp("2020-03-18"): pd.Timestamp("2020-03-15"),  # brought forward to the Sunday
 }
 
 
@@ -106,43 +121,53 @@ def scheduled_from_fed_calendar():
                 "announcement_date": announcement,
                 "effective_date": announcement + US_BDAY,
                 "scheduled": True,
+                "cancelled": pd.NaT,
             }
+
+
+def from_fraser(url):
+    """Rate-decision meetings FRASER indexes on one decade's page, scheduled or not."""
+    response = requests.get(url, headers=HEADERS, timeout=60)
+    response.raise_for_status()
+    soup = BeautifulSoup(response.text, "html.parser")
+    for item in soup.find_all("a", href=True):
+        match = re.search(
+            r"/(?:meeting|conference|telephone-conference)-(.*?)-\d+$",
+            item["href"],
+            re.IGNORECASE,
+        )
+        if not match:
+            continue
+
+        announcement_date, tags = parse_slug(match.group(1))
+        announcement_date = ANNOUNCEMENT_OVERRIDES.get(
+            announcement_date, announcement_date
+        )
+
+        # Notation votes carry no rate decision.
+        if "notation" in tags or announcement_date in NO_RATE_DECISION:
+            continue
+        cancelled = pd.NaT
+        if "cancelled" in tags:
+            if announcement_date not in CANCELLED_ON:
+                raise ValueError(f"FRASER lists the {announcement_date.date()} meeting as cancelled; "
+                                 "add the day it was called off to CANCELLED_ON")
+            cancelled = CANCELLED_ON[announcement_date]
+
+        yield {
+            "announcement_date": announcement_date,
+            "effective_date": announcement_date + US_BDAY,
+            "scheduled": "unscheduled" not in tags,
+            "cancelled": cancelled,
+        }
 
 
 def main():
     """Fed-calendar rows come first, so they win on collision and keep ``scheduled`` right."""
     try:
-        response = requests.get(FRASER, headers=HEADERS, timeout=60)
-        response.raise_for_status()
-
-        soup = BeautifulSoup(response.text, "html.parser")
         meetings_data = list(scheduled_from_fed_calendar())
-
-        for item in soup.find_all("a", href=True):
-            match = re.search(
-                r"/(?:meeting|conference|telephone-conference)-(.*?)-\d+$",
-                item["href"],
-                re.IGNORECASE,
-            )
-            if not match:
-                continue
-
-            announcement_date, tags = parse_slug(match.group(1))
-            announcement_date = ANNOUNCEMENT_OVERRIDES.get(
-                announcement_date, announcement_date
-            )
-
-            # Cancelled meetings and notation votes carry no rate decision.
-            if "cancelled" in tags or "notation" in tags:
-                continue
-
-            meetings_data.append(
-                {
-                    "announcement_date": announcement_date,
-                    "effective_date": announcement_date + US_BDAY,
-                    "scheduled": "unscheduled" not in tags,
-                }
-            )
+        for decade in DECADES:
+            meetings_data += list(from_fraser(FRASER.format(decade=decade)))
 
         if meetings_data:
             df = (

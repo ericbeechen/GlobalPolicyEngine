@@ -1,23 +1,26 @@
-"""SR3 against the ZQ path: the SOFR - EFFR basis the two markets imply together.
+"""SOFR futures against the ZQ path: the SOFR - EFFR basis the two markets imply together.
 
-For each session, take the EFFR path solved from ZQ and, for every SR3
-quarter inside its horizon, find the constant spread b that reprices the SR3
-settle when SOFR is
+For each session, take the EFFR path solved from ZQ and, for every SOFR
+contract whose reference period lies inside its horizon, find the constant
+spread b that reprices the settle when SOFR is
 
     realized SOFR on days already fixed, ZQ-implied EFFR + b on the rest,
 
-compounded over the IMM quarter as the contract settles. b is then the
-market-implied SOFR - EFFR basis over the window's unknown days. If the ZQ path
+combined over the reference period as the contract settles: averaged over the
+calendar month for SR1, compounded over the IMM quarter for SR3. b is then the
+market-implied SOFR - EFFR basis over the period's unknown days. If the ZQ path
 is right, b is smooth, sits close to the basis that is later realized, and
 moves where funding pressure is known to move it. If it jumps around at random,
 one of the two extractions is wrong.
 
-SR3's futures/forward convexity is ignored: inside the ~13-month ZQ horizon it
-is well under a basis point.
+SR1 is the like-for-like check: it averages SOFR over the month exactly as ZQ
+averages EFFR, so its basis is read month by month. Futures/forward convexity is
+ignored: inside the ~13-month ZQ horizon it is well under a basis point.
 """
 
 import numpy as np
 import pandas as pd
+from policypath.calendars import known_meetings
 from policypath.curves.futures import reference_period, settlement_rate
 from policypath.curves.helpers import sofr_business_days
 from policypath.panel import settles_on
@@ -37,13 +40,14 @@ def path_daily(first_unknown, rate_now, steps, end):
     return rate
 
 
-def implied_basis(session, path, through, sr3, sofr):
-    """The implied basis for each SR3 quarter ending by `through`.
+def implied_basis(session, path, through, settles, sofr, shape):
+    """The implied basis for each contract whose reference period ends by `through`.
 
     `path` is the ZQ path on the session (a Series of rates indexed by the day
-    each takes effect, first entry the first unknown day), `sr3` the session's
-    SR3 settles (contract, expiration, value), `sofr` SOFR fixings (date, value,
-    published). Only fixings published by the session are used.
+    each takes effect, first entry the first unknown day), `settles` the
+    session's SOFR futures settles (contract, expiration, value), `shape` what
+    they settle to (``month`` for SR1, ``imm_quarter`` for SR3), `sofr` SOFR
+    fixings (date, value, published). Only fixings published by the session are used.
     """
     session = pd.Timestamp(session)
     known = sofr[sofr["published"] < session.normalize() + DAY].set_index("date")["value"].sort_index()
@@ -51,8 +55,8 @@ def implied_basis(session, path, through, sr3, sofr):
     first_future = sofr_business_days(last + DAY, last + pd.Timedelta(days=10))[0]
     effr = path_daily(path.index[0], path.iloc[0], path.iloc[1:].to_dict(), through)
     rows = []
-    for contract, expiration, price in sr3[["contract", "expiration", "value"]].itertuples(index=False):
-        start, end = reference_period("imm_quarter", expiration)
+    for contract, expiration, price in settles[["contract", "expiration", "value"]].itertuples(index=False):
+        start, end = reference_period(shape, expiration)
         if end <= session or end > through or start < known.index[0]:
             continue
         # A week back, so a period opening on a holiday finds the fixing covering it.
@@ -67,11 +71,11 @@ def implied_basis(session, path, through, sr3, sofr):
 
         def rate(b):
             daily = pd.Series(np.where(unknown, forward + b, fixed), index=days)
-            return settlement_rate("imm_quarter", start, end, daily, fixing_dates)
+            return settlement_rate(shape, start, end, daily, fixing_dates)
 
         target = 100.0 - price
         b = 0.0
-        for _ in range(4):  # Newton; the map is all but linear in b
+        for _ in range(4):  # Newton; the map is linear in b for a month, all but linear for a quarter
             f0, f1 = rate(b), rate(b + 0.01)
             b -= (f0 - target) / ((f1 - f0) / 0.01)
         rows.append({"contract": contract, "start": start, "end": end,
@@ -96,12 +100,12 @@ def trailing_basis(sofr, effr, as_of, n=20):
     return float((s - e).dropna().tail(n).mean() * 100.0)
 
 
-def next_quarter(basis):
-    """Per session, the first SR3 quarter lying wholly after the session's fixings.
+def next_period(basis):
+    """Per session, the first contract whose reference period lies wholly after the session's fixings.
 
-    A quarter already partly fixed has few unknown days, and its implied basis
+    A period already partly fixed has few unknown days, and its implied basis
     carries price noise times the inverse of that fraction, so the summary uses
-    the first quarter that is all forward.
+    the first period that is all forward.
     """
     ahead = basis[basis["unknown_frac"] == 1.0]
     return ahead.sort_values("start").groupby("session").head(1).set_index("session").sort_index()
@@ -116,15 +120,18 @@ def cover_end(meetings, session_meetings):
     return min(later.min(), horizon_end) if len(later) else horizon_end
 
 
-def build(sessions, meetings_panel, meetings, sr3_log, sofr, effr):
-    """Implied basis for every solved session. One row per session and SR3 quarter.
+def build(sessions, meetings_panel, meetings, futures_log, sofr, effr, shape):
+    """Implied basis for every solved session. One row per session and SOFR contract.
+
+    `futures_log` is the cached settle log of the SOFR futures root, `shape`
+    what it settles to.
 
     ``realized_bp`` is the SOFR - EFFR basis that later printed over the same
     unknown days, where they have all printed: an ex-post yardstick, never an input.
     """
     ok = sessions[sessions["error"].isna()].set_index("session")
     by_session = dict(tuple(meetings_panel.groupby("session")))
-    by_date = dict(tuple(sr3_log.groupby("date")))
+    by_date = dict(tuple(futures_log.groupby("date")))
     frames = []
     for day, row in ok.iterrows():
         if day not in by_date:
@@ -132,7 +139,8 @@ def build(sessions, meetings_panel, meetings, sr3_log, sofr, effr):
         m = by_session[day]
         path = pd.Series([row["rate_now"], *m["rate"]],
                          index=pd.DatetimeIndex([row["first_unknown"], *m["effective_date"]]))
-        b = implied_basis(day, path, cover_end(meetings, m), settles_on(by_date[day], day), sofr)
+        through = cover_end(known_meetings(meetings, day), m)
+        b = implied_basis(day, path, through, settles_on(by_date[day], day), sofr, shape)
         frames.append(b.assign(session=day))
     out = pd.concat(frames, ignore_index=True)
     printed = min(sofr["date"].max(), effr["date"].max())

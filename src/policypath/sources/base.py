@@ -45,6 +45,9 @@ class Source(ABC):
 
     name: str
     keys: tuple = ("date",)
+    # True when every record carries the moment it was really published, so a
+    # value arriving late is an older vintage, not a revision (`cache.append`).
+    dated: bool = False
     # Days before the last covered date to fetch again on every update, so a
     # value revised shortly after publication is picked up as a new vintage.
     refetch_days: int = 0
@@ -82,7 +85,7 @@ class Source(ABC):
         added = 0
         for lo, hi in _split(cache.merge_ranges(gaps), self.chunk):
             obs = self.observations(series, lo, hi)
-            n = cache.append(obs, self.name, series, currency, keys=self.keys)
+            n = cache.append(obs, self.name, series, currency, keys=self.keys, dated=self.dated)
             through = self.covered_through(obs, lo, hi)
             if through is not None:
                 cache.mark_fetched(self.name, series, currency, lo, min(through, hi))

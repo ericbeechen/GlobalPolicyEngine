@@ -1,4 +1,4 @@
-"""Print the ZQ and SR3 contracts and their final settlements for one trade date.
+"""Print every ZQ, SR1 and SR3 contract in the archive and its final settlement for one trade date.
 
     uv run python scripts/show_databento.py 2024-03-15
 """

@@ -25,6 +25,10 @@ def currency(ccy):
 
 
 def meetings(ccy):
-    """The meeting calendar for `ccy`: announcement_date, effective_date, scheduled."""
+    """The meeting calendar for `ccy`: announcement_date, effective_date, scheduled, cancelled.
+
+    Every meeting ever on it, including ones called off; `calendars.known_meetings`
+    gives the calendar as it stood on a date.
+    """
     path = CONFIG_DIR / "meetings" / currency(ccy)["meetings"]
-    return pd.read_csv(path, parse_dates=["announcement_date", "effective_date"])
+    return pd.read_csv(path, parse_dates=["announcement_date", "effective_date", "cancelled"])

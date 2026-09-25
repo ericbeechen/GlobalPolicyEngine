@@ -43,6 +43,21 @@ def known_daily(fixings, as_of, bday=US_BDAY):
     return f.reindex(pd.date_range(f.index[0], through, freq="D")).ffill()
 
 
+def known_meetings(meetings, as_of):
+    """The meeting calendar as it stood at the end of `as_of`.
+
+    An unscheduled meeting counts from its announcement: before then nobody
+    could price it, and handing it to the solver as a pillar is look-ahead. A
+    scheduled meeting that was called off counts until it was, since the market
+    priced a decision there. Scheduled meetings count on every date: the Fed
+    publishes them about two years ahead, and the calendar does not record when.
+    """
+    as_of = pd.Timestamp(as_of)
+    announced = meetings["scheduled"].astype(bool) | (meetings["announcement_date"] <= as_of)
+    standing = meetings["cancelled"].isna() | (meetings["cancelled"] > as_of)
+    return meetings[announced & standing]
+
+
 def label_path(path, meetings):
     """Join a solved policy path to the meeting calendar.
     """

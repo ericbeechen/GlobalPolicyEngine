@@ -4,7 +4,7 @@
 USD:
   enabled: true
   meetings: fomc.csv            # under config/meetings/
-  history_start: "2016-01-01"   # first fixing pulled into the cache
+  history_start: "2010-01-01"   # first fixing pulled into the cache: before the first ZQ session
 
   # The overnight rate the policy futures settle on.
   overnight:
@@ -15,10 +15,18 @@ USD:
 
   # Everything update_data.py keeps cached.
   fred_series: [EFFR, SOFR, DFEDTARL, DFEDTARU]
-  futures_roots: [ZQ, SR3]
+  futures_roots: [ZQ, SR1, SR3]
+  # What each root settles to (curves/futures.py): the calendar-month average
+  # of its overnight rate, or SOFR compounded over the IMM quarter.
+  contract_shapes: {ZQ: month, SR1: month, SR3: imm_quarter}
+  # First session a root really traded, where the archive starts earlier. CME sent
+  # reference settles for SR1's whole strip on 2018-04-20, 04-27 and 05-04, before
+  # its first trade on the evening of Sunday 2018-05-06. They stay in the cache as
+  # published; nothing downstream reads them as a market.
+  first_sessions: {SR1: "2018-05-07"}
 
   path:
-    start: "2021-01-01"         # first session in the panel
+    start: "2010-06-07"         # first session in the panel: the first ZQ session in the archive
     n_meetings: 8               # solve and report this many upcoming meetings
     # Both chosen from the full panel; see notes/decisions.md (2026-09-24).
     # Pin today-until-the-next-meeting to the last fixing when it spans fewer
@@ -29,11 +37,12 @@ USD:
     # without pinning it only moved the amplification into the next contract.
     min_forward_days: 0
 
-  # Secondary overnight index: the discount curve and the SR3 cross-check.
+  # Secondary overnight index: the discount curve and the cross-check of the ZQ path.
   sofr:
     source: fred
     series: SOFR
-    futures: SR3
+    futures: SR3                # the discount curve: SR1 lists only ~13 months out
+    crosscheck: SR1             # monthly average like ZQ, so the basis is read month by month
     day_count: Actual360
     curve_years: 3              # SR3 contracts used out to this many years
 

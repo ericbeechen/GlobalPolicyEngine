@@ -17,7 +17,7 @@ from dataclasses import dataclass
 import numpy as np
 import pandas as pd
 from policypath import config
-from policypath.calendars import US_BDAY, known_daily
+from policypath.calendars import US_BDAY, known_daily, known_meetings
 from policypath.curves.policy_path import implied_path
 from policypath.sources import cache
 
@@ -54,10 +54,12 @@ def solve_session(session, strip, meetings, fixings, n_meetings, min_forward_day
     """The implied path over the next `n_meetings` meetings after `session`.
 
     `strip` is the session's monthly strip, `fixings` the overnight fixings
-    with their publication dates. Raises `ShortStrip` if the strip or the
-    calendar stops short, ValueError if the solve is underdetermined.
+    with their publication dates, `meetings` the whole calendar: only the
+    meetings known on the session are pillars. Raises `ShortStrip` if the strip
+    or the calendar stops short, ValueError if the solve is underdetermined.
     """
     session = pd.Timestamp(session)
+    meetings = known_meetings(meetings, session)
     upcoming = (meetings[meetings["effective_date"] > session]
                 .sort_values("effective_date").head(n_meetings).reset_index(drop=True))
     if len(upcoming) < n_meetings:
