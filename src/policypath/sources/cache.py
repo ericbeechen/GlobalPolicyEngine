@@ -22,6 +22,7 @@ Only `sources/` writes here. Everything downstream reads through `read` or `log`
 
 import json
 from pathlib import Path
+import time
 import pandas as pd
 from policypath.sources.base import VINTAGE_COLUMNS, require_published
 
@@ -55,7 +56,16 @@ def _save_manifest(manifest, root):
     root.mkdir(parents=True, exist_ok=True)
     tmp = root / (MANIFEST + ".tmp")
     tmp.write_text(json.dumps(manifest, indent=2, sort_keys=True))
-    tmp.replace(root / MANIFEST)
+    # On Windows the swap fails while anything (an indexer, antivirus, an editor)
+    # has the manifest open for a moment; wait that out rather than abort a long update.
+    for attempt in range(10):
+        try:
+            tmp.replace(root / MANIFEST)
+            return
+        except PermissionError:
+            if attempt == 9:
+                raise
+            time.sleep(0.5)
 
 
 def merge_ranges(ranges):
@@ -113,11 +123,16 @@ def _keys(source, series, currency, root):
 # vintage log
 # --------------------------------------------------------------------------
 
-def append(df, source, series, currency, keys=("date",), root=CACHE_DIR):
+def append(df, source, series, currency, keys=("date",), root=CACHE_DIR, dated=False):
     """Add new observations and revisions to the log. Returns the number of rows added.
 
     A row is added when its value differs from the vintage before it for the
     same observation, so re-appending what is already cached adds nothing.
+
+    `dated` says the source stamps every record with when it was really
+    published (Databento's receive time), so a changed value that sorts before
+    the latest cached vintage is an older vintage arriving late -- a backfill
+    next to a range already cached -- not an undated revision, and keeps its date.
     """
     keys = list(keys)
     require_published(df, keys)
@@ -137,7 +152,7 @@ def append(df, source, series, currency, keys=("date",), root=CACHE_DIR):
     if add.empty:
         return 0
 
-    if old is not None:
+    if old is not None and not dated:
         # A changed value claiming to be no newer than what it replaces is an
         # undated revision: it is knowable from when we saw it, not before.
         seen = old.groupby(keys)["published"].max().rename("_seen")
