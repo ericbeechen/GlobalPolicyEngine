@@ -36,7 +36,8 @@ USD:
     futures: SR3
     day_count: Actual360
     curve_years: 3              # SR3 contracts used out to this many years
-      # Real-time macro inputs. Every series is pulled with its full ALFRED vintage
+
+  # Real-time macro inputs. Every series is pulled with its full ALFRED vintage
   # history; reports/vintages_USD.md says what each one covers.
   macro:
     source: alfred

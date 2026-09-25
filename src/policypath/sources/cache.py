@@ -23,7 +23,7 @@ Only `sources/` writes here. Everything downstream reads through `read` or `log`
 import json
 from pathlib import Path
 import pandas as pd
-from policypath.sources.base import require_published
+from policypath.sources.base import VINTAGE_COLUMNS, require_published
 
 CACHE_DIR = Path(__file__).resolve().parents[3] / "data" / "cache"
 MANIFEST = "manifest.json"
@@ -181,6 +181,7 @@ def read(source, series, currency, as_of, root=CACHE_DIR):
     """The series as it was knowable at the end of `as_of`: one row per observation."""
     return view(log(source, series, currency, root), as_of, _keys(source, series, currency, root))
 
+
 def metadata(source, series, currency, root=CACHE_DIR):
     """What the manifest records for one key: covered ranges, or vintage counts and series metadata."""
     entry = _manifest(root).get(_key(source, series, currency))
@@ -188,8 +189,10 @@ def metadata(source, series, currency, root=CACHE_DIR):
         raise KeyError(f"nothing in the manifest for {_key(source, series, currency)}")
     return entry
 
-VINTAGE_COLUMNS = ["date", "value", "realtime_start", "realtime_end"]
 
+# --------------------------------------------------------------------------
+# real-time vintages (ALFRED)
+# --------------------------------------------------------------------------
 
 def write_vintages(df, source, series, currency, meta=None, root=CACHE_DIR):
     """Replace one series' vintage file with a fresh full pull. Returns the rows added.
@@ -199,9 +202,9 @@ def write_vintages(df, source, series, currency, meta=None, root=CACHE_DIR):
     open, but it must not drop, change or re-date a vintage already cached:
     that raises, and the file is left as it was.
     """
-    missing = [c for c in VINTAGE_COLUMNS if c not in df.columns]
-    if missing:
-        raise ValueError(f"vintages are missing columns {missing}")
+    absent = [c for c in VINTAGE_COLUMNS if c not in df.columns]
+    if absent:
+        raise ValueError(f"vintages are missing columns {absent}")
     df = df[VINTAGE_COLUMNS].sort_values(["date", "realtime_start"]).reset_index(drop=True)
     path = _path(source, series, currency, root)
     added = len(df)

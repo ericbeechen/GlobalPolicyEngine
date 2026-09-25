@@ -56,9 +56,3 @@ def label_path(path, meetings):
     })
     out.loc[out.index[0], "announced"] = pd.NaT
     return out.reset_index(drop=True)
-
-
-def next_meetings(as_of, meetings, n):
-    """The next `n` meetings strictly after `as_of`, by announcement date."""
-    upcoming = meetings[meetings["announcement_date"] > pd.Timestamp(as_of)]
-    return upcoming.sort_values("announcement_date").head(n).reset_index(drop=True)

@@ -19,10 +19,6 @@ def ql_date(ts):
     return ql.Date(ts.day, ts.month, ts.year)
 
 
-def to_timestamp(d):
-    return pd.Timestamp(d.year(), d.month(), d.dayOfMonth())
-
-
 def sofr_business_days(start, end):
     """SOFR fixing dates in [start, end), on QuantLib's SOFR calendar."""
     days = pd.date_range(start, pd.Timestamp(end) - pd.Timedelta(days=1), freq="D")
