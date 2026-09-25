@@ -97,6 +97,7 @@ if __name__ == "__main__":
     print(build_effr().tail(3).to_string(index=False))
     print(build_sofr().tail(3).to_string(index=False))
     print(build_expiry_settles().tail(3).to_string(index=False))
+    build_alfred()
     build_strips()
     print("wrote fixtures to", HERE)
 
