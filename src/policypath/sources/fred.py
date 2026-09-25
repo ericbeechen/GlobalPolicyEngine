@@ -14,10 +14,10 @@ import numpy as np
 import pandas as pd
 import requests
 from policypath.calendars import US_BDAY
-from policypath.sources.base import Source, require_published
+from policypath.sources.base import VINTAGE_COLUMNS, Source, require_published
 
 BASE = "https://api.stlouisfed.org/fred/"
-PAGE = 100_000  
+PAGE = 100_000
 MAX_VINTAGES = 2000
 
 
@@ -38,7 +38,7 @@ def _request(endpoint, params):
     if not r.ok:
         try:
             msg = r.json()["error_message"]
-        except ValueError:
+        except (ValueError, KeyError):
             msg = r.reason
         raise RuntimeError(f"FRED {endpoint} {params.get('series_id')}: {r.status_code} {msg}")
     return r.json()
@@ -138,10 +138,18 @@ class Fred(Source):
     def fetch(self, series, start, end):
         return observations(series, start, end, self.lag_bdays)
 
+
+# ALFRED's bounds for "every vintage there is"; an open interval ends on the last.
 REALTIME_START, REALTIME_END = "1776-07-04", "9999-12-31"
-VINTAGE_COLUMNS = ["date", "value", "realtime_start", "realtime_end"]
+
 
 def vintages(series_id, start=None):
+    """Every ALFRED vintage of `series_id` from reference date `start` on.
+
+    Columns: date, value, realtime_start, realtime_end. A "." is kept as NaN,
+    since a superseded vintage may have carried one; ``realtime_end`` is NaT
+    while the value is still current.
+    """
     rows = _fetch(series_id, start, None, realtime_start=REALTIME_START, realtime_end=REALTIME_END)
     df = pd.DataFrame(rows, columns=VINTAGE_COLUMNS)
     value = df["value"].mask(df["value"] == ".")
@@ -153,8 +161,11 @@ def vintages(series_id, start=None):
         "realtime_end": pd.to_datetime(end),
     }).astype({c: "datetime64[ns]" for c in ["date", "realtime_start", "realtime_end"]})
 
+
 def vintage_dates(series_id):
+    """Every day ALFRED recorded a new vintage of `series_id`, oldest first."""
     return pd.to_datetime(pd.Series(_get("series/vintagedates", "vintage_dates", 10_000, series_id=series_id)))
+
 
 def series_info(series_id):
     """FRED's metadata for one series: title, frequency, units, seasonal adjustment."""
