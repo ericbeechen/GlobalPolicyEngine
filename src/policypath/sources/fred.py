@@ -28,22 +28,27 @@ def _key():
     return key
 
 
-def _get(endpoint, rows_field, limit, **params):
-    """Every row of one query, following `offset` pagination.
+def _request(endpoint, params):
+    """One FRED request, as JSON.
 
     Errors report FRED's own message, never the URL: it would carry the API key.
     """
-    params = {"api_key": _key(), "file_type": "json", "limit": limit, **params}
+    params = {"api_key": _key(), "file_type": "json", **params}
+    r = requests.get(BASE + endpoint, params=params, timeout=60)
+    if not r.ok:
+        try:
+            msg = r.json()["error_message"]
+        except ValueError:
+            msg = r.reason
+        raise RuntimeError(f"FRED {endpoint} {params.get('series_id')}: {r.status_code} {msg}")
+    return r.json()
+
+
+def _get(endpoint, rows_field, limit, **params):
+    """Every row of one query, following `offset` pagination."""
     rows, offset = [], 0
     while True:
-        r = requests.get(BASE + endpoint, params={**params, "offset": offset}, timeout=60)
-        if not r.ok:
-            try:
-                msg = r.json()["error_message"]
-            except ValueError:
-                msg = r.reason
-            raise RuntimeError(f"FRED {endpoint} {params.get('series_id')}: {r.status_code} {msg}")
-        j = r.json()
+        j = _request(endpoint, {**params, "limit": limit, "offset": offset})
         rows += j[rows_field]
         offset += len(j[rows_field])
         if offset >= j["count"] or not j[rows_field]:
@@ -132,3 +137,26 @@ class Fred(Source):
 
     def fetch(self, series, start, end):
         return observations(series, start, end, self.lag_bdays)
+
+REALTIME_START, REALTIME_END = "1776-07-04", "9999-12-31"
+VINTAGE_COLUMNS = ["date", "value", "realtime_start", "realtime_end"]
+
+def vintages(series_id, start=None):
+    rows = _fetch(series_id, start, None, realtime_start=REALTIME_START, realtime_end=REALTIME_END)
+    df = pd.DataFrame(rows, columns=VINTAGE_COLUMNS)
+    value = df["value"].mask(df["value"] == ".")
+    end = df["realtime_end"].mask(df["realtime_end"] == REALTIME_END)
+    return pd.DataFrame({
+        "date": pd.to_datetime(df["date"]),
+        "value": pd.to_numeric(value).astype("float64"),
+        "realtime_start": pd.to_datetime(df["realtime_start"]),
+        "realtime_end": pd.to_datetime(end),
+    }).astype({c: "datetime64[ns]" for c in ["date", "realtime_start", "realtime_end"]})
+
+def vintage_dates(series_id):
+    return pd.to_datetime(pd.Series(_get("series/vintagedates", "vintage_dates", 10_000, series_id=series_id)))
+
+def series_info(series_id):
+    """FRED's metadata for one series: title, frequency, units, seasonal adjustment."""
+    s = _request("series", {"series_id": series_id})["seriess"][0]
+    return {k: s[k] for k in ["title", "frequency_short", "units_short", "seasonal_adjustment_short"]}
