@@ -76,7 +76,10 @@ def implied_paths(sessions, meetings, effr, path, theme="light"):
     for _, dates, rates in paths:
         top.step(dates, rates, where="post", color=t["series"][0], lw=1.1, alpha=0.6)
     realized = effr.set_index("date")["value"]
-    top.plot(realized.index, realized.to_numpy(), color=t["ink"], lw=2)
+    # A fixing holds until the next one (weekends carry Friday's, as in ZQ's average),
+    # so it is a step on calendar days; a line would slope a Friday print into Monday.
+    daily = realized.reindex(pd.date_range(realized.index[0], realized.index[-1], freq="D")).ffill()
+    top.step(daily.index, daily.to_numpy(), where="post", color=t["ink"], lw=2)
     top.set_ylabel("Percent")
     top.set_ylim(bottom=-0.1)
     top.legend(handles=[Line2D([], [], color=t["ink"], lw=2, label="Realized EFFR"),
@@ -95,7 +98,8 @@ def implied_paths(sessions, meetings, effr, path, theme="light"):
                  va="center", fontsize=9, color=t["secondary"])
     top.plot([target], [priced], "o", ms=6, color=t["series"][0], mec=t["surface"], mew=2)
     _title(top, f"The fed funds path implied by ZQ futures, {paths[0][0].year}-{paths[-1][0].year}",
-           "Each blue step is one session's solved path; the heavy line is what the rate then did.", t)
+           "Each blue step is one session's solved path; the heavy line is what the rate then did. "
+           "Its 2015-17 notches are real: EFFR printed 5-12bp low on the last day of most months.", t)
 
     grid = meetings.pivot(index="k", columns="session", values="cum_bp")
     x = mdates.date2num(grid.columns.to_numpy())
