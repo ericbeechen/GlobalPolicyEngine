@@ -1,6 +1,6 @@
 # GlobalPolicyEngine
 
-The finished project measures where markets misprice central-bank policy paths across currencies and trades the gap. What exists today is the first half of the USD leg: the **market** path, bootstrapped out of fed funds futures settlements on every session since 2021, and checked against realized EFFR, a captured CME FedWatch screen and the SOFR futures strip. The model path, the signal and the backtest are not started.
+How well do markets price the path of central banks? This project is built to isolate these differences around currencies and trade them. 
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="reports/figures/implied_paths_USD_dark.png">
