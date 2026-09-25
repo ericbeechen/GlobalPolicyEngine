@@ -18,13 +18,26 @@ Outputs, all in this directory:
 """
 
 import pandas as pd
-
+from policypath import config
 from policypath.sources import fred, rates
 
 HERE = __import__("pathlib").Path(__file__).resolve().parent
 START, END = "2020-12-01", "2026-09-21"
 # Sessions worth keeping a full strip for. Each is a day the near meeting was live.
 STRIP_DATES = ["2022-06-01", "2022-06-13", "2023-06-13", "2024-09-17", "2026-09-21"]
+
+
+
+ALFRED_START = "2018-01-01"  # reference dates kept; every vintage of each is kept
+
+
+def build_alfred():
+    """Every ALFRED vintage of the macro series, reference dates from 2018."""
+    out = HERE / "alfred"
+    out.mkdir(exist_ok=True)
+    spec = config.currency("USD")["macro"]
+    for series in [*spec["series"], *spec["validation"]]:
+        fred.vintages(series, ALFRED_START).to_csv(out / f"{series}.csv", index=False, date_format="%Y-%m-%d")
 
 
 def build_effr():
@@ -86,3 +99,4 @@ if __name__ == "__main__":
     print(build_expiry_settles().tail(3).to_string(index=False))
     build_strips()
     print("wrote fixtures to", HERE)
+
