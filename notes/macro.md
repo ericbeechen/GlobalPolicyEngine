@@ -1,6 +1,6 @@
 # Macro nowcast: decisions
 
-Numbers are from `reports/nowcast_USD.md` and `reports/vintages_USD.md` (cache as of 2026-09-25).
+Numbers are from `reports/nowcast_USD.md` and `reports/vintages_USD.md` (cache as of 2026-09-25). 
 
 ## `as_of` = end of day D
 
