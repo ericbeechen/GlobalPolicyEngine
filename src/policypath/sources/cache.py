@@ -180,3 +180,55 @@ def view(vintages, as_of, keys=("date",)):
 def read(source, series, currency, as_of, root=CACHE_DIR):
     """The series as it was knowable at the end of `as_of`: one row per observation."""
     return view(log(source, series, currency, root), as_of, _keys(source, series, currency, root))
+
+VINTAGE_COLUMNS = ["date", "value", "realtime_start", "realtime_end"]
+
+
+def write_vintages(df, source, series, currency, meta=None, root=CACHE_DIR):
+    """Replace one series' vintage file with a fresh full pull. Returns the rows added.
+
+    For sources that keep their own vintage archive (ALFRED), a pull is the
+    whole history again. It may add vintages and close an interval that was
+    open, but it must not drop, change or re-date a vintage already cached:
+    that raises, and the file is left as it was.
+    """
+    missing = [c for c in VINTAGE_COLUMNS if c not in df.columns]
+    if missing:
+        raise ValueError(f"vintages are missing columns {missing}")
+    df = df[VINTAGE_COLUMNS].sort_values(["date", "realtime_start"]).reset_index(drop=True)
+    path = _path(source, series, currency, root)
+    added = len(df)
+    if path.exists():
+        old = pd.read_parquet(path)
+        both = old.merge(df, on=["date", "realtime_start"], how="left", suffixes=("", "_new"), indicator=True)
+        lost = both["_merge"] == "left_only"
+        same = (both["value"] == both["value_new"]) | (both["value"].isna() & both["value_new"].isna())
+        reended = both["realtime_end"].notna() & (both["realtime_end"] != both["realtime_end_new"])
+        bad = lost | (~lost & (~same | reended))
+        if bad.any():
+            raise ValueError(f"{_key(source, series, currency)}: the new pull drops or changes "
+                             f"{bad.sum()} cached vintages; not written")
+        added = len(df) - len(old)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_suffix(".tmp")
+    df.to_parquet(tmp, index=False)
+    tmp.replace(path)
+
+    manifest = _manifest(root)
+    manifest[_key(source, series, currency)] = {
+        **(meta or {}),
+        "vintages": int(df["realtime_start"].nunique()),
+        "last_vintage": df["realtime_start"].max().strftime("%Y-%m-%d"),
+        "updated": _now().isoformat(timespec="seconds"),
+    }
+    _save_manifest(manifest, root)
+    return added
+
+
+def vintages(source, series, currency, root=CACHE_DIR):
+    """Every vintage cached for one series, with its real-time interval. Most callers want a VintagePanel."""
+    path = _path(source, series, currency, root)
+    if not path.exists():
+        raise FileNotFoundError(f"no vintages cached for {_key(source, series, currency)} at {path}; "
+                                "run scripts/update_data.py --macro-only")
+    return pd.read_parquet(path)
