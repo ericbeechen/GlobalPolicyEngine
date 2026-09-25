@@ -2,11 +2,10 @@ from pathlib import Path
 import pandas as pd
 import pytest
 from policypath import config
-from policypath.calendars import US_BDAY, known_daily
+from policypath.calendars import US_BDAY, known_daily, known_meetings
 from policypath.curves.policy_path import implied_path
 
 DATA = Path(__file__).parent / "data"
-MEETINGS = Path(__file__).parents[1] / "config" / "meetings" / "fomc.csv"
 BP = 0.01 
 HORIZON_MONTHS = 12
 
@@ -79,8 +78,7 @@ def effr_monthly_avg(effr):
 
 @pytest.fixture(scope="module")
 def meetings():
-    m = pd.read_csv(MEETINGS, parse_dates=["announcement_date", "effective_date"])
-    return m
+    return config.meetings("USD")
 
 
 # --------------------------------------------------------------------------
@@ -330,29 +328,58 @@ def test_fixings_known_through_the_day_before(as_of, known_through, carried):
     assert daily.iloc[-1] == pd.Timestamp(carried).day / 100.0
 
 
-def test_expired_contracts_settle_to_realized_effr(effr_monthly_avg):
+def unseen_move(daily, months, expiries):
+    """Per contract, how far the fixings its expiry session could not see moved, in the month average.
+
+    The session settles before its own day's fixing is published (the next
+    morning), so the fixings dated from the expiry day to the month end are
+    unseen. Each counts |fixing - last published fixing| / days in month.
+    """
+    out = []
+    for month, expiry in zip(months, pd.to_datetime(expiries)):
+        last_seen = daily[:expiry - pd.Timedelta(days=1)].iloc[-1]
+        unseen = daily[expiry:month.end_time.normalize()]
+        out.append((unseen - last_seen).abs().sum() / month.days_in_month)
+    return pd.Series(out, index=months)
+
+
+def test_expired_contracts_settle_to_realized_effr(effr, effr_monthly_avg):
     """100 - settle == average realized EFFR over the contract month.
 
     This is the ZQ contract definition. A break here means the settlement feed,
     the contract-to-month mapping or the averaging convention is wrong, and every
     implied path in the repo is wrong with it.
+
+    The archive holds the expiry session's settle, not CME's final settlement,
+    and that session has not seen the fixings of its own day onward. EFFR moves
+    at month and quarter ends, by several basis points before 2016, so those
+    days are allowed for: one tick (0.25bp) plus how far they moved from the
+    last fixing the session saw. That still fails 128 of 193 months with the
+    contract mapped one month off, and 20 with business-day instead of
+    calendar-day averaging. Tightest case: ZQH8, a quarter end on Good Friday,
+    0.363bp against 0.365bp.
     """
     settles = pd.read_csv(DATA / "zq_expiry_settles.csv")
     settles["month"] = settles["month"].apply(pd.Period)
     settles = settles[settles["month"].isin(effr_monthly_avg.index)]
-    assert len(settles) > 24, "fixture too thin to be a meaningful check"
+    assert len(settles) > 150, "fixture too thin to be a meaningful check"
 
     implied = 100.0 - settles["price"].to_numpy()
     realized = effr_monthly_avg.loc[settles["month"]].to_numpy()
     err = pd.Series(implied - realized, index=settles["month"].to_numpy())
+    daily = effr["effr"].reindex(pd.date_range(effr.index[0], effr.index[-1], freq="D")).ffill()
+    allowed = 0.3 * BP + unseen_move(daily, err.index, settles["expiry"])
 
-    # One tick is 0.25bp, and the expiry-session settle can predate the final
-    # fixing of the month's last day or two. Anything beyond that is a real break.
-    worst = err.abs().idxmax()
-    assert err.abs().max() < 0.3 * BP, (
+    excess = err.abs() - allowed
+    worst = excess.idxmax()
+    assert excess.max() < 0, (
         f"worst month {worst}: implied {implied[list(err.index).index(worst)]:.4f} "
-        f"vs realized {realized[list(err.index).index(worst)]:.4f}"
+        f"vs realized {realized[list(err.index).index(worst)]:.4f}, "
+        f"allowed {allowed[worst] / BP:.2f}bp"
     )
+    # Where nothing unseen moved, the settle is the average to a tick.
+    calm = allowed <= 0.3 * BP + 1e-12
+    assert calm.sum() > 60 and err[calm].abs().max() < 0.3 * BP  # 84 of 194 months
 
 FEDWATCH = DATA / "fedwatch"
 
@@ -413,10 +440,11 @@ def solve_session(day, meetings, effr=None):
     implied_avg = load_strip(day)
     horizon = pd.Timestamp(day).to_period("M") + HORIZON_MONTHS
     implied_avg = implied_avg[implied_avg.index <= horizon]
+    pillars = known_meetings(meetings, day)["effective_date"]
     if effr is None:
-        return implied_path(implied_avg, meetings["effective_date"])
+        return implied_path(implied_avg, pillars)
     spec = config.currency("USD")["path"]
-    return implied_path(implied_avg, meetings["effective_date"], fixings_known_on(effr, day),
+    return implied_path(implied_avg, pillars, fixings_known_on(effr, day),
                         spec["min_forward_days"], spec["min_regime_days"])
 
 

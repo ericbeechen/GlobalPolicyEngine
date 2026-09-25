@@ -10,6 +10,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 from policypath import config, panel
+from policypath.calendars import known_meetings
 
 DATA = Path(__file__).parent / "data"
 SESSIONS = ["2022-06-13", "2023-06-13", "2024-09-17", "2026-09-21"]
@@ -64,3 +65,31 @@ def test_a_settle_revised_after_the_next_business_day_is_not_used():
     })
     used = panel.settles_on(vintages, day)
     assert used["value"].item() == 95.21
+
+
+def test_the_calendar_on_each_day_of_march_2020(meetings):
+    """Emergency cuts count from their announcement; the meeting they replaced until it was called off."""
+    def pillars(day):
+        return set(known_meetings(meetings, day)["effective_date"].dt.strftime("%Y-%m-%d"))
+    march = {"2020-03-04", "2020-03-16", "2020-03-19"}
+    assert pillars("2020-03-02") & march == {"2020-03-19"}
+    assert pillars("2020-03-03") & march == {"2020-03-04", "2020-03-19"}
+    assert pillars("2020-03-13") & march == {"2020-03-04", "2020-03-19"}
+    assert pillars("2020-03-16") & march == {"2020-03-04", "2020-03-16"}
+
+
+def test_an_unscheduled_meeting_announced_later_is_invisible(fixings, meetings):
+    day = pd.Timestamp("2024-09-17")
+    surprise = pd.DataFrame({"announcement_date": [pd.Timestamp("2024-10-10")],
+                             "effective_date": [pd.Timestamp("2024-10-11")],
+                             "scheduled": [False], "cancelled": [pd.NaT]})
+    poisoned = pd.concat([meetings, surprise], ignore_index=True)
+
+    want = solve(day, fixings, meetings)
+    got = solve(day, fixings, poisoned)
+    pd.testing.assert_frame_equal(got.meetings, want.meetings)
+    assert got.summary == want.summary
+    # ...and the same meeting, announced by the session, is a pillar.
+    known = solve(day, fixings, poisoned.assign(announcement_date=poisoned["announcement_date"].where(
+        poisoned["scheduled"], day)))
+    assert pd.Timestamp("2024-10-11") in set(known.meetings["effective_date"])

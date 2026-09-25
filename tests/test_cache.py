@@ -49,6 +49,23 @@ def test_an_undated_revision_is_known_only_from_when_we_saw_it(tmp_path):
     assert cache.read("fred", "SOFR", "USD", today, root=tmp_path)["value"].item() == 5.31
 
 
+def test_a_dated_vintage_backfilled_late_keeps_its_date(tmp_path):
+    """The seam between two archive jobs: a session's final was cached first, from the
+    later job, and its preliminary arrives with the earlier one. It is an older
+    vintage, knowable at the close, not a revision to stamp with today."""
+    keys = ("date", "contract")
+    final = obs([("2020-12-30", "ZQF1", 99.915, "2020-12-30 19:13")], keys)
+    prelim = obs([("2020-12-30", "ZQF1", 99.910, "2020-12-30 15:00")], keys)
+    cache.append(final, "databento", "ZQ", "USD", keys=keys, root=tmp_path, dated=True)
+    assert cache.append(prelim, "databento", "ZQ", "USD", keys=keys, root=tmp_path, dated=True) == 1
+
+    log = cache.log("databento", "ZQ", "USD", root=tmp_path)
+    assert sorted(log["published"]) == [T("2020-12-30 15:00"), T("2020-12-30 19:13")]
+    at_close = cache.view(log[log["published"] < T("2020-12-30 16:00")], "2020-12-30", keys)
+    assert at_close["value"].item() == 99.910
+    assert cache.read("databento", "ZQ", "USD", "2020-12-30", root=tmp_path)["value"].item() == 99.915
+
+
 def test_publication_date_is_required(tmp_path):
     df = obs([("2024-03-01", 5.33, None)])
     with pytest.raises(ValueError, match="publication date"):
