@@ -181,6 +181,13 @@ def read(source, series, currency, as_of, root=CACHE_DIR):
     """The series as it was knowable at the end of `as_of`: one row per observation."""
     return view(log(source, series, currency, root), as_of, _keys(source, series, currency, root))
 
+def metadata(source, series, currency, root=CACHE_DIR):
+    """What the manifest records for one key: covered ranges, or vintage counts and series metadata."""
+    entry = _manifest(root).get(_key(source, series, currency))
+    if entry is None:
+        raise KeyError(f"nothing in the manifest for {_key(source, series, currency)}")
+    return entry
+
 VINTAGE_COLUMNS = ["date", "value", "realtime_start", "realtime_end"]
 
 
