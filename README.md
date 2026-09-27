@@ -1,6 +1,6 @@
 # GlobalPolicyEngine
 
-How well do markets price the path of central banks? This project is built to isolate these differences around currencies and trade them. 
+How well do markets price the path of central banks? This project is built to isolate these differences around currencies and trade them. USD and GBP are built
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="reports/figures/implied_paths_USD_dark.png">
@@ -17,7 +17,9 @@ Working end to end for USD:
 - A SOFR discount curve bootstrapped in QuantLib from SR3 futures and SOFR fixings, and a cross-check of the ZQ path against SR1 (below).
 - A real-time macro nowcast on every Fed business day from 2011-03-04, the first day every input has an ALFRED vintage (CBO's natural rate from 2011-02-02, average hourly earnings from 2011-03-04).
 - A model path on each of the 3,921 sessions since then: the Fed's own balanced-approach rule from the Monetary Policy Report, in its inertial form, fed by that day's nowcast, with r* from the FOMC's longer-run dot and an explicit floor at the lower bound. The gap between the two paths, per meeting and z-scored on its trailing two years, and a crude backtest of it (below).
-- `uv run pytest -q` gives 190 passed, 6 skipped.
+- GBP through the same interface (below): the Bank of England's fitted OIS curve on every London business day from 2009-08-03 (4,332 sessions, no failures), a real-time UK nowcast from the ONS's own revisions triangles from 2010-08-26, and the same rule. The GBP path lands on the Bank's own MPR conditioning paths to 1.0bp on average over 29 reports.
+- A weekly one-page brief, generated from cache: both currencies' paths, the gaps, the GBP - USD differential, what changed since last week and why.
+- `uv run pytest -q` gives 212 passed, 6 skipped.
 
 ## Install
 
@@ -76,6 +78,22 @@ uv run python scripts/build_model.py
 uv run python scripts/run_model_path.py 2021-11-01
 ```
 
+GBP needs neither the archive nor a key. Pull the Bank of England's curve, SONIA and Bank Rate and the ONS vintages, then build the panel, the nowcast and the model, and check the path against the Bank's MPR conditioning paths:
+
+```bash
+uv run python scripts/update_data.py --ccy GBP
+uv run python scripts/build_panel.py --ccy GBP
+uv run python scripts/build_nowcast.py --ccy GBP
+uv run python scripts/build_model.py --ccy GBP
+uv run python scripts/check_mpr.py
+```
+
+The weekly brief, for every currency in `config/brief.yml`, one page to `reports/brief_<date>.pdf`:
+
+```bash
+uv run python scripts/build_brief.py
+```
+
 ## How the path is solved
 
 `policypath.curves.policy_path.implied_path` takes the implied average rate per contract month (`100 - price`) and the meeting effective dates, and returns the overnight rate in force in each regime between them.
@@ -110,10 +128,28 @@ The gap is market minus model in bp at each meeting. It widens where it should: 
 
 The crude backtest trades the implied rate at the fourth meeting ahead on that meeting's z. It receives when the market is above its usual relation to the rule, holds DV01 fixed and trades one session after the signal. Over 2012-26 it returns a Sharpe of 0.02 **before costs**: it loses through 2014-20, when the market priced lower-for-longer and then cuts the rule never justified, and makes it back in 2021-25. The horizon was fixed before any P&L was run; the others are in `reports/model_USD.md` as a sensitivity, not a menu.
 
+## GBP: the Bank of England's curve
+
+There is no ZQ outside the US. What makes the US extraction closed-form (a contract settling on the arithmetic monthly average of the overnight rate) has no European counterpart, so GBP comes from a different mechanic behind the same interface. `market.path(date, ccy)` returns the same object for both currencies, from the backend the config names. The US panel is bit-identical to week 4 through it.
+
+The Bank publishes a fitted OIS spot curve every day, continuously compounded, at monthly maturities from one month to five years. The expected SONIA between two meetings is the forward over that window, exact from two spot rates. Meeting dates fall between maturities, so the log discount factor is interpolated linearly between them. Today until the first meeting is pinned to the rate in force: the last SONIA fixing, moved by any Bank Rate change since, because a decision applies from noon on the day it is announced. Against the SONIA that then printed, pinning cuts the error on that first regime from 0.84bp to 0.52bp (2022: 3.3bp to 0.1bp).
+
+The check is the Bank's own. Each MPR projection is conditioned on a Bank Rate path averaged from the same OIS curve over 15 working days. Rebuilt from the step path for all 29 reports from August 2019 to July 2026, it lands within 1.0bp on average (August 2024: 0.36bp at worst). The differences have a sign you can predict. The Bank averages a smooth spline, which starts a priced move before its meeting; the step path moves on the day. So the difference correlates −0.59 with the move priced inside the quarter.
+
+The UK labour data is the weak input, and the brief says so rather than smoothing it. LFS unemployment, which the gap is built from, was suspended in late 2023 and rebadged; the last official vintage is held through the suspension. Read as first printed against the claimant count and PAYE payrolls, it has agreed less since 2023: the LFS and claimant 12-month changes correlated +0.72 to 2022 and −0.16 since (`reports/nowcast_GBP.md`). There is no published UK longer-run policy rate, so r* is a constant. So is u*. The traded z subtracts the gap's trailing mean, so a constant moves the bp level, not the trade.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="reports/figures/model_vs_market_GBP_dark.png">
+  <img alt="Bank of England OIS-implied Bank Rate path against the balanced-approach rule's path, and the gap at the fourth meeting ahead since 2010" src="reports/figures/model_vs_market_GBP_light.png">
+</picture>
+
+The GBP crude backtest (same expression, fourth meeting, no costs) returns a Sharpe of 0.75, but 90% of it is 2022-23. One regime again, and no evidence yet.
+
 ## Data
 
 - **`databento/`** is gitignored and not distributed: it is a paid batch archive, ~1.2 GB, one definition and one statistics file per day per Databento batch job. Six jobs cover ZQ from 2010-06-06 to 2026-09-21, SR3 from 2020-12-31 to 2026-09-21, and SR1 from 2010-06-06 to 2026-09-24 (it first listed in 2018). Every job names its daily files the same way, so each is kept in its own folder, `databento/<definitions|statistics>/<job_id>/`, with its manifest, metadata and condition files. Download a new job straight into `databento/definitions/` or `databento/statistics/`, then run `uv run python scripts/file_databento.py`. It files every file under its job by the sha256 in the job's manifest, so the ` (2)` copies a browser makes of colliding names do not matter, and it checks every job is complete. `sources/archive.py` knows which job holds which root, and only `sources/` reads the archive.
 - **`data/`** is gitignored and entirely derived. `data/cache/` holds one parquet vintage log per `(source, currency, series)` plus `manifest.json`, which records the ranges already covered and is what makes `update_data.py` incremental. CME sends a preliminary settle around 16:00 ET and the final that evening, or on the Sunday for a Friday session. Both are kept, so a read at the close sees the preliminary. The panel uses each session's settles as they stood by the end of the next business day, and records when the last one arrived.
+- **Bank of England and ONS** data need no key: `sources/boe.py` (IADB series, the OIS curve archive) and `sources/ons.py` (revisions triangles, the release calendar). The MPC calendar is scraped by `sources/pull_mpc.py` into the committed `config/meetings/mpc.csv`. `tests/data/boe/conditioning_paths.csv` is ground truth taken once from the Bank's Projections Databank.
 - **`reports/`** is generated: `build_panel.py` writes `coverage_USD.md`, `sofr_check_USD.md` and the figures above; `catalogue_vintages.py` writes `vintages_USD.md`; `build_nowcast.py` writes `nowcast_USD.md` and its figures; `build_model.py` writes `model_USD.md`, the model figures and the one-pager.
 - **`tests/data/`** is committed precisely so the suite runs for anyone who clones the repo without that archive. Everything in it is small enough to read in a diff. Regenerate with `uv run --env-file .env python tests/data/build_fixtures.py` (needs the archive and the network; `--market-only` leaves the ALFRED fixtures as they are).
 - **`tests/data/fedwatch/`** holds hand-typed captures of the CME FedWatch tool. FedWatch publishes no history and it is not recoverable after the fact, so this gets filled in going forward rather than backfilled. Each capture stores the futures strip *and* the probabilities from the same screen, so comparing them isolates bootstrap-vs-bootstrap difference from data timing. Rows are laid out exactly as the tool displays them so a capture can be checked against the screenshot cell by cell, and every file opens with a one-line provenance note on line 1 (the readers skip it by position).
