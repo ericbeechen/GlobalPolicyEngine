@@ -14,6 +14,7 @@ is knowable from then, not from t's close.
 """
 
 from dataclasses import dataclass
+from pathlib import Path
 import numpy as np
 import pandas as pd
 from policypath import config
@@ -22,6 +23,7 @@ from policypath.curves.policy_path import implied_path
 from policypath.sources import cache
 
 DAY = pd.Timedelta(days=1)
+PANEL_DIR = Path(__file__).resolve().parents[2] / "data" / "panel"
 
 
 class ShortStrip(ValueError):
@@ -142,3 +144,11 @@ def build(ccy, start=None, end=None, **overrides):
     cols = ["session", "k", "announcement_date", "effective_date", "scheduled",
             "rate", "step_bp", "cum_bp"]
     return sessions, meetings[cols] if len(meetings) else meetings
+
+
+def load(ccy, name, root=PANEL_DIR):
+    """One table `scripts/build_*.py` wrote to ``data/panel/<ccy>_<name>.parquet`` (sessions, meetings, macro, ...)."""
+    path = Path(root) / f"{ccy}_{name}.parquet"
+    if not path.exists():
+        raise FileNotFoundError(f"{path} is missing; run the build script that writes it")
+    return pd.read_parquet(path)

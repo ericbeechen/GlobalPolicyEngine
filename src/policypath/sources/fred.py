@@ -77,11 +77,14 @@ def observations(series_id, start=None, end=None, lag_bdays=1):
     """Current-vintage observations with ``published`` = ``date`` + `lag_bdays` Fed business days.
 
     Columns: date, value, published. Days FRED reports as "." are dropped, not NaN.
+    A non-business day rolls back to the business day before, then moves `lag_bdays`
+    on, and is never published before its own date: with ``lag_bdays=0`` a
+    Saturday's target range is published on the Saturday, not the Friday.
     """
     df = _frame(_fetch(series_id, start, end), [])
     days = df["date"].to_numpy().astype("datetime64[D]")
-    df["published"] = pd.to_datetime(np.busday_offset(days, lag_bdays, roll="backward",
-                                                      busdaycal=US_BDAY.calendar))
+    lagged = np.busday_offset(days, lag_bdays, roll="backward", busdaycal=US_BDAY.calendar)
+    df["published"] = pd.to_datetime(np.maximum(lagged, days))
     return require_published(df)
 
 
@@ -124,8 +127,10 @@ def effr(start=None, end=None):
 class Fred(Source):
     """Current-vintage FRED series, cached as observations keyed by date.
 
-    EFFR, SOFR and the target-range bounds are all published the next business
-    day. A week is fetched again on every update: SOFR can be revised on the
+    EFFR and SOFR are published the next business day (`lag_bdays` = 1). The
+    target range in force on a day is announced before it starts, and an SEP
+    median is dated on its release day (`lag_bdays` = 0; ``fred_lags`` in
+    config). A week is fetched again on every update: SOFR can be revised on the
     day it is published, and the refetch costs one small request per series.
     """
 

@@ -114,6 +114,23 @@ def mark_fetched(source, series, currency, start, end, root=CACHE_DIR):
     _save_manifest(manifest, root)
 
 
+def drop(source, series, currency, root=CACHE_DIR):
+    """Forget one key: its log and its manifest entry. Returns True if anything was there.
+
+    For a series whose publication rule changed. `append` keys revisions on the
+    value, so re-fetching the same values under a new `published` adds nothing;
+    the log has to be rebuilt from an empty key.
+    """
+    path = _path(source, series, currency, root)
+    manifest = _manifest(root)
+    found = path.exists() or _key(source, series, currency) in manifest
+    if path.exists():
+        path.unlink()
+    if manifest.pop(_key(source, series, currency), None) is not None:
+        _save_manifest(manifest, root)
+    return found
+
+
 def _keys(source, series, currency, root):
     entry = _manifest(root).get(_key(source, series, currency), {})
     return entry.get("keys", ["date"])

@@ -31,8 +31,8 @@ def nowcast(as_of, ccy="USD", panel=None, spec=None):
 def build(ccy, start, end, panel=None, spec=None):
     """Every Fed business day in [start, end], one row each.
 
-    No try/except: every date since 2021 should succeed, so a failure is a bug,
-    not a data gap.
+    No try/except: every date from the config's ``macro.start`` (the first day
+    every input has a vintage) should succeed, so a failure is a bug, not a data gap.
     """
     panel = panel if panel is not None else VintagePanel.from_cache(ccy)
     days = pd.date_range(start, end, freq=US_BDAY)
