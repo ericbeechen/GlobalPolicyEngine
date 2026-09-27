@@ -1,0 +1,10 @@
+# The weekly brief (report/brief.py, scripts/build_brief.py). Not currency behaviour:
+# which currencies it covers, which pair it differences, which horizons it tabulates.
+
+currencies: [USD, GBP]
+# First minus second: positive when the first market prices more tightening against
+# its own rule than the second does against its. The first cross-country signal.
+differential: [GBP, USD]
+horizons: [1, 4, 8]
+traded: 4               # the horizon the crude backtest trades; "what changed" is read here
+lookback_days: 7        # "since last week": the sessions on or before the brief date minus this

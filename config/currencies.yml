@@ -6,12 +6,23 @@ USD:
   meetings: fomc.csv            # under config/meetings/
   history_start: "2010-01-01"   # first fixing pulled into the cache: before the first ZQ session
 
-  # The overnight rate the policy futures settle on.
+  calendar: fed                 # business days: calendars.BDAYS
+
+  # The overnight rate the market path is in, and whose fixings are substituted.
   overnight:
     source: fred
     series: EFFR
-  # Monthly-average futures the policy path is solved from.
-  policy_futures: ZQ
+  # Where the market path comes from: market.EXTRACTORS. ZQ settles on the
+  # calendar-month average of EFFR, so the path is a least-squares solve.
+  market:
+    extractor: futures_strip
+    label: ZQ futures             # names the source in figures and the brief
+    overnight_label: EFFR
+    figure_note: "Its 2015-17 notches are real: EFFR printed 5-12bp low on the last day of most months."
+    tags:
+      calendar:
+        lag: "scheduled FOMC dates are treated as known on every date (fomc.csv records no publication date)"
+  policy_futures: ZQ            # the monthly-average futures it is solved from
 
   # Everything update_data.py keeps cached.
   fred_series: [EFFR, SOFR, DFEDTARL, DFEDTARU, FEDTARMDLR]
@@ -78,6 +89,11 @@ USD:
       moments_start: "1993-01-01" # NEWORDER starts 1992-02; first complete q/q is 1993Q1
       min_series: 3
       benchmark: GDPNOW           # validation only: the composite is correlated with it, never fitted to it
+    tags:
+      PCEPILFE:
+        lag: "core PCE's latest one or two months are bridged from core CPI until PCE prints (real-time RMSE 0.075pp m/m)"
+      NROU:
+        lag: "CBO's natural rate has vintages only from 2011-02-02, so the model path starts 2011-03-04"
 
   # The model path: the Fed's own balanced-approach rule from the Monetary Policy
   # Report, in its inertial form. Imposed, not estimated; an estimated rule is a
@@ -86,7 +102,7 @@ USD:
   #   path      R_k = rho R_(k-1) + (1 - rho) max(elb, R*),  R_0 = the range in force
   # Conditioning is hold-flat: pi, u - u* and r* stay at their as-of values at every meeting.
   rule:
-    target_range: [DFEDTARL, DFEDTARU]   # R_0 is the midpoint in force on the day
+    target_range: {source: fred, series: [DFEDTARL, DFEDTARU]}   # R_0: the midpoint in force on the day
     inflation: infl_12m                  # nowcast column: 12-month core PCE, percent
     gap: u_gap                           # nowcast column: u - u*, positive = slack
     inflation_target: 2.0
@@ -98,8 +114,16 @@ USD:
     # the median over the last this-many known fixings, held flat like the macro.
     spread_fixings: 20
     rstar:
+      source: fred
       series: FEDTARMDLR                 # FOMC SEP median longer-run funds rate, minus the target
       before_first: 2.0                  # Taylor (1993)'s r*, before the first dot (2012-01-25)
+    tags:
+      conditioning:
+        quality: "hold-flat conditioning: inflation, the unemployment gap and r* stay at today's values at every meeting"
+      rule:
+        quality: "the rule is imposed from the Fed's Monetary Policy Report, not estimated"
+      rstar:
+        quality: "r* is the SEP median as FRED rounds it (to within 5bp); Taylor's 2% before the first dot, 2012-01-25"
 
   # Market path minus model path, per meeting horizon.
   signal:
@@ -112,3 +136,193 @@ USD:
     horizon: 4                           # the k-th meeting ahead, re-chosen every session
     execution_lag: 1                     # sessions between the signal and the position
     dv01: 1.0                            # P&L in bp per unit of z
+    tags:
+      costs:
+        quality: "the crude backtest has no transaction costs yet (week 8)"
+
+  # Words and moments the generated reports use for this currency.
+  report:
+    labels: {market: ZQ, rate: EFFR, rule: "Fed's own rule", policy: fed funds, meetings: FOMC, bank: the Fed,
+             inflation: Core PCE, policy_rate: Midpoint, nowcast_start: "which needs a vintaged u*"}
+    # Days the gap should explain: report/model.py reads each on the first session on or after it.
+    moments:
+      - ["2011-08-09", "\"Exceptionally low\" through mid-2013: calendar guidance"]
+      - ["2013-06-24", "Taper tantrum"]
+      - ["2015-06-01", "Liftoff delayed"]
+      - ["2015-12-15", "Eve of liftoff"]
+      - ["2018-12-20", "Day after the last hike of the cycle"]
+      - ["2019-07-30", "Eve of the first insurance cut"]
+      - ["2020-06-01", "Both at the floor"]
+      - ["2021-11-01", "Late 2021: inflation up, the Fed waits"]
+      - ["2022-03-01", "Eve of liftoff, 2022"]
+      - ["2022-06-13", "Before the first 75bp hike"]
+      - ["2023-06-13", "The pause"]
+      - ["2023-12-14", "Pivot debate: the day after the December dots"]
+      - ["2024-04-15", "Cuts priced out"]
+      - ["2024-09-17", "Eve of the first cut"]
+    # Marked on the gap chart where the gap is widest inside each window.
+    chart_moments:
+      - ["2015-03-01", "2015-09-30", "Liftoff waits"]
+      - ["2019-06-01", "2019-10-31", "2019 cuts"]
+      - ["2021-10-01", "2022-03-31", "Rule up, Fed waits"]
+      - ["2023-10-01", "2024-01-31", "Pivot debate"]
+      - ["2024-07-01", "2024-09-30", "Cuts repriced"]
+
+
+GBP:
+  enabled: true
+  meetings: mpc.csv             # under config/meetings/
+  history_start: "2009-01-01"   # the Bank's OIS curve archive starts 2009-01-02
+  calendar: uk                  # England and Wales bank holidays: calendars.UKHolidayCalendar
+
+  # SONIA: the overnight rate the OIS curve discounts on. Not Bank Rate: see rule.spread_*.
+  overnight:
+    source: boe
+    series: IUDSOIA
+  # The Bank's fitted OIS spot curve, short end (monthly, 1-60 months). There is
+  # no monthly-average futures contract to solve, so the path is the forward
+  # between consecutive meetings (curves/forward.py).
+  market:
+    extractor: forward_curve
+    curve: {source: boe, series: OIS_SPOT}
+    label: the Bank of England's OIS curve
+    overnight_label: SONIA
+    # Today until the first meeting is always the rate in force: no meeting falls
+    # inside it, and reading it off the curve smears the first meeting's step
+    # across the monthly node interval it lands in. Measured against the SONIA that
+    # then printed, 2009-26: mean absolute error 0.52bp pinned vs 0.84bp read off
+    # the curve (MPC days 0.52 vs 1.39; 2022 0.09 vs 3.29). notes/decisions.md.
+    pin_first_regime: true
+    # The rate in force is the last SONIA fixing moved by any Bank Rate change
+    # since: a decision takes effect at noon on the day it is announced, before
+    # it is in any published fixing.
+    policy_rate: {source: boe, series: IUDBEDR}
+    tags:
+      curve:
+        quality: "the Bank's OIS curve has monthly maturities, so a meeting's step is placed by interpolating between them; against the Bank's own MPR conditioning paths the path is within 1.0bp on average"
+      calendar:
+        lag: "scheduled MPC dates are treated as known on every date; the September 2022 meeting is listed on the 22nd, where it was moved to"
+
+  # Everything update_data.py keeps cached from the Bank of England.
+  boe_series: [IUDSOIA, IUDBEDR]    # SONIA, Bank Rate
+  # London business days to publication: SONIA at 9:00 the next day; Bank Rate
+  # in force on d was announced by noon on d at the latest.
+  boe_lags: {IUDSOIA: 1, IUDBEDR: 0}
+  boe_curves: [OIS_SPOT]            # published by noon the next business day
+
+  path:
+    start: "2009-08-03"
+    n_meetings: 8
+    # Pin today-until-the-next-meeting to the last SONIA fixing when it spans
+    # fewer days than this. The curve's first node is one month, so a first
+    # meeting inside it is always pinned (curves/forward.py) whatever this says.
+    min_regime_days: 10
+
+  # Real-time macro inputs, from the ONS as it published them (sources/ons.py): the
+  # revisions triangles for the labour market, CPI (never revised) with its release
+  # days. Not ALFRED: its OECD copies of UK series run 22-25 days late and stopped in 2025.
+  macro:
+    source: ons
+    history_start: "2009-01-01"
+    series: [D7G7, MGSX]            # CPI 12-month rate; LFS unemployment rate 16+, SA (UNEM04)
+    # Cross-checks on the LFS, never nowcast inputs (the ONS itself recommends reading
+    # them alongside it): the claimant count level (CLA03) and PAYE payrolled employees.
+    validation: [CLAIMANTS, PAYE]
+    projections: []
+    # First as_of: the first UNEM04 release, August 2010 (dated by rule: before the
+    # ONS calendar starts in 2016 a release is dated the 26th, never early).
+    start: "2010-08-26"
+    inflation:
+      rate: D7G7                    # CPI 12-month: the MPC's target, published, never revised
+    gap:
+      unemployment: MGSX            # three months ending the labelled month
+      # No vintaged UK natural rate is machine-readable back to 2010 (OBR publishes one
+      # per forecast, in its tables; a week 9 job). A constant, like r*: the gap's z
+      # removes its trailing mean, so a constant moves the bp level, not the trade.
+      # 4.5: the Bank's own medium-term equilibrium, "around 4½%" (February 2025 MPR).
+      natural_rate: {constant: 4.5}
+    # Where each input's publication date or value is approximate, said once here;
+    # report/brief.py builds the limitations footer from these, not by hand.
+    report: labour                 # report/labour.py: the LFS read against the claimant count and PAYE
+    tags:
+      D7G7:
+        lag: "CPI release days before February 2016 are dated the 26th of the month (up to ~10 days late, never early)"
+      MGSX:
+        lag: "LFS release days before April 2016 are dated the 26th of the month (up to ~10 days late, never early)"
+        quality: >-
+          LFS unemployment is noisy after the 2023 response-rate collapse: suspended Oct 2023-Jan 2024
+          (the last official vintage is held), "official statistics in development" Feb 2024-Aug 2026,
+          volatile in mid-2023 and 2024, and a collection error in May-June 2026 degraded releases from July
+      CLAIMANTS:
+        quality: "claimant count is still 'official statistics in development'"
+      PAYE:
+        quality: "PAYE RTI vintages exist only from December 2019; not used before then"
+      natural_rate:
+        quality: "u* is a constant 4.5%, not a real-time estimate"
+      rstar:
+        quality: "r* is a constant (-1.6%, the 2009-26 average real Bank Rate): a hindsight number that moves the bp gap, not the z"
+
+  # The same rule as USD, imposed, with the Bank's own numbers where they differ.
+  rule:
+    target_range: {source: boe, series: [IUDBEDR, IUDBEDR]}   # Bank Rate: one rate, not a range
+    inflation: infl_12m
+    gap: u_gap
+    inflation_target: 2.0
+    coefficients: {inflation_gap: 0.5, unemployment_gap: 2.0}
+    inertia: 0.85
+    # Monthly meetings until 2015, eight a year from 2016 (2016 had eleven).
+    meetings_per_quarter: [{from: "2009-01-01", value: 3}, {from: "2016-01-01", value: 2}]
+    # The floor the MPC itself described: 0.5% until it cut to 0.25% in August 2016 and
+    # said a cut to "close to, but a little above, zero" was possible; 0.1% from then (it
+    # went there in March 2020 and never below). notes/decisions.md.
+    elb: [{from: "2009-01-01", value: 0.5}, {from: "2016-08-04", value: 0.1}]
+    spread_fixings: 20
+    # SONIA was reformed on 2018-04-23 (brokered to transaction-based): its spread to Bank
+    # Rate is estimated only from fixings the same side of that date.
+    spread_breaks: ["2018-04-23"]
+    # No longer-run policy rate is published (no SEP), and the long end of the OIS curve
+    # would make the model inherit market pricing. A constant: the 2009-08..2026-08
+    # average of Bank Rate minus 12-month CPI, -1.59% (median -1.40). notes/decisions.md.
+    rstar: {constant: -1.6}
+    tags:
+      conditioning:
+        quality: "hold-flat conditioning: inflation, the unemployment gap and r* stay at today's values at every meeting"
+      rule:
+        quality: "the rule is imposed from the Fed's Monetary Policy Report, not estimated"
+
+  signal:
+    window: 730D
+    min_periods: 250
+    sd_floor_bp: 5
+
+  backtest:
+    horizon: 4
+    execution_lag: 1
+    dv01: 1.0
+    tags:
+      costs:
+        quality: "the crude backtest has no transaction costs yet (week 8)"
+
+  report:
+    labels: {market: OIS, rate: SONIA, rule: "The balanced-approach rule", policy: Bank Rate, meetings: MPC,
+             bank: the Bank, inflation: CPI, policy_rate: Bank Rate,
+             nowcast_start: "which starts with the first LFS revisions-triangle release"}
+    moments:
+      - ["2011-06-01", "CPI at 4.5%, Bank Rate held at 0.5%"]
+      - ["2013-08-07", "Forward guidance"]
+      - ["2016-06-24", "The day after the EU referendum"]
+      - ["2017-11-02", "The first hike in a decade"]
+      - ["2019-08-01", "Brexit uncertainty: cuts priced"]
+      - ["2020-03-12", "The day after the emergency cut"]
+      - ["2021-11-05", "The day after the November 2021 hold"]
+      - ["2022-03-01", "CPI at 5.5%, Bank Rate 0.5%"]
+      - ["2022-09-27", "The mini-budget: an emergency hike priced"]
+      - ["2023-06-23", "The day after the 50bp hike to 5%"]
+      - ["2023-12-01", "Peak rates"]
+      - ["2024-08-02", "The day after the first cut"]
+      - ["2025-06-02", "Gradual cuts"]
+    chart_moments:
+      - ["2016-06-01", "2016-09-30", "Referendum"]
+      - ["2021-10-01", "2022-03-31", "Rule up, Bank waits"]
+      - ["2022-09-15", "2022-11-15", "Mini-budget"]
+      - ["2024-07-01", "2024-09-30", "Cuts begin"]
