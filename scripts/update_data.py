@@ -8,6 +8,7 @@ rebuilds everything.
 
     uv run --env-file .env python scripts/update_data.py
     uv run --env-file .env python scripts/update_data.py --macro-only
+    uv run --env-file .env python scripts/update_data.py --refetch DFEDTARL DFEDTARU
 """
 
 import argparse
@@ -19,6 +20,8 @@ from policypath.sources import cache, fred, rates
 parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
 parser.add_argument("--ccy", default="USD")
 parser.add_argument("--macro-only", action="store_true", help="pull ALFRED only; no archive needed")
+parser.add_argument("--refetch", nargs="+", default=[], metavar="SERIES",
+                    help="drop these FRED series from the cache first and pull them whole again")
 args = parser.parse_args()
 cfg = config.currency(args.ccy)
 today = pd.Timestamp.today().normalize()
@@ -32,8 +35,10 @@ def report(source, series):
 
 t0 = time.perf_counter()
 if not args.macro_only:
-    source = fred.Fred()
     for series in cfg["fred_series"]:
+        if series in args.refetch and cache.drop("fred", series, args.ccy):
+            print(f"fred/{series:<9} dropped")
+        source = fred.Fred(lag_bdays=cfg.get("fred_lags", {}).get(series, 1))
         added = source.update(series, args.ccy, cfg["history_start"], today, cache)
         print(f"fred/{series:<9} +{added:>6} rows   covered {report('fred', series)}")
 
