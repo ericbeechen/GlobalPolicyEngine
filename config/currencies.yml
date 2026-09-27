@@ -14,7 +14,12 @@ USD:
   policy_futures: ZQ
 
   # Everything update_data.py keeps cached.
-  fred_series: [EFFR, SOFR, DFEDTARL, DFEDTARU]
+  fred_series: [EFFR, SOFR, DFEDTARL, DFEDTARU, FEDTARMDLR]
+  # Fed business days from a value's date to when it is public; 1 when not listed
+  # (the NY Fed publishes EFFR and SOFR the next morning). The target range in
+  # force on day d is always announced before d starts, and an SEP median is
+  # dated on its release day. See notes/decisions.md (2026-09-27).
+  fred_lags: {DFEDTARL: 0, DFEDTARU: 0, FEDTARMDLR: 0}
   futures_roots: [ZQ, SR1, SR3]
   # What each root settles to (curves/futures.py): the calendar-month average
   # of its overnight rate, or SOFR compounded over the IMM quarter.
@@ -55,7 +60,9 @@ USD:
              PCEPILFE, CPILFESL, CES0500000003]
     validation: [CPILFENS, GDPNOW, UNRATEMDLR]   # pulled and tested, never a nowcast input
     projections: [NROU]           # published ahead of the dates they describe
-    start: "2021-01-01"           # first as_of the nowcast panel is built for
+    # First as_of the nowcast panel is built for: the first day every input has a
+    # vintage. NROU's first is 2011-02-02, average hourly earnings' 2011-03-04.
+    start: "2011-03-04"
     inflation:
       target: PCEPILFE            # what the rule reacts to
       bridge: CPILFESL            # prints ~2 weeks earlier; stands in until the target arrives
@@ -71,3 +78,37 @@ USD:
       moments_start: "1993-01-01" # NEWORDER starts 1992-02; first complete q/q is 1993Q1
       min_series: 3
       benchmark: GDPNOW           # validation only: the composite is correlated with it, never fitted to it
+
+  # The model path: the Fed's own balanced-approach rule from the Monetary Policy
+  # Report, in its inertial form. Imposed, not estimated; an estimated rule is a
+  # different block. See notes/decisions.md (2026-09-27).
+  #   notional  R* = r* + pi + a (pi - pi*) + b (u* - u)
+  #   path      R_k = rho R_(k-1) + (1 - rho) max(elb, R*),  R_0 = the range in force
+  # Conditioning is hold-flat: pi, u - u* and r* stay at their as-of values at every meeting.
+  rule:
+    target_range: [DFEDTARL, DFEDTARU]   # R_0 is the midpoint in force on the day
+    inflation: infl_12m                  # nowcast column: 12-month core PCE, percent
+    gap: u_gap                           # nowcast column: u - u*, positive = slack
+    inflation_target: 2.0
+    coefficients: {inflation_gap: 0.5, unemployment_gap: 2.0}   # MPR balanced approach
+    inertia: 0.85                        # per quarter, as in the MPR's inertial rule
+    meetings_per_quarter: 2              # so 0.85 ** 0.5 = 0.922 per meeting
+    elb: 0.125                           # midpoint of 0-0.25: the floor, applied to R*
+    # EFFR minus the midpoint, to put the model path on the rate ZQ settles on:
+    # the median over the last this-many known fixings, held flat like the macro.
+    spread_fixings: 20
+    rstar:
+      series: FEDTARMDLR                 # FOMC SEP median longer-run funds rate, minus the target
+      before_first: 2.0                  # Taylor (1993)'s r*, before the first dot (2012-01-25)
+
+  # Market path minus model path, per meeting horizon.
+  signal:
+    window: 730D                         # trailing distribution: two years, calendar
+    min_periods: 250                     # about a year of sessions before a z exists
+    sd_floor_bp: 5                       # at the ELB the gap barely moves; see notes/decisions.md
+
+  # Crude backtest: trade the implied rate after one meeting, no costs.
+  backtest:
+    horizon: 4                           # the k-th meeting ahead, re-chosen every session
+    execution_lag: 1                     # sessions between the signal and the position
+    dv01: 1.0                            # P&L in bp per unit of z
