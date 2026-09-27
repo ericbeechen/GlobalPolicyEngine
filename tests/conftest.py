@@ -49,3 +49,38 @@ def target():
 def sep():
     """FOMC SEP median longer-run funds rate, one row per SEP, public on its release day."""
     return pd.read_csv(DATA / "sep.csv", parse_dates=["date", "published"])
+
+
+# ---- GBP: the Bank of England's series and curve, the ONS vintages ------------------
+
+BOE, ONS = DATA / "boe", DATA / "ons"
+
+
+@pytest.fixture(scope="session")
+def sonia():
+    """SONIA fixings: date, value, published (the next London business day)."""
+    return pd.read_csv(BOE / "sonia.csv", parse_dates=["date", "published"])
+
+
+@pytest.fixture(scope="session")
+def bank_rate():
+    """Bank Rate in force each day, public that day (a change is announced at noon and applies from then)."""
+    return pd.read_csv(BOE / "bank_rate.csv", parse_dates=["date", "published"])
+
+
+@pytest.fixture(scope="session")
+def curve():
+    """The Bank's OIS spot curve, 1-24 months, on the committed days: date, tenor, value, published."""
+    return pd.read_csv(BOE / "curve.csv", parse_dates=["date", "published"])
+
+
+@pytest.fixture(scope="session")
+def ons_raw():
+    frames = [pd.read_csv(p, parse_dates=["date", "realtime_start", "realtime_end"]).assign(series=p.stem)
+              for p in sorted(ONS.glob("*.csv"))]
+    return pd.concat(frames, ignore_index=True)
+
+
+@pytest.fixture(scope="session")
+def ons_panel(ons_raw):
+    return VintagePanel(ons_raw, config.currency("GBP")["macro"]["projections"])

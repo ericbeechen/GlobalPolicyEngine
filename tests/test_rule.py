@@ -10,7 +10,8 @@ import pandas as pd
 import pytest
 from policypath import config
 from policypath.model.path import model_path, operating_spread, policy_rate
-from policypath.model.reaction import floor_at_elb, inertial_path, notional, per_meeting_inertia
+from policypath.model.reaction import (floor_at_elb, inertial_path, lower_bound, notional, on,
+                                       per_meeting_inertia)
 from policypath.model.rstar import rstar
 
 T = pd.Timestamp
@@ -78,8 +79,29 @@ def test_inertia_closes_fifteen_percent_of_the_distance_each_quarter():
 
 
 def test_the_floor_is_the_elb_and_only_binds_below_it():
-    assert floor_at_elb(-4.2, RULE) == RULE["elb"] == 0.125
-    assert floor_at_elb(0.3, RULE) == 0.3
+    elb = lower_bound(RULE, "2021-01-04")
+    assert floor_at_elb(-4.2, elb) == elb == 0.125
+    assert floor_at_elb(0.3, elb) == 0.3
+
+
+def test_a_dated_schedule_gives_the_value_in_force_on_the_day():
+    # the Bank of England's floor: 0.5% until the August 2016 cut, then close to zero
+    schedule = [{"from": "2009-03-05", "value": 0.5}, {"from": "2016-08-04", "value": 0.1}]
+    spec = {**RULE, "elb": schedule, "meetings_per_quarter": [{"from": "2009-01-01", "value": 3},
+                                                                {"from": "2016-01-01", "value": 2}]}
+    assert lower_bound(spec, "2016-08-03") == 0.5 and lower_bound(spec, "2016-08-04") == 0.1
+    assert on(schedule, "2026-01-01") == 0.1 and on(7, "2026-01-01") == 7
+    with pytest.raises(ValueError, match="no entry in force"):
+        lower_bound(spec, "2008-12-31")
+    # monthly meetings move a third of a quarter's adjustment each, eight a year half
+    assert per_meeting_inertia(spec, "2015-06-01") == pytest.approx(0.85 ** (1 / 3))
+    assert per_meeting_inertia(spec, "2016-06-01") == pytest.approx(0.85 ** 0.5)
+
+
+def test_a_constant_rstar_needs_no_sep():
+    spec = {**RULE, "rstar": {"constant": -0.5}}
+    r = rstar(None, "2024-01-02", spec)
+    assert r["rstar"] == -0.5 and pd.isna(r["sep_date"])
 
 
 # ---- the path on a date ----------------------------------------------------------

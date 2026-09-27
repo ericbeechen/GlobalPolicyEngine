@@ -22,11 +22,19 @@ Outputs, all in this directory:
   sofr.csv              SOFR from FRED, one row per fixing, with its publication day.
   sep.csv               The FOMC SEP median longer-run funds rate (FEDTARMDLR), one row
                         per SEP, published on its release day.
+
+GBP, under boe/ and ons/ (--gbp-only rebuilds just these; needs the network, not the archive):
+  boe/sonia.csv, boe/bank_rate.csv   IADB IUDSOIA and IUDBEDR from 2009, with publication days.
+  boe/curve.csv         The Bank's OIS spot curve, 1-24 months, on the GBP_SESSIONS and on
+                        every day of the three MPR windows the conditioning-path test reads.
+  ons/<series>.csv      Every ONS vintage of the GBP macro series, reference dates from 2018.
+  boe/conditioning_paths.csv is ground truth, built once by hand from the Bank's databank; not here.
 """
 
 import pandas as pd
 from policypath import config
-from policypath.sources import fred, rates
+from policypath.calendars import UK_BDAY
+from policypath.sources import boe, fred, ons, rates
 
 HERE = __import__("pathlib").Path(__file__).resolve().parent
 START, END = "2010-06-01", "2026-09-21"
@@ -131,12 +139,47 @@ def build_sep():
     return s
 
 
+# GBP sessions with a whole curve kept: the day after the November 2021 hold, liftoff's eve,
+# the mini-budget, the June 2023 50bp, the first cut, the latest.
+GBP_SESSIONS = ["2021-11-05", "2022-03-01", "2022-09-27", "2023-06-23", "2024-08-02", "2025-06-02",
+                "2026-09-24"]
+# The MPR reports whose 15-day windows the conditioning-path test recomputes (windows read in each report).
+MPR_WINDOWS = {"August 2019": "2019-07-24", "February 2023": "2023-01-24", "August 2024": "2024-07-22"}
+CURVE_TENORS = 24
+GBP_END = "2026-09-25"   # the Bank publishes to the day before; the archive-bound USD fixtures stop at END
+
+
+def build_gbp():
+    out = HERE / "boe"
+    out.mkdir(exist_ok=True)
+    cfg = config.currency("GBP")
+    for series, name in [("IUDSOIA", "sonia"), ("IUDBEDR", "bank_rate")]:
+        s = boe.BoeSeries(cfg["boe_lags"][series]).fetch(series, "2009-01-01", GBP_END)
+        s.assign(date=s["date"].dt.date, published=s["published"].dt.date).to_csv(out / f"{name}.csv", index=False)
+    days = set(pd.to_datetime(GBP_SESSIONS))
+    for end in MPR_WINDOWS.values():
+        days |= set(pd.date_range(end=end, periods=15, freq=UK_BDAY))
+    curve = boe.BoeCurve().fetch("OIS_SPOT", "2009-01-01", "2026-12-31")
+    curve = curve[curve["date"].isin(days) & (curve["tenor"] <= CURVE_TENORS)]
+    curve.assign(date=curve["date"].dt.date, published=curve["published"].dt.date).to_csv(
+        out / "curve.csv", index=False)
+    macro = cfg["macro"]
+    (HERE / "ons").mkdir(exist_ok=True)
+    for series in [*macro["series"], *macro["validation"]]:
+        ons.vintages(series, ALFRED_START).to_csv(HERE / "ons" / f"{series}.csv", index=False, date_format="%Y-%m-%d")
+    return curve
+
+
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description="Regenerate the committed test fixtures.")
     parser.add_argument("--market-only", action="store_true",
                         help="skip ALFRED: rebuild the rates fixtures, leave tests/data/alfred/ as it is")
+    parser.add_argument("--gbp-only", action="store_true", help="rebuild only the GBP fixtures (no archive needed)")
     args = parser.parse_args()
+    if args.gbp_only:
+        print(build_gbp().groupby("date").size().to_string())
+        raise SystemExit
     print(build_effr().tail(3).to_string(index=False))
     print(build_sofr().tail(3).to_string(index=False))
     print(build_sep().tail(3).to_string(index=False))
@@ -145,5 +188,6 @@ if __name__ == "__main__":
     if not args.market_only:
         build_alfred()
     build_strips()
+    build_gbp()
     print("wrote fixtures to", HERE)
 

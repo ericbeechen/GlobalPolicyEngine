@@ -10,9 +10,9 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import pytest
-from policypath import config, panel
+from policypath import config, market, panel
 from policypath.backtest import engine, instrument
-from policypath.calendars import known_meetings
+from policypath.calendars import UK_BDAY, known_meetings
 from policypath.macro.nowcast import nowcast
 from policypath.macro.vintage import VintagePanel
 from policypath.model import path as model
@@ -161,5 +161,61 @@ def test_the_whole_pipeline_at_d_ignores_everything_after_d(day, fixings, target
         for name in want:
             pd.testing.assert_frame_equal(got[name], want[name], check_dtype=False, obj=name)
     # the stages really ran: a z exists at D, and the rule's inputs are D's
+    assert want["signal"].loc[(day, 2), "z"] == want["signal"].loc[(day, 2), "z"]
+    assert want["model_summary"].loc[day, "macro_as_of"] == day
+
+
+# ---- the same for GBP: the forward-curve extractor, the ONS vintages, a constant r* ------
+
+GBP_SESSIONS = ["2021-11-05", "2022-03-01", "2022-09-27", "2023-06-23", "2024-08-02", "2025-06-02", "2026-09-24"]
+GBP = config.currency("GBP")
+GBP_RULE = {**GBP["rule"], "spread_fixings": 1}
+
+
+def gbp_pipeline(days, curve, sonia, bank_rate, vintages, meetings):
+    """Every GBP stage, end to end, on the committed curve sessions `days`, from the inputs given."""
+    spec = GBP["path"]
+    summaries, frames, rows = [], [], []
+    for day in map(pd.Timestamp, days):
+        spot = curve[curve["date"] == day].set_index("tenor")["value"].sort_index()
+        s = market.solve_curve(day, spot, meetings, sonia, spec["n_meetings"], spec["min_regime_days"], UK_BDAY,
+                               policy=bank_rate, pin_always=GBP["market"]["pin_first_regime"])
+        summaries.append({"session": day, "error": None, **s.summary})
+        frames.append(s.meetings.assign(session=day))
+        rows.append(nowcast(day, "GBP", panel=vintages, spec=GBP["macro"]))
+    sessions, paths_ = pd.DataFrame(summaries), pd.concat(frames, ignore_index=True)
+    target = model.target_range(bank_rate, bank_rate)
+    model_summary, paths = model.build(sessions, paths_, pd.DataFrame(rows), None, target, sonia, GBP_RULE)
+    signal = gap_signal.build(paths, SIGNAL)
+    z = signal[signal["k"] == 2].set_index("session")["z"]
+    pnl = engine.run(z, instrument.held_rate_change(sessions, paths_, 2), lag=0)
+    return {"model_summary": model_summary.set_index("session"), "paths": paths.set_index(["session", "k"]),
+            "signal": signal.set_index(["session", "k"]), "pnl": pnl}
+
+
+# A Tuesday and a Friday: a leak of one day is invisible on a Friday, when nothing is published on the Saturday.
+@pytest.mark.parametrize("day", ["2022-09-27", "2024-08-02"])
+def test_the_whole_gbp_pipeline_at_d_ignores_everything_after_d(day, curve, sonia, bank_rate, ons_raw):
+    day = pd.Timestamp(day)
+    mpc = config.meetings("GBP")
+    by_published = lambda f: f[f["published"] <= day]
+    poison = lambda f: f.assign(value=f["value"].mask(f["published"] > day, 99.0))
+    full = VintagePanel(ons_raw, GBP["macro"]["projections"])
+    later = ons_raw["realtime_start"] > day
+    noise = np.random.default_rng(1).uniform(1.5, 3.0, len(ons_raw))
+    dirty = VintagePanel(ons_raw.assign(value=ons_raw["value"].where(~later, ons_raw["value"] * noise)),
+                         GBP["macro"]["projections"])
+    early = [d for d in GBP_SESSIONS if pd.Timestamp(d) <= day]
+    # A session's own curve is published the next business day, as the panel reads it; later curves are not.
+    own = curve[curve["date"] <= day]
+    later_curves = curve.assign(value=curve["value"].where(curve["date"] <= day, 99.0))
+
+    want = gbp_pipeline(early, own, by_published(sonia), by_published(bank_rate), full.truncate(day),
+                        known_meetings(mpc, day))
+    appended = through(gbp_pipeline(GBP_SESSIONS, curve, sonia, bank_rate, full, mpc), day)
+    poisoned = through(gbp_pipeline(GBP_SESSIONS, later_curves, poison(sonia), poison(bank_rate), dirty, mpc), day)
+    for got in (appended, poisoned):
+        for name in want:
+            pd.testing.assert_frame_equal(got[name], want[name], check_dtype=False, obj=name)
     assert want["signal"].loc[(day, 2), "z"] == want["signal"].loc[(day, 2), "z"]
     assert want["model_summary"].loc[day, "macro_as_of"] == day
