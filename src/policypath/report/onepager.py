@@ -149,7 +149,8 @@ class _Column:
             raise ValueError("the one-pager runs past one page; cut words, not the margin")
 
 
-def write(today, effr, signal, result, headline, out_dir, ccy, author=None, generated=None, preview=None):
+def write(today, effr, signal, result, headline, out_dir, ccy, author=None, generated=None, preview=None,
+          moments=(), labels=None):
     """reports/onepager_<ccy>_<session>.pdf, dated by the session it describes. Returns the path.
 
     `preview`, if given, is a PNG path the same page is also rendered to, for checking the layout.
@@ -165,7 +166,8 @@ def write(today, effr, signal, result, headline, out_dir, ccy, author=None, gene
              size=9, color=t["secondary"], gap=0.16)
     col.text(framework(), size=9, gap=0.12)
     top, bottom = col.axes(4.25, n=2)
-    charts.ship(today, effr, signal, k, theme="light", axes=(top, bottom))
+    charts.ship(today, effr, signal, k, theme="light", axes=(top, bottom),
+                moments=[tuple(m) for m in moments], labels=labels)
     for ax in (top, bottom):
         ax.title.set_fontsize(10.5)
         for text in ax.texts:                        # the subtitle `_title` draws, and the direct labels

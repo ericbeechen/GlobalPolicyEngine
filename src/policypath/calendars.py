@@ -1,8 +1,9 @@
 import pandas as pd
-from pandas.tseries.holiday import (AbstractHolidayCalendar, Holiday,
-                                    USFederalHolidayCalendar, nearest_workday,
-                                    sunday_to_monday)
-from pandas.tseries.offsets import CustomBusinessDay
+from dateutil.relativedelta import MO
+from pandas.tseries.holiday import (AbstractHolidayCalendar, EasterMonday, GoodFriday, Holiday,
+                                    USFederalHolidayCalendar, nearest_workday, next_monday,
+                                    next_monday_or_tuesday, sunday_to_monday)
+from pandas.tseries.offsets import CustomBusinessDay, DateOffset
 
 
 class FedHolidayCalendar(AbstractHolidayCalendar):
@@ -22,6 +23,50 @@ class FedHolidayCalendar(AbstractHolidayCalendar):
 
 # Fed business days: the calendar FOMC effective dates and NY Fed fixings follow.
 US_BDAY = CustomBusinessDay(calendar=FedHolidayCalendar())
+
+
+def _one_off(name, day):
+    d = pd.Timestamp(day)
+    return Holiday(name, year=d.year, month=d.month, day=d.day)
+
+
+class UKHolidayCalendar(AbstractHolidayCalendar):
+    """England and Wales bank holidays: the days SONIA is not fixed and the Bank does not publish.
+
+    A New Year's Day, Christmas or Boxing Day on a weekend moves to the next
+    weekday. The early May holiday moved to Friday 8 May in 2020 (VE Day), the
+    spring holiday to 4 June 2012 and 2 June 2022 (jubilees), and five days were
+    one-offs. Checked against the SONIA fixing dates (`tests/test_gbp.py`).
+    """
+    rules = [
+        Holiday("New Year's Day", month=1, day=1, observance=next_monday),
+        GoodFriday,
+        EasterMonday,
+        Holiday("Early May", month=5, day=1, offset=DateOffset(weekday=MO(1)), end_date="2019-12-31"),
+        Holiday("Early May", month=5, day=1, offset=DateOffset(weekday=MO(1)), start_date="2021-01-01"),
+        _one_off("Early May (VE Day)", "2020-05-08"),
+        Holiday("Spring", month=5, day=31, offset=DateOffset(weekday=MO(-1)), end_date="2011-12-31"),
+        Holiday("Spring", month=5, day=31, offset=DateOffset(weekday=MO(-1)),
+                start_date="2013-01-01", end_date="2021-12-31"),
+        Holiday("Spring", month=5, day=31, offset=DateOffset(weekday=MO(-1)), start_date="2023-01-01"),
+        _one_off("Spring (Diamond Jubilee)", "2012-06-04"),
+        _one_off("Spring (Platinum Jubilee)", "2022-06-02"),
+        Holiday("Summer", month=8, day=31, offset=DateOffset(weekday=MO(-1))),
+        Holiday("Christmas Day", month=12, day=25, observance=next_monday),
+        Holiday("Boxing Day", month=12, day=26, observance=next_monday_or_tuesday),
+        _one_off("Royal Wedding", "2011-04-29"),
+        _one_off("Diamond Jubilee", "2012-06-05"),
+        _one_off("Platinum Jubilee", "2022-06-03"),
+        _one_off("State Funeral", "2022-09-19"),
+        _one_off("Coronation", "2023-05-08"),
+    ]
+
+
+# London business days: SONIA fixings, the Bank of England's curves, MPC dates.
+UK_BDAY = CustomBusinessDay(calendar=UKHolidayCalendar())
+
+# By the name a currency's config gives in ``calendar``.
+BDAYS = {"fed": US_BDAY, "uk": UK_BDAY}
 
 
 def known_daily(fixings, as_of, bday=US_BDAY):

@@ -50,8 +50,25 @@ def rates(index, month):
             "3m_ann": ((p[month] / p[month - 3 * MONTH]) ** 4 - 1) * 100}
 
 
+def published_rate(panel, as_of, spec):
+    """A 12-month inflation rate the statistics office publishes itself, as it stood on `as_of`.
+
+    For a target measure that is never revised and prints before anything
+    that could stand in for it (UK CPI), there is nothing to bridge.
+    """
+    rate = panel.series(spec["rate"], as_of).dropna()
+    if rate.empty:
+        raise ValueError(f"no {spec['rate']} published by {pd.Timestamp(as_of).date()}")
+    return {"infl_month": rate.index[-1], "infl_12m": rate.iloc[-1]}
+
+
 def inflation(panel, as_of, spec):
-    """Core PCE to the latest month core CPI has, and wages as a diagnostic."""
+    """Core PCE to the latest month core CPI has, and wages as a diagnostic.
+
+    A spec with ``rate`` instead of ``target`` reads a published 12-month rate directly (`published_rate`).
+    """
+    if "rate" in spec:
+        return published_rate(panel, as_of, spec)
     target = panel.series(spec["target"], as_of).dropna()
     if target.empty:
         raise ValueError(f"no {spec['target']} published by {pd.Timestamp(as_of).date()}")

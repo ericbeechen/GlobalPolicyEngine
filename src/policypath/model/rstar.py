@@ -25,7 +25,12 @@ def rstar(sep, as_of, spec):
     `sep` has ``date``, ``value`` (the longer-run median, percent) and
     ``published``; `spec` is the rule block. Returns ``rstar``, the SEP it came
     from (``sep_date``, NaT before the first) and that SEP's ``longer_run`` median.
+
+    A currency whose central bank publishes no longer-run rate gives
+    ``rstar: {constant: x}`` instead, and `sep` is None.
     """
+    if "constant" in spec["rstar"]:
+        return {"rstar": spec["rstar"]["constant"], "sep_date": pd.NaT, "longer_run": np.nan}
     known = sep[sep["published"] < pd.Timestamp(as_of).normalize() + DAY]
     if known.empty:
         return {"rstar": spec["rstar"]["before_first"], "sep_date": pd.NaT, "longer_run": np.nan}

@@ -67,8 +67,15 @@ def monthly_paths(sessions, meetings, tail_days=45):
     return out
 
 
-def implied_paths(sessions, meetings, effr, path, theme="light"):
-    """Monthly implied paths over realized EFFR, and the implied move by meeting horizon."""
+def implied_paths(sessions, meetings, effr, path, theme="light", market=None):
+    """Monthly implied paths over the realized overnight rate, and the implied move by meeting horizon.
+
+    `market` is the config's market block: ``label`` names the source in the
+    title, ``overnight_label`` the realized rate, ``figure_note`` adds to the subtitle.
+    """
+    market = market or {}
+    label = market.get("label", "ZQ futures")
+    rate = market.get("overnight_label", "EFFR")
     t = _style(theme)
     fig, (top, bottom) = plt.subplots(2, 1, figsize=(11, 8.2), sharex=True,
                                       gridspec_kw={"height_ratios": [2.1, 1], "hspace": 0.32})
@@ -82,7 +89,7 @@ def implied_paths(sessions, meetings, effr, path, theme="light"):
     top.step(daily.index, daily.to_numpy(), where="post", color=t["ink"], lw=2)
     top.set_ylabel("Percent")
     top.set_ylim(bottom=-0.1)
-    top.legend(handles=[Line2D([], [], color=t["ink"], lw=2, label="Realized EFFR"),
+    top.legend(handles=[Line2D([], [], color=t["ink"], lw=2, label=f"Realized {rate}"),
                         Line2D([], [], color=t["series"][0], lw=1.5,
                                label="Implied path, first session of each month (next 8 meetings)")],
                loc="upper left", fontsize=9, labelcolor=t["secondary"])
@@ -92,14 +99,14 @@ def implied_paths(sessions, meetings, effr, path, theme="light"):
     target = day + pd.DateOffset(years=1)
     priced = pd.Series(rates, index=pd.DatetimeIndex(dates)).asof(target)
     printed = realized.asof(target)
-    top.annotate(f"On {day.day} {day:%b %Y} ZQ priced {priced:.2f}% for {target:%b %Y}.\n"
-                 f"EFFR then printed {printed:.2f}%.",
+    top.annotate(f"On {day.day} {day:%b %Y} the market priced {priced:.2f}% for {target:%b %Y}.\n"
+                 f"{rate} then printed {printed:.2f}%.",
                  xy=(target, priced), xytext=(12, -2), textcoords="offset points",
                  va="center", fontsize=9, color=t["secondary"])
     top.plot([target], [priced], "o", ms=6, color=t["series"][0], mec=t["surface"], mew=2)
-    _title(top, f"The fed funds path implied by ZQ futures, {paths[0][0].year}-{paths[-1][0].year}",
+    _title(top, f"The {market.get('policy', 'policy')} path implied by {label}, {paths[0][0].year}-{paths[-1][0].year}",
            "Each blue step is one session's solved path; the heavy line is what the rate then did. "
-           "Its 2015-17 notches are real: EFFR printed 5-12bp low on the last day of most months.", t)
+           + market.get("figure_note", ""), t)
 
     grid = meetings.pivot(index="k", columns="session", values="cum_bp")
     x = mdates.date2num(grid.columns.to_numpy())
@@ -149,14 +156,17 @@ def sofr_basis(nq, root, path, theme="light"):
     plt.close(fig)
 
 
-def write_all(sessions, meetings, effr, nq, root, out_dir, ccy):
+def write_all(sessions, meetings, effr, nq, root, out_dir, ccy, market=None):
+    """The path figure, and the SOFR basis figure where there is a cross-check (`nq` not None)."""
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     written = []
     for theme in THEMES:
         p = out_dir / f"implied_paths_{ccy}_{theme}.png"
-        implied_paths(sessions, meetings, effr, p, theme)
-        q = out_dir / f"sofr_basis_{ccy}_{theme}.png"
-        sofr_basis(nq, root, q, theme)
-        written += [p, q]
+        implied_paths(sessions, meetings, effr, p, theme, market)
+        written.append(p)
+        if nq is not None:
+            q = out_dir / f"sofr_basis_{ccy}_{theme}.png"
+            sofr_basis(nq, root, q, theme)
+            written.append(q)
     return written

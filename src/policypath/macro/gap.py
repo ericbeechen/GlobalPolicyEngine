@@ -12,11 +12,15 @@ def unemployment_gap(panel, as_of, spec):
 
     u* is the natural rate for that month's quarter, from the same vintage.
     Raises rather than carrying u* forward if the vintage has no value there.
+    Where no vintaged estimate exists, ``natural_rate: {constant: x}`` fixes it.
     """
     u = panel.series(spec["unemployment"], as_of).dropna()
     if u.empty:
         raise ValueError(f"no {spec['unemployment']} published by {pd.Timestamp(as_of).date()}")
     month = u.index[-1]
+    if isinstance(spec["natural_rate"], dict):
+        star = spec["natural_rate"]["constant"]
+        return {"gap_month": month, "u": u.iloc[-1], "u_star": star, "u_gap": u.iloc[-1] - star}
     quarter = month.to_period("Q").start_time
     star = panel.series(spec["natural_rate"], as_of)
     if pd.isna(star.get(quarter)):

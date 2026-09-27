@@ -15,14 +15,10 @@ import pandas as pd
 from matplotlib.lines import Line2D
 from policypath.report.figures import THEMES, _style, _title
 
-# Moments the gap should mark, and where to look for the extreme near each.
-MOMENTS = [
-    ("2015-03-01", "2015-09-30", "Liftoff waits"),
-    ("2019-06-01", "2019-10-31", "2019 cuts"),
-    ("2021-10-01", "2022-03-31", "Rule up, Fed waits"),
-    ("2023-10-01", "2024-01-31", "Pivot debate"),
-    ("2024-07-01", "2024-09-30", "Cuts repriced"),
-]
+# The words a chart uses for a currency (config ``report.labels``); these are USD's.
+LABELS = {"market": "ZQ", "rate": "EFFR", "rule": "Fed's own rule", "policy": "fed funds",
+          "meetings": "FOMC", "bank": "the Fed"}
+
 
 
 def _dates(ax):
@@ -31,8 +27,9 @@ def _dates(ax):
     ax.tick_params(axis="both", length=0)
 
 
-def paths_now(ax, today, effr, t, lead_days=150, tail_days=40):
-    """Market and model step paths as of one session, after realized EFFR."""
+def paths_now(ax, today, effr, t, lead_days=150, tail_days=40, labels=None):
+    """Market and model step paths as of one session, after the realized overnight rate."""
+    w = {**LABELS, **(labels or {})}
     day = today["session"]
     m = today["meetings"]
     realized = effr.set_index("date")["value"]
@@ -47,30 +44,37 @@ def paths_now(ax, today, effr, t, lead_days=150, tail_days=40):
     ax.step(dates, market, where="post", color=t["series"][0], lw=2)
     ax.step(dates, model, where="post", color=t["series"][1], lw=2)
     ax.axvline(day, color=t["axis"], lw=1)
-    for label, series, color in [("Market (ZQ)", market, t["series"][0]),
-                                 ("Fed's own rule", model, t["series"][1])]:
+    for label, series, color in [(f"Market ({w['market']})", market, t["series"][0]),
+                                 (w["rule"], model, t["series"][1])]:
         ax.annotate(label, xy=(end, series[-1]), xytext=(6, 0), textcoords="offset points",
                     va="center", fontsize=9, color=t["secondary"])
     for k in (4, 8):
         row = m[m["k"] == k].iloc[0]
         x = row["effective_date"] + (m["effective_date"].iloc[k] - row["effective_date"]) / 2 \
             if k < len(m) else row["effective_date"] + pd.Timedelta(days=tail_days / 2)
-        lo = min(row["market"], row["model"])
-        ax.annotate(f"{row['gap_bp']:+.0f}bp", xy=(x, lo), xytext=(0, -10), textcoords="offset points",
-                    ha="center", va="top", fontsize=9, color=t["secondary"])
+        # A wide gap is labelled between the two paths, a narrow one just under them.
+        if abs(row["gap_bp"]) > 30:
+            xy, offset, va = (x, (row["market"] + row["model"]) / 2), (0, 0), "center"
+        else:
+            xy, offset, va = (x, min(row["market"], row["model"])), (0, -10), "top"
+        ax.annotate(f"{row['gap_bp']:+.0f}bp", xy=xy, xytext=offset, textcoords="offset points",
+                    ha="center", va=va, fontsize=9, color=t["secondary"])
     ax.set_ylabel("Percent")
     ax.xaxis.set_major_locator(mdates.MonthLocator(bymonth=[1, 4, 7, 10]))
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%b %Y"))
     ax.tick_params(axis="both", length=0)
-    ax.legend(handles=[Line2D([], [], color=t["ink"], lw=2, label="Realized EFFR"),
-                       Line2D([], [], color=t["series"][0], lw=2, label="Market: ZQ-implied path"),
+    ax.legend(handles=[Line2D([], [], color=t["ink"], lw=2, label=f"Realized {w['rate']}"),
+                       Line2D([], [], color=t["series"][0], lw=2, label=f"Market: {w['market']}-implied path"),
                        Line2D([], [], color=t["series"][1], lw=2,
                               label="Model: balanced-approach rule, inertial, macro held flat")],
               loc="upper left", fontsize=9, labelcolor=t["secondary"])
 
 
-def gap_history(ax, signal, k, t):
-    """The gap at horizon k in bp, with the trailing mean +- 1 sd its z is measured against."""
+def gap_history(ax, signal, k, t, moments=()):
+    """The gap at horizon k in bp, with the trailing mean +- 1 sd its z is measured against.
+
+    `moments` are (from, to, label): each is marked where the gap is widest inside it.
+    """
     s = signal[signal["k"] == k].set_index("session").sort_index()
     s = s[s["gap_bp"].notna()]
     ax.axhline(0, color=t["axis"], lw=1)
@@ -82,12 +86,13 @@ def gap_history(ax, signal, k, t):
     # Labels sit in two rows under the data, each tied to its point by a leader,
     # so none of them lands on the line.
     low = min(s["gap_bp"].min(), (s["window_mean_bp"] - s["window_sd_bp"]).min())
-    rows = [low - 30, low - 55]
-    for i, (lo, hi, label) in enumerate(MOMENTS):
+    rows = [low - 30, low - 55]   # label rows, below everything
+    for i, (lo, hi, label) in enumerate(moments):
         w = s.loc[lo:hi, "gap_bp"]
         if w.empty:
             continue
-        at, y = w.idxmin(), w.min()
+        at = w.abs().idxmax()
+        y = w[at]
         row = rows[i % 2]
         ax.plot([at, at], [y - 6, row + 11], color=t["muted"], lw=0.8)
         ax.plot([at], [y], "o", ms=5, color=t["series"][0], mec=t["surface"], mew=1.5, zorder=3)
@@ -101,7 +106,7 @@ def gap_history(ax, signal, k, t):
     _dates(ax)
 
 
-def ship(today, effr, signal, k, path=None, theme="light", axes=None):
+def ship(today, effr, signal, k, path=None, theme="light", axes=None, moments=(), labels=None):
     """The one figure: paths as of today on top, the gap's history underneath."""
     t = _style(theme)
     if axes is None:
@@ -109,12 +114,13 @@ def ship(today, effr, signal, k, path=None, theme="light", axes=None):
                                           gridspec_kw={"height_ratios": [1.35, 1], "hspace": 0.42})
     else:
         fig, (top, bottom) = axes[0].figure, axes
-    paths_now(top, today, effr, t)
+    w = {**LABELS, **(labels or {})}
+    paths_now(top, today, effr, t, labels=w)
     day = today["session"]
-    _title(top, f"The fed funds path: market against the Fed's own rule, {day:%d %B %Y}",
-           f"Next {len(today['meetings'])} FOMC meetings. The rule uses only data public on the day, "
+    _title(top, f"The {w['policy']} path: market against {w['rule'][0].lower() + w['rule'][1:]}, {day:%d %B %Y}",
+           f"Next {len(today['meetings'])} {w['meetings']} meetings. The rule uses only data public on the day, "
            "and holds today's inflation, unemployment gap and r* flat.", t)
-    gap_history(bottom, signal, k, t)
+    gap_history(bottom, signal, k, t, moments)
     first = signal.loc[signal["gap_bp"].notna(), "session"].min()
     _title(bottom, f"The gap at the {k}th meeting ahead, {first:%Y}-{day:%Y}",
            "Negative: the market prices less tightening than the rule. The z is the gap against its band.", t)
@@ -145,13 +151,13 @@ def equity(result, summary, k, path, theme="light"):
     plt.close(fig)
 
 
-def write_all(today, effr, signal, result, summary, k, out_dir, ccy):
+def write_all(today, effr, signal, result, summary, k, out_dir, ccy, moments=(), labels=None):
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     written = []
     for theme in THEMES:
         p = out_dir / f"model_vs_market_{ccy}_{theme}.png"
-        ship(today, effr, signal, k, p, theme)
+        ship(today, effr, signal, k, p, theme, moments=moments, labels=labels)
         q = out_dir / f"backtest_{ccy}_{theme}.png"
         equity(result, summary, k, q, theme)
         written += [p, q]

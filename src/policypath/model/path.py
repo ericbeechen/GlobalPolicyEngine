@@ -13,7 +13,7 @@ between them, held flat like the macro inputs.
 import numpy as np
 import pandas as pd
 from policypath import config
-from policypath.model.reaction import floor_at_elb, inertial_path, notional
+from policypath.model.reaction import floor_at_elb, inertial_path, lower_bound, notional
 from policypath.model.rstar import rstar
 from policypath.sources import cache
 
@@ -35,12 +35,17 @@ def target_range(lower, upper):
 
 
 def inputs(ccy, root=cache.CACHE_DIR):
-    """The rule's non-macro inputs from the cache, as full vintage logs."""
+    """The rule's non-macro inputs from the cache, as full vintage logs.
+
+    A policy rate with one value rather than a range (Bank Rate) lists the same
+    series as both bounds. ``sep`` is None where r* is a constant.
+    """
     cfg = config.currency(ccy)
     rule = cfg["rule"]
-    lower, upper = (cache.log("fred", s, ccy, root) for s in rule["target_range"])
-    return {"sep": cache.log("fred", rule["rstar"]["series"], ccy, root),
-            "target": target_range(lower, upper),
+    source, (lo, hi) = rule["target_range"]["source"], rule["target_range"]["series"]
+    rs = rule["rstar"]
+    return {"sep": None if "constant" in rs else cache.log(rs["source"], rs["series"], ccy, root),
+            "target": target_range(cache.log(source, lo, ccy, root), cache.log(source, hi, ccy, root)),
             "fixings": cache.log(cfg["overnight"]["source"], cfg["overnight"]["series"], ccy, root)}
 
 
@@ -53,13 +58,20 @@ def policy_rate(target, as_of):
     return t.iloc[-1], t.index[-1]
 
 
-def operating_spread(fixings, target, as_of, n):
-    """EFFR minus the midpoint, median over the last `n` fixings published by `as_of`.
+def operating_spread(fixings, target, as_of, n, breaks=()):
+    """The overnight rate minus the policy rate, median over the last `n` fixings published by `as_of`.
 
     A median, since one fixing is not a level: in 2015-17 EFFR printed 5-12bp
-    low on most month ends.
+    low on most month ends. `breaks` are dates the overnight rate's definition
+    changed (SONIA's reform, 2018-04-23): fixings from before the latest break on
+    or before `as_of` are not used, so the spread is estimated either side of it.
+    Until the first fixing after a break is published, the estimate from before it stands.
     """
-    f = known(fixings, as_of)["value"].tail(n)
+    f = known(fixings, as_of)["value"]
+    passed = [pd.Timestamp(b) for b in breaks if pd.Timestamp(b) <= pd.Timestamp(as_of)]
+    if passed and (f.index >= max(passed)).any():
+        f = f[f.index >= max(passed)]
+    f = f.tail(n)
     mid = known(target, as_of)["value"].reindex(f.index)
     spread = (f - mid).dropna()
     if spread.empty:
@@ -83,15 +95,16 @@ def model_path(as_of, effective_dates, macro, sep, target, fixings, spec):
     # "if the macro picture does not change, where does the rule take policy?".
     pi, gap = macro[spec["inflation"]], macro[spec["gap"]]
     unconstrained = notional(pi, gap, r["rstar"], spec)
-    goal = floor_at_elb(unconstrained, spec)
+    elb = lower_bound(spec, as_of)
+    goal = floor_at_elb(unconstrained, elb)
     r0, r0_date = policy_rate(target, as_of)
-    spread = operating_spread(fixings, target, as_of, spec["spread_fixings"])
+    spread = operating_spread(fixings, target, as_of, spec["spread_fixings"], spec.get("spread_breaks", ()))
     dates = pd.DatetimeIndex(effective_dates)
-    mid = inertial_path(r0, goal, len(dates), spec)
+    mid = inertial_path(r0, goal, len(dates), spec, as_of)
     frame = pd.DataFrame({"k": np.arange(1, len(dates) + 1), "effective_date": dates,
                           "model": mid + spread, "model_mid": mid})
     summary = {"macro_as_of": pd.Timestamp(macro["as_of"]), "inflation": pi, "u_gap": gap, **r,
-               "notional": unconstrained, "at_elb": unconstrained < spec["elb"], "goal": goal,
+               "notional": unconstrained, "at_elb": unconstrained < elb, "elb": elb, "goal": goal,
                "r0": r0, "r0_date": r0_date, "spread_bp": spread * 100.0,
                "macro_published": pd.Timestamp(macro["published"])}
     return summary, frame
