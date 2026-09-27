@@ -1,0 +1,34 @@
+"""r*: what the committee itself says the neutral real rate is, as it stood on a date.
+
+The FOMC's median longer-run federal funds rate from each Summary of Economic
+Projections, less the 2% target. Each SEP is a dated document published with
+the statement and never revised, so it is real-time by construction: step-fill
+from one release to the next. The model is of the committee's reaction
+function, so what it believes neutral to be is the relevant number, not an
+estimate of true neutral (HLW is a week 9 robustness check).
+
+Before the first dot (2012-01-25) there is no committee number, and Taylor
+(1993)'s 2% stands in: fixed in 1993, so it carries no look-ahead. FRED rounds
+the median to one decimal, as the Fed's own tables have since 2015-09 (2.875 is
+2.9), so r* can be off by up to 5bp. See notes/decisions.md (2026-09-27).
+"""
+
+import numpy as np
+import pandas as pd
+
+DAY = pd.Timedelta(days=1)
+
+
+def rstar(sep, as_of, spec):
+    """r* in percent at the end of `as_of`.
+
+    `sep` has ``date``, ``value`` (the longer-run median, percent) and
+    ``published``; `spec` is the rule block. Returns ``rstar``, the SEP it came
+    from (``sep_date``, NaT before the first) and that SEP's ``longer_run`` median.
+    """
+    known = sep[sep["published"] < pd.Timestamp(as_of).normalize() + DAY]
+    if known.empty:
+        return {"rstar": spec["rstar"]["before_first"], "sep_date": pd.NaT, "longer_run": np.nan}
+    last = known.sort_values(["date", "published"]).iloc[-1]
+    return {"rstar": last["value"] - spec["inflation_target"], "sep_date": last["date"],
+            "longer_run": last["value"]}
