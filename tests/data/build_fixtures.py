@@ -9,7 +9,8 @@ Everything it writes is small enough to read in a diff.
 
 Outputs, all in this directory:
   effr.csv              EFFR and prevailing target range from FRED, one row per
-                        fixing, with the day the fixing was published.
+                        fixing, with the day the fixing was published. The range
+                        is the one in force on `date`, public that same day.
   zq_expiry_settles.csv One row per expired ZQ contract: its settle on its own
                         expiry session, which must equal 100 - the realized
                         average EFFR for the contract month.
@@ -19,6 +20,8 @@ Outputs, all in this directory:
   sr3_strip_<date>.csv  The SR3 strip on the same sessions, for the curve tests, where
                         the archive has SR3 (2020-12-31 on).
   sofr.csv              SOFR from FRED, one row per fixing, with its publication day.
+  sep.csv               The FOMC SEP median longer-run funds rate (FEDTARMDLR), one row
+                        per SEP, published on its release day.
 """
 
 import pandas as pd
@@ -119,6 +122,15 @@ def build_sofr():
     return s
 
 
+def build_sep():
+    rule = config.currency("USD")["rule"]
+    lag = config.currency("USD")["fred_lags"][rule["rstar"]["series"]]
+    s = fred.observations(rule["rstar"]["series"], START, END, lag_bdays=lag)
+    s = s.assign(date=s["date"].dt.date, published=s["published"].dt.date)
+    s[["date", "value", "published"]].to_csv(HERE / "sep.csv", index=False)
+    return s
+
+
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description="Regenerate the committed test fixtures.")
@@ -127,6 +139,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     print(build_effr().tail(3).to_string(index=False))
     print(build_sofr().tail(3).to_string(index=False))
+    print(build_sep().tail(3).to_string(index=False))
     for series in ["ZQ", "SR1"]:
         print(build_expiry_settles(series).tail(3).to_string(index=False))
     if not args.market_only:

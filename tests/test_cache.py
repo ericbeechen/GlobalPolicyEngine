@@ -109,3 +109,27 @@ def test_update_is_incremental_and_rerunning_adds_nothing(tmp_path):
 
     assert src.update("X", "USD", "2024-03-01", "2024-03-31", rooted) == 0
     assert src.calls[1:] == [(T("2024-03-30"), T("2024-03-31"))]
+
+
+def test_dropping_a_key_forgets_its_log_and_its_coverage(tmp_path):
+    df = obs([("2024-03-01", 5.33, "2024-03-04")])
+    cache.append(df, "fred", "DFEDTARU", "USD", root=tmp_path)
+    cache.mark_fetched("fred", "DFEDTARU", "USD", T("2024-03-01"), T("2024-03-01"), root=tmp_path)
+    cache.append(df, "fred", "EFFR", "USD", root=tmp_path)
+    assert cache.drop("fred", "DFEDTARU", "USD", root=tmp_path)
+    with pytest.raises(FileNotFoundError):
+        cache.log("fred", "DFEDTARU", "USD", root=tmp_path)
+    assert cache.fetched("fred", "DFEDTARU", "USD", root=tmp_path) == []
+    assert len(cache.log("fred", "EFFR", "USD", root=tmp_path)) == 1     # nothing else touched
+    assert not cache.drop("fred", "DFEDTARU", "USD", root=tmp_path)
+
+
+def test_a_same_day_series_is_never_published_before_its_date(monkeypatch):
+    """With no lag, a weekend's target range is public on the weekend day, not the Friday before."""
+    from policypath.sources import fred
+    rows = [{"date": d, "value": "5.50"} for d in ["2024-09-13", "2024-09-14", "2024-09-15", "2024-09-16"]]
+    monkeypatch.setattr(fred, "_fetch", lambda *a, **k: rows)
+    same_day = fred.observations("DFEDTARU", lag_bdays=0)
+    assert (same_day["published"] == same_day["date"]).all()
+    next_day = fred.observations("DFEDTARU", lag_bdays=1)
+    assert next_day["published"].tolist() == list(pd.to_datetime(["2024-09-16"] * 3 + ["2024-09-17"]))

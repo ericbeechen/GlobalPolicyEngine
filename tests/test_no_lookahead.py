@@ -1,4 +1,4 @@
-"""Appending future data must leave the path at date D unchanged.
+"""Appending future data must leave everything at date D unchanged.
 
 The publication boundary is the easiest place to leak: on session t the market
 knew fixings through t - 1 only, and a settle is only as final as the vintage
@@ -7,19 +7,19 @@ see, poisons it, and checks nothing moves.
 """
 
 from pathlib import Path
+import numpy as np
 import pandas as pd
 import pytest
 from policypath import config, panel
+from policypath.backtest import engine, instrument
 from policypath.calendars import known_meetings
+from policypath.macro.nowcast import nowcast
+from policypath.macro.vintage import VintagePanel
+from policypath.model import path as model
+from policypath.signal import gap as gap_signal
 
 DATA = Path(__file__).parent / "data"
 SESSIONS = ["2022-06-13", "2023-06-13", "2024-09-17", "2026-09-21"]
-
-
-@pytest.fixture(scope="module")
-def fixings():
-    e = pd.read_csv(DATA / "effr.csv", parse_dates=["date", "published"])
-    return e.rename(columns={"effr": "value"})[["date", "value", "published"]]
 
 
 @pytest.fixture(scope="module")
@@ -93,3 +93,73 @@ def test_an_unscheduled_meeting_announced_later_is_invisible(fixings, meetings):
     known = solve(day, fixings, poisoned.assign(announcement_date=poisoned["announcement_date"].where(
         poisoned["scheduled"], day)))
     assert pd.Timestamp("2024-10-11") in set(known.meetings["effective_date"])
+
+
+# ---- the whole pipeline: market path, nowcast, r*, model path, gap, z, P&L ----------
+
+# Every committed strip session the ALFRED fixtures reach (they start in 2018).
+PIPELINE_SESSIONS = ["2022-06-01", "2022-06-13", "2023-06-13", "2024-09-17", "2026-09-21"]
+MACRO = config.currency("USD")["macro"]
+MACRO_SPEC = {**MACRO, "activity": {**MACRO["activity"], "moments_start": "2018-04-01"},
+              "inflation": {**MACRO["inflation"], "bridge_window": 24}}
+# The spread over one fixing, not a median of 20: one leaked fixing cannot move a median.
+RULE = {**config.currency("USD")["rule"], "spread_fixings": 1}
+# Five sessions make a short history: a window that spans them, and a z from the second on.
+SIGNAL = {**config.currency("USD")["signal"], "window": "1600D", "min_periods": 1}
+
+
+def pipeline(days, fixings, target, sep, vintages, meetings):
+    """Every stage, end to end, on the fixture sessions `days`, from the inputs given."""
+    spec = config.currency("USD")["path"]
+    summaries, frames, rows = [], [], []
+    for day in map(pd.Timestamp, days):
+        s = panel.solve_session(day, strip(day), meetings, fixings, spec["n_meetings"],
+                                spec["min_forward_days"], spec["min_regime_days"])
+        summaries.append({"session": day, "error": None, **s.summary})
+        frames.append(s.meetings.assign(session=day))
+        rows.append(nowcast(day, panel=vintages, spec=MACRO_SPEC))
+    sessions, market = pd.DataFrame(summaries), pd.concat(frames, ignore_index=True)
+    model_summary, paths = model.build(sessions, market, pd.DataFrame(rows), sep, target, fixings, RULE)
+    signal = gap_signal.build(paths, SIGNAL)
+    z = signal[signal["k"] == 2].set_index("session")["z"]
+    pnl = engine.run(z, instrument.held_rate_change(sessions, market, 2), lag=0)
+    return {"model_summary": model_summary.set_index("session"), "paths": paths.set_index(["session", "k"]),
+            "signal": signal.set_index(["session", "k"]), "pnl": pnl}
+
+
+def through(result, day):
+    return {name: frame.loc[frame.index.get_level_values(0) <= day] for name, frame in result.items()}
+
+
+@pytest.mark.parametrize("day", ["2023-06-13", "2024-09-17"])
+def test_the_whole_pipeline_at_d_ignores_everything_after_d(day, fixings, target, sep, raw, meetings):
+    """Truncate every input at D and run end to end; then append everything after D, then poison it.
+
+    The output for every session up to D must not move. This is what covers the
+    SEP step-fill (a later dot must not reach back) and hold-flat conditioning
+    (a later print must not reach the path at D).
+    """
+    day = pd.Timestamp(day)
+    projections = MACRO["projections"]
+    by_published = lambda f: f[f["published"] <= day]
+    poison = lambda f: f.assign(value=f["value"].mask(f["published"] > day, 99.0))
+    full = VintagePanel(raw, projections)
+    # Later vintages scaled at random, row by row: a constant would flatten every
+    # growth rate after D and break the fits the later sessions run.
+    later = raw["realtime_start"] > day
+    noise = np.random.default_rng(0).uniform(1.5, 3.0, len(raw))
+    dirty = VintagePanel(raw.assign(value=raw["value"].where(~later, raw["value"] * noise)), projections)
+    early = [d for d in PIPELINE_SESSIONS if pd.Timestamp(d) <= day]
+    assert len(early) >= 3 and len(early) < len(PIPELINE_SESSIONS)
+
+    want = pipeline(early, by_published(fixings), by_published(target), by_published(sep),
+                    full.truncate(day), known_meetings(meetings, day))
+    appended = through(pipeline(PIPELINE_SESSIONS, fixings, target, sep, full, meetings), day)
+    poisoned = through(pipeline(PIPELINE_SESSIONS, poison(fixings), poison(target), poison(sep), dirty,
+                                meetings), day)
+    for got in (appended, poisoned):
+        for name in want:
+            pd.testing.assert_frame_equal(got[name], want[name], check_dtype=False, obj=name)
+    # the stages really ran: a z exists at D, and the rule's inputs are D's
+    assert want["signal"].loc[(day, 2), "z"] == want["signal"].loc[(day, 2), "z"]
+    assert want["model_summary"].loc[day, "macro_as_of"] == day
