@@ -1,10 +1,13 @@
-"""Nowcast every Fed business day from the macro start to today, and report.
+"""Nowcast every business day from the macro start to today, and report.
 
 Reads only the cache (run scripts/update_data.py --macro-only first). Writes
 the panel to data/panel/<ccy>_macro.parquet, reports/nowcast_<ccy>.md and its
-figures, and prints the headline.
+figures, and prints the headline. Which report is written is the config's
+``macro.report``: the US one (the PCE bridge, activity against GDPNow) or the
+UK one (the LFS against the claimant count and PAYE).
 
     uv run python scripts/build_nowcast.py
+    uv run python scripts/build_nowcast.py --ccy GBP
 """
 
 import argparse
@@ -13,9 +16,11 @@ import pandas as pd
 from policypath import config
 from policypath.macro import nowcast
 from policypath.macro.vintage import VintagePanel
-from policypath.report import nowcast as report
+from policypath.report import labour
+from policypath.report import nowcast as us
 
 ROOT = Path(__file__).resolve().parents[1]
+REPORTS = {"nowcast": us, "labour": labour}
 
 parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
 parser.add_argument("--ccy", default="USD")
@@ -30,13 +35,6 @@ out = ROOT / "data" / "panel"
 out.mkdir(parents=True, exist_ok=True)
 frame.to_parquet(out / f"{args.ccy}_macro.parquet", index=False)
 
-headline, tables, gap = report.checks(frame, panel, spec, end)
-reports = ROOT / "reports"
-(reports / f"nowcast_{args.ccy}.md").write_text(report.markdown(args.ccy, headline, tables))
-drawn = report.write_figures(gap, reports / "figures", args.ccy)
-
-print(f"{headline['fed_business_days']} days, {headline['first']:%Y-%m-%d} .. {headline['last']:%Y-%m-%d}")
-print(f"n_bridged: {headline['n_bridged']}   activity_n: {headline['activity_n']}")
-for title in list(tables)[:2] + list(tables)[-1:]:
-    print(f"\n{title}\n{tables[title].round(3).to_string(index=False)}")
-print(f"\nwrote {out / f'{args.ccy}_macro.parquet'}, {reports / f'nowcast_{args.ccy}.md'} and {len(drawn)} figures")
+for line in REPORTS[spec.get("report", "nowcast")].write(args.ccy, frame, panel, spec, end, ROOT / "reports"):
+    print(line)
+print(f"wrote {out / f'{args.ccy}_macro.parquet'}")

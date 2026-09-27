@@ -24,6 +24,8 @@ parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
 parser.add_argument("--ccy", default="USD")
 parser.add_argument("--author", default=None, help="name for the one-pager's byline")
 parser.add_argument("--preview", default=None, help="also render the one-pager to this PNG")
+parser.add_argument("--onepager", action="store_true",
+                    help="also write the week 4 one-page note (USD prose); the weekly brief is scripts/build_brief.py")
 args = parser.parse_args()
 cfg = config.currency(args.ccy)
 
@@ -42,12 +44,14 @@ signal.to_parquet(out / f"{args.ccy}_signal.parquet", index=False)
 result.reset_index(names="session").to_parquet(out / f"{args.ccy}_backtest.parquet", index=False)
 
 reports = ROOT / "reports"
-(reports / f"model_{args.ccy}.md").write_text(report.markdown(args.ccy, headline, tables, today))
+(reports / f"model_{args.ccy}.md").write_text(report.markdown(args.ccy, headline, tables, today, cfg))
 effr = inputs["fixings"]
 k = cfg["backtest"]["horizon"]
-drawn = charts.write_all(today, effr, signal, result, headline["backtest"], k, reports / "figures", args.ccy)
-page = onepager.write(today, effr, signal, result, headline, reports, args.ccy, author=args.author,
-                      preview=args.preview)
+moments, labels = [tuple(m) for m in cfg["report"]["chart_moments"]], cfg["report"]["labels"]
+drawn = charts.write_all(today, effr, signal, result, headline["backtest"], k, reports / "figures", args.ccy,
+                         moments, labels)
+page = (onepager.write(today, effr, signal, result, headline, reports, args.ccy, author=args.author,
+                       preview=args.preview, moments=moments, labels=labels) if args.onepager else None)
 
 b = headline["backtest"]
 print(f"{headline['model_sessions']} sessions with a model path, "
