@@ -13,6 +13,7 @@ from policypath.macro.activity import activity, history, inputs
 from policypath.macro.gap import unemployment_gap
 from policypath.macro.inflation import bridge, bridge_backtest, inflation
 from policypath.macro.nowcast import build, nowcast
+from policypath.macro.nowcast import inputs as nowcast_inputs
 from policypath.macro.vintage import VintagePanel
 
 T = pd.Timestamp
@@ -232,3 +233,23 @@ def test_build_gives_one_row_per_fed_business_day(panel):
     days = pd.date_range("2024-01-10", "2024-01-26", freq=US_BDAY)
     assert T("2024-01-15") not in days            # Martin Luther King Jr. Day
     assert frame["as_of"].tolist() == list(days)
+
+
+def test_build_reuses_a_day_only_when_no_input_changed_and_matches_day_by_day(panel):
+    """`build` copies the day before's row when no input has a new vintage; that must be what recomputing gives."""
+    start, end = "2023-12-01", "2024-03-29"
+    frame = build("USD", start, end, panel, SPEC)
+    fresh = pd.DataFrame([nowcast(d, panel=panel, spec=SPEC) for d in pd.date_range(start, end, freq=US_BDAY)])
+    pd.testing.assert_frame_equal(frame, fresh, check_exact=True)
+    names = nowcast_inputs(SPEC)
+    keys = [panel.version(d, names) for d in frame["as_of"]]
+    reused = sum(a == b for a, b in zip(keys, keys[1:]))
+    assert 0 < reused < len(keys) - 1, "the window should have release days and quiet days"
+
+
+def test_every_series_the_nowcast_reads_is_in_its_inputs(panel, monkeypatch):
+    read = set()
+    series = VintagePanel.series
+    monkeypatch.setattr(VintagePanel, "series", lambda self, name, as_of: read.add(name) or series(self, name, as_of))
+    nowcast("2024-01-20", panel=panel, spec=SPEC)
+    assert read <= set(nowcast_inputs(SPEC))

@@ -1,0 +1,40 @@
+# The committed fixtures laid out as a cache (policypath/fixtures.py), per currency, so the
+# whole chain runs on them through the same entry points the build scripts use. What the
+# regression harness freezes in its fixtures tier and what tests/test_no_lookahead.py
+# truncates and poisons. Adding a currency's fixtures is a block here, not a new test.
+
+USD:
+  # Every committed strip session the ALFRED fixtures reach (they start in 2018).
+  sessions: ["2022-06-01", "2022-06-13", "2023-06-13", "2024-09-17", "2026-09-21"]
+  # Monthly-strip files: month, symbol, price. Laid out as the settle log, received 16:00 on the session.
+  strips: {source: databento, series: ZQ, file: "zq_strip_{session}.csv"}
+  # Daily logs: date, value, published. `value` and `published` name the columns to take them from.
+  logs:
+    - {source: fred, series: EFFR, file: effr.csv, value: effr}
+    - {source: fred, series: DFEDTARL, file: effr.csv, value: target_low, published: date}
+    - {source: fred, series: DFEDTARU, file: effr.csv, value: target_high, published: date}
+    - {source: fred, series: FEDTARMDLR, file: sep.csv}
+  # Real-time vintages, one file per series: date, value, realtime_start, realtime_end.
+  vintages: {source: alfred, dir: alfred}
+  # The fixtures are short: windows that fit them, so every stage runs on every session.
+  overrides:
+    macro: {activity: {moments_start: "2018-04-01"}, inflation: {bridge_window: 24}}
+    # The spread over one fixing, not a median of 20: one leaked fixing cannot move a median.
+    rule: {spread_fixings: 1}
+    # Five sessions make a short history: a window that spans them, and a z from the second on.
+    signal: {window: 1600D, min_periods: 1}
+  # The days test_no_lookahead truncates at: at least three sessions on or before each, and one after.
+  lookahead: ["2023-06-13", "2024-09-17"]
+
+GBP:
+  sessions: ["2021-11-05", "2022-03-01", "2022-09-27", "2023-06-23", "2024-08-02", "2025-06-02", "2026-09-24"]
+  logs:
+    - {source: boe, series: OIS_SPOT, file: boe/curve.csv, keys: [date, tenor]}
+    - {source: boe, series: IUDSOIA, file: boe/sonia.csv}
+    - {source: boe, series: IUDBEDR, file: boe/bank_rate.csv}
+  vintages: {source: ons, dir: ons}
+  overrides:
+    rule: {spread_fixings: 1}
+    signal: {window: 1600D, min_periods: 1}
+  # A Tuesday and a Friday: a leak of one day is invisible on a Friday, when nothing is published on the Saturday.
+  lookahead: ["2022-09-27", "2024-08-02"]

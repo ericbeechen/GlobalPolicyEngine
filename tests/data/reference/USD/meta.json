@@ -1,0 +1,16 @@
+{
+  "end": "2026-09-21",
+  "commit": "8c7545b-dirty",
+  "frozen": "2026-09-28T15:35:13",
+  "rows": {
+    "sessions": 5,
+    "meetings": 40,
+    "macro": 5,
+    "model": 5,
+    "paths": 40,
+    "signal": 40,
+    "backtest": 32
+  },
+  "tier": "fixtures",
+  "seconds": 0.3
+}

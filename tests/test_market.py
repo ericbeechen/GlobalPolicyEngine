@@ -36,7 +36,8 @@ def root(tmp_path_factory, fixings, curve, sonia, bank_rate):
             "published": T(day) + pd.Timedelta(hours=19),
             "expiration": pd.PeriodIndex(s["month"], freq="M").end_time.normalize(),
         })
-        cache.append(rows, "databento", usd["policy_futures"], "USD", keys=("date", "contract"), root=root,
+        futures = usd["market"]["futures"]
+        cache.append(rows, futures["source"], futures["series"], "USD", keys=("date", "contract"), root=root,
                      dated=True)
     cache.append(fixings, usd["overnight"]["source"], usd["overnight"]["series"], "USD", root=root)
     curve_spec = gbp["market"]["curve"]
@@ -65,15 +66,15 @@ def test_each_matches_its_backend_solved_directly(root, fixings, curve, sonia, b
     strip = pd.Series(s["implied_rate"].to_numpy(), index=pd.PeriodIndex(s["month"], freq="M"))
     spec = usd_cfg["path"]
     direct = market.solve_session("2024-09-17", strip, config.meetings("USD"), fixings, spec["n_meetings"],
-                                  spec["min_forward_days"], spec["min_regime_days"], US_BDAY)
+                                  US_BDAY, spec["min_forward_days"], spec["min_regime_days"])
     got = market.path("2024-09-17", "USD", root)
     assert got.meetings["rate"].to_numpy() == pytest.approx(direct.meetings["rate"].to_numpy(), abs=1e-9)
 
     spot = curve[curve["date"] == T("2024-08-02")].set_index("tenor")["value"].sort_index()
     g = gbp_cfg["path"]
-    direct = market.solve_curve("2024-08-02", spot, config.meetings("GBP"), sonia, g["n_meetings"],
-                                g["min_regime_days"], UK_BDAY, policy=bank_rate,
-                                pin_always=gbp_cfg["market"]["pin_first_regime"])
+    direct = market.solve_curve("2024-08-02", spot, config.meetings("GBP"), sonia, g["n_meetings"], UK_BDAY,
+                                gbp_cfg["market"]["curve"]["year_days"], g["tail_days"], g["min_regime_days"],
+                                policy=bank_rate, pin_always=gbp_cfg["market"]["pin_first_regime"])
     got = market.path("2024-08-02", "GBP", root)
     pd.testing.assert_frame_equal(got.meetings, direct.meetings)
 

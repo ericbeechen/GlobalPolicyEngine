@@ -39,6 +39,15 @@ def test_preliminary_and_final_settles_are_both_kept(tmp_path):
     assert cache.read("databento", "ZQ", "USD", "2024-03-01", root=tmp_path)["value"].item() == 94.675
 
 
+def test_a_view_at_the_end_of_a_day_sees_that_day_and_not_the_next_morning():
+    """`view` is the first of two filters on every fixing the market path reads (`calendars.known_daily` is
+    the second), so a one-day slip in either alone moves no output: each is pinned by its own test."""
+    log = obs([("2024-03-01", 5.31, "2024-03-01 23:59"), ("2024-03-04", 5.32, "2024-03-05 00:00"),
+               ("2024-03-05", 5.33, "2024-03-05 08:00")]).assign(retrieved=T("2024-03-06"))
+    assert cache.view(log, "2024-03-04")["date"].tolist() == [T("2024-03-01")]
+    assert cache.view(log, "2024-03-05")["date"].tolist() == [T("2024-03-01"), T("2024-03-04"), T("2024-03-05")]
+
+
 def test_an_undated_revision_is_known_only_from_when_we_saw_it(tmp_path):
     """FRED reports a revised value with the original publication date."""
     cache.append(obs([("2024-03-01", 5.33, "2024-03-04")]), "fred", "SOFR", "USD", root=tmp_path)
@@ -133,3 +142,30 @@ def test_a_same_day_series_is_never_published_before_its_date(monkeypatch):
     assert (same_day["published"] == same_day["date"]).all()
     next_day = fred.observations("DFEDTARU", lag_bdays=1)
     assert next_day["published"].tolist() == list(pd.to_datetime(["2024-09-16"] * 3 + ["2024-09-17"]))
+
+
+def vintage(rows):
+    return pd.DataFrame(rows, columns=["date", "value", "realtime_start", "realtime_end"]).astype(
+        {"date": "datetime64[ns]", "realtime_start": "datetime64[ns]", "realtime_end": "datetime64[ns]"})
+
+
+def test_a_vintage_reprinted_to_the_last_bit_keeps_its_cached_value(tmp_path):
+    """ALFRED re-prints old vintages at full float precision: not a revision, and the cached bits stay."""
+    cache.write_vintages(vintage([("1990-07-01", 5.693902493, "2020-01-28", None)]), "alfred", "NROU", "USD",
+                         root=tmp_path)
+    again = vintage([("1990-07-01", 5.6939024929999995, "2020-01-28", "2020-08-02"),
+                     ("1990-07-01", 5.70, "2020-08-03", None)])
+    assert cache.write_vintages(again, "alfred", "NROU", "USD", root=tmp_path) == 1
+    got = cache.vintages("alfred", "NROU", "USD", root=tmp_path)
+    assert got["value"].tolist() == [5.693902493, 5.70]
+    assert got["realtime_end"].iloc[0] == T("2020-08-02")
+
+
+def test_a_real_revision_of_a_cached_vintage_still_refuses(tmp_path):
+    cache.write_vintages(vintage([("1990-07-01", 5.693902493, "2020-01-28", None)]), "alfred", "NROU", "USD",
+                         root=tmp_path)
+    with pytest.raises(ValueError, match="changes 1 cached vintages"):
+        cache.write_vintages(vintage([("1990-07-01", 5.6939025, "2020-01-28", None)]), "alfred", "NROU", "USD",
+                             root=tmp_path)
+    assert cache.vintages("alfred", "NROU", "USD", root=tmp_path)["value"].item() == 5.693902493
+

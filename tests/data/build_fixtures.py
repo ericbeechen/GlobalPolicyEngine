@@ -132,7 +132,8 @@ def build_sofr():
 
 def build_sep():
     rule = config.currency("USD")["rule"]
-    lag = config.currency("USD")["fred_lags"][rule["rstar"]["series"]]
+    rstar = rule["rstar"]
+    lag = config.currency("USD")["sources"]["daily"][rstar["source"]][rstar["series"]]
     s = fred.observations(rule["rstar"]["series"], START, END, lag_bdays=lag)
     s = s.assign(date=s["date"].dt.date, published=s["published"].dt.date)
     s[["date", "value", "published"]].to_csv(HERE / "sep.csv", index=False)
@@ -154,7 +155,7 @@ def build_gbp():
     out.mkdir(exist_ok=True)
     cfg = config.currency("GBP")
     for series, name in [("IUDSOIA", "sonia"), ("IUDBEDR", "bank_rate")]:
-        s = boe.BoeSeries(cfg["boe_lags"][series]).fetch(series, "2009-01-01", GBP_END)
+        s = boe.BoeSeries(cfg["sources"]["daily"]["boe"][series]).fetch(series, "2009-01-01", GBP_END)
         s.assign(date=s["date"].dt.date, published=s["published"].dt.date).to_csv(out / f"{name}.csv", index=False)
     days = set(pd.to_datetime(GBP_SESSIONS))
     for end in MPR_WINDOWS.values():

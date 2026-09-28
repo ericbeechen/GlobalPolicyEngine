@@ -323,7 +323,7 @@ def fixings_for(first, last):
 ])
 def test_fixings_known_through_the_day_before(as_of, known_through, carried):
     fixings = fixings_for("2023-09-01", "2023-10-31")
-    daily = known_daily(fixings, as_of)
+    daily = known_daily(fixings, as_of, US_BDAY)
     assert daily.index[-1] == pd.Timestamp(known_through)
     assert daily.iloc[-1] == pd.Timestamp(carried).day / 100.0
 
@@ -427,7 +427,7 @@ def load_strip(day):
 def fixings_known_on(effr, day):
     """The EFFR fixture as it stood on `day`: every calendar day known by then."""
     fixings = effr.reset_index().rename(columns={"effr": "value"})
-    return known_daily(fixings, day)
+    return known_daily(fixings, day, US_BDAY)
 
 
 def solve_session(day, meetings, effr=None):

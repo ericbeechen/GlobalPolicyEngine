@@ -25,6 +25,7 @@ T = pd.Timestamp
 DATA = Path(__file__).parent / "data"
 GBP = config.currency("GBP")
 PATH = GBP["path"]
+YEAR_DAYS = GBP["market"]["curve"]["year_days"]
 
 
 @pytest.fixture(autouse=True)
@@ -45,8 +46,9 @@ def spot_on(curve, day):
 
 
 def solve(day, curve, mpc, sonia, bank_rate):
-    return solve_curve(day, spot_on(curve, day), mpc, sonia, PATH["n_meetings"], PATH["min_regime_days"],
-                       UK_BDAY, policy=bank_rate, pin_always=GBP["market"]["pin_first_regime"])
+    return solve_curve(day, spot_on(curve, day), mpc, sonia, PATH["n_meetings"], UK_BDAY, YEAR_DAYS,
+                       PATH["tail_days"], PATH["min_regime_days"], policy=bank_rate,
+                       pin_always=GBP["market"]["pin_first_regime"])
 
 
 # ---- the calendar -----------------------------------------------------------------
@@ -89,7 +91,7 @@ def test_a_path_with_steps_on_the_curves_maturities_comes_back_exactly():
     as_of = T("2023-01-02")
     e1, e2, end = as_of + pd.Timedelta(days=365), as_of + pd.Timedelta(days=730), as_of + pd.Timedelta(days=1095)
     spot = spot_from([(as_of, 4.0), (e1, 3.0), (e2, 2.5)], as_of)
-    path = forward_path(spot, as_of, [e1, e2], end)
+    path = forward_path(spot, as_of, [e1, e2], end, YEAR_DAYS)
     assert path.to_numpy() == pytest.approx([4.0, 3.0, 2.5], abs=1e-12)
     assert not path.attrs["pinned"] and np.isnan(path.attrs["residual_bp"])
 
@@ -98,18 +100,18 @@ def test_a_flat_curve_gives_a_flat_path_and_the_first_month_is_pinned():
     as_of = T("2024-01-02")
     spot = pd.Series(4.5, index=range(1, 25))
     meetings = [T("2024-01-18"), T("2024-03-07"), T("2024-04-25")]
-    path = forward_path(spot, as_of, meetings, T("2024-06-06"), last_fixing=4.45)
+    path = forward_path(spot, as_of, meetings, T("2024-06-06"), YEAR_DAYS, last_fixing=4.45)
     assert path.attrs["pinned"] and path.iloc[0] == pytest.approx(4.45)      # before the 1-month node
-    later = forward_path(spot, as_of, meetings[1:], T("2024-06-06"), last_fixing=4.45)
+    later = forward_path(spot, as_of, meetings[1:], T("2024-06-06"), YEAR_DAYS, last_fixing=4.45)
     assert not later.attrs["pinned"] and later.to_numpy() == pytest.approx(4.5)
-    always = forward_path(spot, as_of, meetings[1:], T("2024-06-06"), last_fixing=4.45, pin_always=True)
+    always = forward_path(spot, as_of, meetings[1:], T("2024-06-06"), YEAR_DAYS, last_fixing=4.45, pin_always=True)
     assert always.attrs["pinned"] and always.iloc[0] == pytest.approx(4.45)
 
 
 def test_a_curve_too_short_for_the_horizon_is_refused():
     spot = pd.Series(4.0, index=range(1, 7))
     with pytest.raises(ValueError, match="ends at 6 months"):
-        forward_path(spot, T("2024-01-02"), [T("2024-03-01")], T("2024-09-01"))
+        forward_path(spot, T("2024-01-02"), [T("2024-03-01")], T("2024-09-01"), YEAR_DAYS)
 
 
 def test_on_a_decision_day_the_rate_in_force_is_the_new_bank_rate(sonia, bank_rate):
