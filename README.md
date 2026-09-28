@@ -1,6 +1,6 @@
 # GlobalPolicyEngine
 
-How well do markets price the path of central banks? This project is built to isolate these differences around currencies and trade them. USD and GBP are built
+How well do markets price the path of central banks? This project is built to isolate these differences around currencies and trade them. USD and GBP are built. A third currency waits on a data purchase; the reasoning is in [notes/DECISIONS.md](notes/DECISIONS.md) (S1).
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="reports/figures/implied_paths_USD_dark.png">
@@ -19,7 +19,10 @@ Working end to end for USD:
 - A model path on each of the 3,921 sessions since then: the Fed's own balanced-approach rule from the Monetary Policy Report, in its inertial form, fed by that day's nowcast, with r* from the FOMC's longer-run dot and an explicit floor at the lower bound. The gap between the two paths, per meeting and z-scored on its trailing two years, and a crude backtest of it (below).
 - GBP through the same interface (below): the Bank of England's fitted OIS curve on every London business day from 2009-08-03 (4,332 sessions, no failures), a real-time UK nowcast from the ONS's own revisions triangles from 2010-08-26, and the same rule. The GBP path lands on the Bank's own MPR conditioning paths to 1.0bp on average over 29 reports.
 - A weekly one-page brief, generated from cache: both currencies' paths, the gaps, the GBP - USD differential, what changed since last week and why.
-- `uv run pytest -q` gives 212 passed, 6 skipped.
+- Every currency-specific value in `config/currencies.yml`, validated against a schema when it loads, and a test that fails if a shared module names a currency in code. Adding a currency is a config block, a meetings file, and a source module only if its data comes from a new provider.
+- A regression harness (`scripts/regress.py`) that freezes every stage's output and checks it bit for bit. Both currencies' full samples are identical to week 5 after the week 6 refactor. The look-ahead tests run per currency.
+- Every choice so far, with its date and reason, in [notes/DECISIONS.md](notes/DECISIONS.md).
+- `uv run pytest -q` gives 428 passed, 6 skipped.
 
 ## Install
 
@@ -94,6 +97,16 @@ The weekly brief, for every currency in `config/brief.yml`, one page to `reports
 uv run python scripts/build_brief.py
 ```
 
+Before changing anything that computes, freeze every stage's output over the full sample, then check after each change. A check stops at the last session the freeze covered, so an updated cache compares like for like. It exits non-zero on any difference, however small. The committed fixtures have their own reference, which the test suite checks:
+
+```bash
+uv run python scripts/regress.py freeze
+```
+
+```bash
+uv run python scripts/regress.py check
+```
+
 ## How the path is solved
 
 `policypath.curves.policy_path.implied_path` takes the implied average rate per contract month (`100 - price`) and the meeting effective dates, and returns the overnight rate in force in each regime between them.
@@ -150,6 +163,7 @@ The GBP crude backtest (same expression, fourth meeting, no costs) returns a Sha
 - **`databento/`** is gitignored and not distributed: it is a paid batch archive, ~1.2 GB, one definition and one statistics file per day per Databento batch job. Six jobs cover ZQ from 2010-06-06 to 2026-09-21, SR3 from 2020-12-31 to 2026-09-21, and SR1 from 2010-06-06 to 2026-09-24 (it first listed in 2018). Every job names its daily files the same way, so each is kept in its own folder, `databento/<definitions|statistics>/<job_id>/`, with its manifest, metadata and condition files. Download a new job straight into `databento/definitions/` or `databento/statistics/`, then run `uv run python scripts/file_databento.py`. It files every file under its job by the sha256 in the job's manifest, so the ` (2)` copies a browser makes of colliding names do not matter, and it checks every job is complete. `sources/archive.py` knows which job holds which root, and only `sources/` reads the archive.
 - **`data/`** is gitignored and entirely derived. `data/cache/` holds one parquet vintage log per `(source, currency, series)` plus `manifest.json`, which records the ranges already covered and is what makes `update_data.py` incremental. CME sends a preliminary settle around 16:00 ET and the final that evening, or on the Sunday for a Friday session. Both are kept, so a read at the close sees the preliminary. The panel uses each session's settles as they stood by the end of the next business day, and records when the last one arrived.
 - **Bank of England and ONS** data need no key: `sources/boe.py` (IADB series, the OIS curve archive) and `sources/ons.py` (revisions triangles, the release calendar). The MPC calendar is scraped by `sources/pull_mpc.py` into the committed `config/meetings/mpc.csv`. `tests/data/boe/conditioning_paths.csv` is ground truth taken once from the Bank's Projections Databank.
+- **`data/reference/`** is gitignored too: the full-sample outputs `scripts/regress.py freeze` wrote, one folder per currency, with a `meta.json` saying what code and which sessions they cover.
 - **`reports/`** is generated: `build_panel.py` writes `coverage_USD.md`, `sofr_check_USD.md` and the figures above; `catalogue_vintages.py` writes `vintages_USD.md`; `build_nowcast.py` writes `nowcast_USD.md` and its figures; `build_model.py` writes `model_USD.md`, the model figures and the one-pager.
 - **`tests/data/`** is committed precisely so the suite runs for anyone who clones the repo without that archive. Everything in it is small enough to read in a diff. Regenerate with `uv run --env-file .env python tests/data/build_fixtures.py` (needs the archive and the network; `--market-only` leaves the ALFRED fixtures as they are).
 - **`tests/data/fedwatch/`** holds hand-typed captures of the CME FedWatch tool. FedWatch publishes no history and it is not recoverable after the fact, so this gets filled in going forward rather than backfilled. Each capture stores the futures strip *and* the probabilities from the same screen, so comparing them isolates bootstrap-vs-bootstrap difference from data timing. Rows are laid out exactly as the tool displays them so a capture can be checked against the screenshot cell by cell, and every file opens with a one-line provenance note on line 1 (the readers skip it by position).
@@ -160,6 +174,6 @@ Five rules the code is written to and should keep being written to:
 
 1. Every function that touches macro data takes an `as_of`. No "latest values" convenience overloads, no full-sample fits.
 2. Network calls live only in `sources/`. Everything else reads from cache or committed fixtures. Observations carry both a reference date and a publication date.
-3. Currency-specific behaviour lives in config, not in branches. Branching on the currency inside a module is a bug; adding a currency should need only a config block and a meetings file.
-4. `tests/test_policy_path.py` passes on every commit.
+3. Currency-specific behaviour lives in config, not in branches. Branching on the currency inside a module is a bug, and `tests/test_no_currency_branches.py` fails on one. Adding a currency should need only a config block (the schema in `config.py` says what is missing), a meetings file, and a source module if its data comes from a new provider.
+4. The test suite passes on every commit, and `scripts/regress.py check` is identical after every refactor. A change that moves a number is a decision: it gets a row in `notes/DECISIONS.md` before the reference is refrozen.
 5. Reports are generated, never hand-edited.
