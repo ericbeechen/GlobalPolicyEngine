@@ -1,7 +1,7 @@
 """The unemployment gap: u - u* in percentage points, from one vintage.
 
 Not an output gap. Potential GDP is quarterly, revised hard and rewritten in
-hindsight; see notes/macro.md.
+hindsight; see notes/DECISIONS.md.
 """
 
 import pandas as pd

@@ -103,10 +103,11 @@ def changed(ccy, now, before, k, cfg):
                         f"(from {rb['inflation']:.1f}%)"))
     if rn["u_gap"] != rb["u_gap"]:
         reasons.append((abs(rn["u_gap"] - rb["u_gap"]) * c["unemployment_gap"] * 100,
-                        f"unemployment for the three months to {now['macro']['gap_month']:%B} came in at "
-                        f"{now['macro']['u']:.1f}%"))
+                        "unemployment " + w["unemployment_period"].format(month=now["macro"]["gap_month"])
+                        + f" came in at {now['macro']['u']:.1f}%"))
     if rn["rstar"] != rb["rstar"]:
-        reasons.append((abs(rn["rstar"] - rb["rstar"]) * 100, f"a new SEP moved r* to {rn['rstar']:.1f}%"))
+        label = cfg["rule"]["rstar"].get("label", "estimate")
+        reasons.append((abs(rn["rstar"] - rb["rstar"]) * 100, f"a new {label} moved r* to {rn['rstar']:.1f}%"))
     if abs(d_mod) >= 1 and reasons:
         text += ", the rule because " + max(reasons)[1]
     elif abs(d_mod) >= 1:
@@ -181,7 +182,7 @@ def write(date, out_dir, root=panel.PANEL_DIR, brief=None, preview=None, generat
                            height / PAGE[1]])
         overnight = cache.log(cfg["overnight"]["source"], cfg["overnight"]["series"], ccy)
         # Short direct labels: two charts share the page's width.
-        charts.paths_now(ax, snap, overnight, t, lead_days=90, labels={**cfg["report"]["labels"], "rule": "Rule"})
+        charts.paths_now(ax, snap, overnight, t, {**cfg["report"]["labels"], "rule": "Rule"}, lead_days=90)
         ax.set_title(f"{ccy}: {cfg['report']['labels']['policy']}, {snap['session']:%d %b %Y}", loc="left",
                      fontsize=10, fontweight="bold", color=t["ink"], pad=6)
         leg = ax.get_legend()

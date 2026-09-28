@@ -21,13 +21,17 @@ from policypath.signal import gap
 ROOT = Path(__file__).resolve().parents[1]
 
 parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-parser.add_argument("--ccy", default="USD")
+parser.add_argument("--ccy", default=config.enabled()[0], help="default: the first enabled currency")
 parser.add_argument("--author", default=None, help="name for the one-pager's byline")
 parser.add_argument("--preview", default=None, help="also render the one-pager to this PNG")
 parser.add_argument("--onepager", action="store_true",
-                    help="also write the week 4 one-page note (USD prose); the weekly brief is scripts/build_brief.py")
+                    help="also write the week 4 one-page note (config report.onepager); the weekly brief is "
+                         "scripts/build_brief.py")
 args = parser.parse_args()
 cfg = config.currency(args.ccy)
+if args.onepager and not cfg["report"]["onepager"]:
+    parser.error(f"{args.ccy} has no one-pager: its prose (report/onepager.py) is written for the currency "
+                 "whose config sets report.onepager: true")
 
 sessions, meetings, macro = (panel.load(args.ccy, name) for name in ["sessions", "meetings", "macro"])
 inputs = path.inputs(args.ccy)
@@ -49,7 +53,7 @@ effr = inputs["fixings"]
 k = cfg["backtest"]["horizon"]
 moments, labels = [tuple(m) for m in cfg["report"]["chart_moments"]], cfg["report"]["labels"]
 drawn = charts.write_all(today, effr, signal, result, headline["backtest"], k, reports / "figures", args.ccy,
-                         moments, labels)
+                         labels, moments)
 page = (onepager.write(today, effr, signal, result, headline, reports, args.ccy, author=args.author,
                        preview=args.preview, moments=moments, labels=labels) if args.onepager else None)
 

@@ -20,12 +20,13 @@ from policypath.sources import cache
 ROOT = Path(__file__).resolve().parents[1]
 
 parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-parser.add_argument("--ccy", default="USD")
+parser.add_argument("--ccy", default=config.enabled()[0], help="default: the first enabled currency")
 args = parser.parse_args()
 cfg = config.currency(args.ccy)
 spec = cfg["path"]
 
 sessions, meetings = panel.build(args.ccy, start=spec["start"])
+bday = BDAYS[cfg["calendar"]]
 out = ROOT / "data" / "panel"
 out.mkdir(parents=True, exist_ok=True)
 sessions.to_parquet(out / f"{args.ccy}_sessions.parquet", index=False)
@@ -33,10 +34,10 @@ meetings.to_parquet(out / f"{args.ccy}_meetings.parquet", index=False)
 
 start, end = sessions["session"].min(), sessions["session"].max()
 run_checks, render = coverage.REPORTS[cfg["market"]["extractor"]]
-headline, tables = run_checks(sessions, meetings, start, end, spec["n_meetings"], BDAYS[cfg["calendar"]])
+headline, tables = run_checks(sessions, meetings, start, end, spec["n_meetings"], bday, cfg)
 reports = ROOT / "reports"
 reports.mkdir(exist_ok=True)
-(reports / f"coverage_{args.ccy}.md").write_text(render(args.ccy, headline, tables, start, end))
+(reports / f"coverage_{args.ccy}.md").write_text(render(args.ccy, headline, tables, start, end, cfg))
 
 as_of = sessions["session"].max()
 effr = cache.read(cfg["overnight"]["source"], cfg["overnight"]["series"], args.ccy, as_of)
@@ -46,16 +47,19 @@ if "sofr" in cfg:
     check = cfg["sofr"]["crosscheck"]
     shape = cfg["contract_shapes"][check]
     sofr = cache.read(cfg["sofr"]["source"], cfg["sofr"]["series"], args.ccy, as_of)
-    futures = cache.log("databento", check, args.ccy)
+    futures = cache.log(cfg["market"]["futures"]["source"], check, args.ccy)
     futures = futures[futures["date"] >= cfg.get("first_sessions", {}).get(check, futures["date"].min())]
-    implied = basis.build(sessions, meetings, config.meetings(args.ccy), futures, sofr, effr, shape)
+    implied = basis.build(sessions, meetings, config.meetings(args.ccy), futures, sofr, effr, shape, bday,
+                          cfg["market"]["final_after_bdays"])
     implied.to_parquet(out / f"{args.ccy}_sofr_basis.parquet", index=False)
     by_year, jumps, nq = crosscheck.summary(implied, sofr, effr)
     (reports / f"sofr_check_{args.ccy}.md").write_text(
         crosscheck.markdown(args.ccy, check, shape, by_year, jumps, nq))
-drawn = figures.write_all(sessions, meetings, effr[effr["date"] >= start], nq, check,
-                          reports / "figures", args.ccy,
-                          {**cfg["market"], "policy": cfg["report"]["labels"]["policy"]})
+drawn = figures.write_all(sessions, meetings, effr[effr["date"] >= start], reports / "figures", args.ccy,
+                          {**cfg["market"], "policy": cfg["report"]["labels"]["policy"],
+                           "annotate_from": cfg["report"]["annotate_from"]})
+if nq is not None:
+    drawn += crosscheck.write_figures(nq, check, reports / "figures", args.ccy)
 
 for key, value in headline.items():
     print(f"{key:>20}: {value:.2f}" if isinstance(value, float) else f"{key:>20}: {value}")

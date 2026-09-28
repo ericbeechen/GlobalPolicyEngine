@@ -1,7 +1,7 @@
 """Core PCE inflation as it could have been read on a date, with CPI standing in until PCE prints.
 
 The rule's input is the 12-month rate: a bridged month's error enters it once,
-where it enters a 3-month annualized rate about four times. See notes/macro.md.
+where it enters a 3-month annualized rate about four times. See notes/DECISIONS.md.
 """
 
 import numpy as np

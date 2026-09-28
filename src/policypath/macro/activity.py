@@ -2,7 +2,7 @@
 
 A diagnostic, not a rule input: the rule's activity measure is the unemployment
 gap. The z-scores' moments come from the same vintage as the growth they
-score, over complete quarters before the target one; see notes/macro.md.
+score, over complete quarters before the target one; see notes/DECISIONS.md.
 """
 
 import numpy as np

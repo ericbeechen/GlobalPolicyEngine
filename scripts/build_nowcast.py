@@ -23,7 +23,7 @@ ROOT = Path(__file__).resolve().parents[1]
 REPORTS = {"nowcast": us, "labour": labour}
 
 parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-parser.add_argument("--ccy", default="USD")
+parser.add_argument("--ccy", default=config.enabled()[0], help="default: the first enabled currency")
 parser.add_argument("--end", default=None, help="last as_of (default: today)")
 args = parser.parse_args()
 spec = config.currency(args.ccy)["macro"]

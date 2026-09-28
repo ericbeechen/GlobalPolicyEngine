@@ -24,7 +24,6 @@ import pandas as pd
 from policypath.report.coverage import table
 from policypath.report.figures import THEMES, _style, _title
 
-LFS, CLAIMANTS, PAYE = "MGSX", "CLAIMANTS", "PAYE"
 
 
 def first_prints(panel, as_of, series):
@@ -53,11 +52,14 @@ def releases(panel, as_of, series):
         yield day, panel.series(series, day)
 
 
-def crosscheck(panel, as_of):
-    """Month by month, the three measures as first printed, and whether they point the same way."""
-    lfs = first_prints(panel, as_of, LFS).set_index("month")
-    cc = first_prints(panel, as_of, CLAIMANTS).set_index("month")
-    paye = first_prints(panel, as_of, PAYE).set_index("month")
+def crosscheck(panel, as_of, codes):
+    """Month by month, the three measures as first printed, and whether they point the same way.
+
+    `codes` is the config's ``macro.labour``: which series is the LFS, the claimant count and PAYE.
+    """
+    lfs = first_prints(panel, as_of, codes["lfs"]).set_index("month")
+    cc = first_prints(panel, as_of, codes["claimants"]).set_index("month")
+    paye = first_prints(panel, as_of, codes["paye"]).set_index("month")
     df = pd.DataFrame({
         "lfs_rate": lfs["value"], "lfs_change_12m_pp": lfs["level_change_12m"],
         "claimants_change_12m_pct": cc["pct_change_12m"], "paye_change_12m_pct": paye["pct_change_12m"],
@@ -81,7 +83,7 @@ def revisions(panel, as_of, series):
 
 def checks(frame, panel, spec, as_of):
     """Every section as a named DataFrame, and a dict of headline numbers."""
-    cross = crosscheck(panel, as_of)
+    cross = crosscheck(panel, as_of, spec["labour"])
     by_year = cross.groupby(cross.index.year).agg(
         lfs_rate=("lfs_rate", "mean"), lfs_change_12m_pp=("lfs_change_12m_pp", "mean"),
         claimants_change_12m_pct=("claimants_change_12m_pct", "mean"),
@@ -89,7 +91,7 @@ def checks(frame, panel, spec, as_of):
         lfs_vs_claimants_disagree=("lfs_vs_claimants_disagree", "mean"),
         lfs_vs_paye_disagree=("lfs_vs_paye_disagree", "mean")).reset_index(names="year")
     recent = cross.tail(12).reset_index(names="month")
-    lfs_rev = revisions(panel, as_of, LFS).reset_index(names="year")
+    lfs_rev = revisions(panel, as_of, spec["labour"]["lfs"]).reset_index(names="year")
     last = frame.iloc[-1]
     since = lambda s, d: s[s.index >= d].mean()
     headline = {
@@ -153,15 +155,19 @@ def markdown(ccy, headline, tables, tags):
     return "\n".join(lines)
 
 
-def figure(cross, path, theme="light"):
-    """LFS unemployment as first printed, and the three measures' 12-month changes."""
+def figure(cross, path, suspended, theme="light"):
+    """LFS unemployment as first printed, and the three measures' 12-month changes.
+
+    `suspended` is the (start, end) the LFS was not published, shaded.
+    """
     t = _style(theme)
+    gap_start, gap_end = map(pd.Timestamp, suspended)
     fig, (top, bottom) = plt.subplots(2, 1, figsize=(11, 7), sharex=True, gridspec_kw={"hspace": 0.35})
     for ax in (top, bottom):
-        ax.axvspan(pd.Timestamp("2023-10-01"), pd.Timestamp("2024-02-01"), color=t["grid"], lw=0)
+        ax.axvspan(gap_start, gap_end, color=t["grid"], lw=0)
     top.plot(cross.index, cross["lfs_rate"], color=t["series"][0], lw=1.8)
     top.set_ylabel("%")
-    top.text(pd.Timestamp("2023-10-01"), top.get_ylim()[1], " LFS suspended", va="top", fontsize=8,
+    top.text(gap_start, top.get_ylim()[1], " LFS suspended", va="top", fontsize=8,
              color=t["secondary"])
     _title(top, "UK unemployment rate (LFS), as first printed", "Three months ending the month shown.", t)
     bottom.axhline(0, color=t["axis"], lw=1)
@@ -182,13 +188,13 @@ def figure(cross, path, theme="light"):
     plt.close(fig)
 
 
-def write_figures(cross, out_dir, ccy):
+def write_figures(cross, out_dir, ccy, suspended):
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     written = []
     for theme in THEMES:
         p = out_dir / f"nowcast_{ccy}_{theme}.png"
-        figure(cross, p, theme)
+        figure(cross, p, suspended, theme)
         written.append(p)
     return written
 
@@ -198,7 +204,7 @@ def write(ccy, frame, panel, spec, as_of, reports):
     headline, tables, cross = checks(frame, panel, spec, as_of)
     (reports / f"nowcast_{ccy}.md").write_text(markdown(ccy, headline, tables, spec.get("tags", {})),
                                                encoding="utf-8")
-    drawn = write_figures(cross, reports / "figures", ccy)
+    drawn = write_figures(cross, reports / "figures", ccy, spec["labour"]["suspended"])
     first = next(iter(tables))
     return [f"{headline['business_days']} days, {headline['first']:%Y-%m-%d} .. {headline['last']:%Y-%m-%d}",
             f"\n{first}\n{tables[first].round(2).to_string(index=False)}",

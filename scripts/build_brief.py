@@ -22,14 +22,16 @@ parser.add_argument("--preview", default=None, help="also render the page to thi
 args = parser.parse_args()
 date = pd.Timestamp(args.date) if args.date else pd.Timestamp.today().normalize()
 
-path, said = brief.write(date, ROOT / "reports", preview=args.preview)
+settings = brief.settings()
+horizons = settings["horizons"]
+path, said = brief.write(date, ROOT / "reports", brief=settings, preview=args.preview)
 for ccy, snap in said["reads"].items():
     m = snap["meetings"].set_index("k")
     print(f"{ccy} {snap['session']:%Y-%m-%d}: gap " + ", ".join(f"k{h} {m.loc[h, 'gap_bp']:+.0f}bp (z {m.loc[h, 'z']:+.1f})"
-                                                       for h in [1, 4, 8]))
+                                                       for h in horizons))
 d = said["differential"]
 print(f"differential {said['differential_session']:%Y-%m-%d}: " + ", ".join(
-    f"k{h} {d.loc[h, 'diff_bp']:+.0f}bp (z {d.loc[h, 'z']:+.1f})" for h in [1, 4, 8]))
+    f"k{h} {d.loc[h, 'diff_bp']:+.0f}bp (z {d.loc[h, 'z']:+.1f})" for h in horizons))
 print("\n".join(said["changed"]))
 print(said["wrong"])
 print(f"wrote {path}")

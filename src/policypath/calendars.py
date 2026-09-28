@@ -69,7 +69,21 @@ UK_BDAY = CustomBusinessDay(calendar=UKHolidayCalendar())
 BDAYS = {"fed": US_BDAY, "uk": UK_BDAY}
 
 
-def known_daily(fixings, as_of, bday=US_BDAY):
+class CMEHolidayCalendar(AbstractHolidayCalendar):
+    """Days CME's interest-rate futures do not settle, among those the Fed may keep open.
+
+    Good Friday, and every federal holiday with pandas' observance, which moves a
+    Saturday holiday to the Friday as CME does (the Fed does not: `FedHolidayCalendar`).
+    Not every day CME is shut: only the ones a coverage report must explain.
+    """
+    rules = [GoodFriday, *USFederalHolidayCalendar.rules]
+
+
+# By the name a currency's config gives in ``market.exchange_calendar``.
+EXCHANGES = {"cme": CMEHolidayCalendar}
+
+
+def known_daily(fixings, as_of, bday):
     """The overnight rate for every calendar day already known at the end of `as_of`.
 
     `fixings` has ``date``, ``value`` and ``published``; only rows published by

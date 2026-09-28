@@ -7,6 +7,7 @@ while it still is). Every method takes an ``as_of``. There is deliberately no
 method for the latest values: that is ``as_of(today)``.
 """
 
+import numpy as np
 import pandas as pd
 from policypath import config
 from policypath.sources import cache
@@ -46,12 +47,31 @@ class VintagePanel:
             raise ValueError(f"{overlap.sum()} vintages overlap the one before them")
         self._frame = df
         self._projections = tuple(projections)
+        # Each series' rows, in the frame's order: a read of one series masks its rows, not every
+        # series' (the nowcast reads a dozen series on each of thousands of days).
+        self._by_series = {name: rows for name, rows in df.groupby("series", sort=True)}
+        # The same rows as arrays, for `series` and `published`, which run thousands of times.
+        self._arrays = {name: (rows["date"].to_numpy(), rows["value"].to_numpy(),
+                               rows["realtime_start"].to_numpy(), rows["realtime_end"].to_numpy())
+                        for name, rows in self._by_series.items()}
+        # The days a series' current rows change: a row starts being current on its realtime_start
+        # and stops the day after its realtime_end. Between two of these, `as_of` returns the same rows.
+        self._changes = {}
+        for name, (_, _, start, end) in self._arrays.items():
+            ends = end[~np.isnat(end)] + np.timedelta64(1, "D")
+            self._changes[name] = np.unique(np.concatenate([start, ends]))
+
+    def _live(self, name, as_of):
+        """The rows of `name` current at the end of `as_of`, as a boolean mask over its arrays."""
+        _, _, start, end = self._arrays[name]
+        day = np.datetime64(pd.Timestamp(as_of).normalize())
+        return (start <= day) & (np.isnat(end) | (end >= day))
 
     @classmethod
-    def from_cache(cls, ccy):
+    def from_cache(cls, ccy, root=cache.CACHE_DIR):
         """Every series the currency's macro block lists, from the cache. No network."""
         spec = config.currency(ccy)["macro"]
-        frames = [cache.vintages(spec["source"], s, ccy).assign(series=s)
+        frames = [cache.vintages(spec["source"], s, ccy, root).assign(series=s)
                   for s in [*spec["series"], *spec["validation"]]]
         return cls(pd.concat(frames, ignore_index=True), spec["projections"])
 
@@ -60,10 +80,13 @@ class VintagePanel:
         return sorted(self._frame["series"].unique())
 
     def _select(self, series):
-        df = self._frame
         if series is None:
-            return df
-        return df[df["series"].isin([series] if isinstance(series, str) else series)]
+            return self._frame
+        names = sorted({series} if isinstance(series, str) else set(series))
+        parts = [self._by_series[n] for n in names if n in self._by_series]
+        if len(parts) == 1:
+            return parts[0]
+        return pd.concat(parts) if parts else self._frame.iloc[:0]
 
     def as_of(self, as_of, series=None):
         """Every observation as it stood at the end of `as_of`: series, date, value, published.
@@ -79,8 +102,39 @@ class VintagePanel:
         return out.rename(columns={"realtime_start": "published"}).reset_index(drop=True)
 
     def series(self, name, as_of):
-        """One series as it stood at the end of `as_of`, indexed by reference date."""
-        return self.as_of(as_of, name).set_index("date")["value"].rename(name)
+        """One series as it stood at the end of `as_of`, indexed by reference date.
+
+        The same as ``as_of(as_of, name).set_index("date")["value"]``, from the arrays.
+        """
+        if name not in self._arrays:
+            return self.as_of(as_of, name).set_index("date")["value"].rename(name)
+        dates, values, _, _ = self._arrays[name]
+        live = self._live(name, as_of)
+        return pd.Series(values[live], index=pd.DatetimeIndex(dates[live], name="date"), name=name)
+
+    def version(self, as_of, series):
+        """A key that is equal for two dates exactly when `series` stood the same at the end of both.
+
+        How many days each series' current rows changed on, up to `as_of`. A result
+        computed from these series alone, on two dates with the same key, is the
+        same result (`nowcast.build` reuses the day before's on such a day).
+        """
+        day = np.datetime64(pd.Timestamp(as_of).normalize())
+        return tuple(int(np.searchsorted(self._changes[n], day, side="right")) if n in self._changes else -1
+                     for n in ([series] if isinstance(series, str) else series))
+
+    def published(self, as_of, series):
+        """The latest publication among `series` as they stood at the end of `as_of`.
+
+        The same as ``as_of(as_of, series)["published"].max()``, from the arrays.
+        """
+        latest = []
+        for name in ([series] if isinstance(series, str) else series):
+            if name in self._arrays:
+                started = self._arrays[name][2][self._live(name, as_of)]
+                if len(started):
+                    latest.append(started.max())
+        return pd.Timestamp(max(latest)) if latest else pd.NaT
 
     def first_release(self, as_of, series=None):
         """The first print of every observation released by the end of `as_of`.

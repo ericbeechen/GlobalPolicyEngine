@@ -18,7 +18,6 @@ from policypath.report.coverage import table
 from policypath.report.figures import THEMES, _style, _title
 
 WINDOWS = [36, 60, 120]   # the bridge windows reported once; never tuned
-EXCLUDE_QUARTER = "2025-01-01"   # GDPNow's gold-import quarter
 
 
 def _latest(panel, name, day):
@@ -76,16 +75,19 @@ def cbo_vintages(gap):
     return pd.DataFrame(rows)
 
 
-def correlations(frame, bench, series):
-    """Same-day correlation of each activity z with GDPNow, over the windows §6.4 asks for."""
+def correlations(frame, bench, series, exclude):
+    """Same-day correlation of each activity z with GDPNow, over the windows §6.4 asks for.
+
+    `exclude` is a benchmark quarter shown once left out (config ``macro.activity.benchmark_exclude``).
+    """
     df = frame.merge(bench, on="as_of")
     cols = ["activity_z", *[f"{s}_z" for s in series]]
     end = df["as_of"].max()
     windows = {
         f"2021-01 .. {end:%Y-%m}": df["as_of"] >= "2021-01-01",
         f"2022-01 .. {end:%Y-%m}": df["as_of"] >= "2022-01-01",
-        f"2022-01 .. {end:%Y-%m}, ex GDPNow {pd.Timestamp(EXCLUDE_QUARTER).to_period('Q')}":
-            (df["as_of"] >= "2022-01-01") & (df["gdpnow_quarter"] != pd.Timestamp(EXCLUDE_QUARTER)),
+        f"2022-01 .. {end:%Y-%m}, ex GDPNow {pd.Timestamp(exclude).to_period('Q')}":
+            (df["as_of"] >= "2022-01-01") & (df["gdpnow_quarter"] != pd.Timestamp(exclude)),
     }
     rows = []
     for label, keep in windows.items():
@@ -125,7 +127,8 @@ def checks(frame, panel, spec, as_of):
         "The gap on the first business day of each quarter: CBO and the SEP longer-run median": quarterly,
         "CBO natural-rate vintages: u* for the gap's quarter the business day before and the first day in force":
             cbo_vintages(gap),
-        "Activity z against GDPNow, same-day correlation": correlations(frame, bench, series),
+        "Activity z against GDPNow, same-day correlation":
+            correlations(frame, bench, series, spec["activity"]["benchmark_exclude"]),
     }
     return headline, tables, gap
 

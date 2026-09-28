@@ -9,7 +9,7 @@ left out of its own window so a z uses only what was known before it.
 
 At the lower bound the gap barely moves, and a 1-2bp sd would turn a tick of
 noise into a large z. So the sd is floored at ``sd_floor_bp``. See
-notes/decisions.md (2026-09-27).
+notes/DECISIONS.md (2026-09-27).
 """
 
 import pandas as pd

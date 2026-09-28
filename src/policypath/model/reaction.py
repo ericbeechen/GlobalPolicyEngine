@@ -11,9 +11,10 @@ different block, not a rewrite. The MPR's rho is quarterly and the FOMC meets
 twice a quarter, so each meeting moves ``1 - inertia ** (1 / meetings_per_quarter)``
 of the way.
 
-The lower bound and the meeting frequency can change over time (the MPC met
-monthly until 2015; the Bank saw its floor at 0.5% until August 2016), so both
-may be given in config as a dated schedule, resolved for a date by `on`.
+The lower bound, the meeting frequency and the inflation target can change over
+time (the MPC met monthly until 2015; the Bank saw its floor at 0.5% until
+August 2016; the ECB's "below, but close to, 2%" became a symmetric 2% in July
+2021), so each may be given in config as a dated schedule, resolved for a date by `on`.
 
 Nothing here reads data. `model/path.py` hands in the macro picture of one date.
 """
@@ -32,13 +33,13 @@ def on(value, as_of):
     return max(live, key=lambda s: pd.Timestamp(s["from"]))["value"]
 
 
-def notional(inflation, u_gap, rstar, spec):
+def notional(inflation, u_gap, rstar, spec, as_of=None):
     """The rule's unconstrained rate, percent. `u_gap` is u - u*, positive = slack.
 
     Kept unfloored so what the rule asks for at the lower bound is still on record.
     """
     c = spec["coefficients"]
-    return (rstar + inflation + c["inflation_gap"] * (inflation - spec["inflation_target"])
+    return (rstar + inflation + c["inflation_gap"] * (inflation - on(spec["inflation_target"], as_of))
             + c["unemployment_gap"] * -u_gap)
 
 

@@ -10,11 +10,12 @@ estimate of true neutral (HLW is a week 9 robustness check).
 Before the first dot (2012-01-25) there is no committee number, and Taylor
 (1993)'s 2% stands in: fixed in 1993, so it carries no look-ahead. FRED rounds
 the median to one decimal, as the Fed's own tables have since 2015-09 (2.875 is
-2.9), so r* can be off by up to 5bp. See notes/decisions.md (2026-09-27).
+2.9), so r* can be off by up to 5bp. See notes/DECISIONS.md (2026-09-27).
 """
 
 import numpy as np
 import pandas as pd
+from policypath.model.reaction import on
 
 DAY = pd.Timedelta(days=1)
 
@@ -35,5 +36,5 @@ def rstar(sep, as_of, spec):
     if known.empty:
         return {"rstar": spec["rstar"]["before_first"], "sep_date": pd.NaT, "longer_run": np.nan}
     last = known.sort_values(["date", "published"]).iloc[-1]
-    return {"rstar": last["value"] - spec["inflation_target"], "sep_date": last["date"],
+    return {"rstar": last["value"] - on(spec["inflation_target"], as_of), "sep_date": last["date"],
             "longer_run": last["value"]}

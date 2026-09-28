@@ -1,36 +1,46 @@
-"""The macro nowcast as it could have been read at the end of one date.
+"""The macro nowcast as it could have been read at the end of one date, for any configured currency.
 
 Reads the cache only, so it needs no .env (run scripts/update_data.py
---macro-only first).
+--macro-only first). Prints every field the nowcast returned, grouped as the
+nowcast builds them: inflation, the unemployment gap, activity where the config
+asks for it, then the latest month each input series had reached.
 
     uv run python scripts/run_nowcast.py 2024-01-20
+    uv run python scripts/run_nowcast.py 2024-01-20 --ccy GBP
 """
 
-import sys
+import argparse
 import pandas as pd
 from policypath import config
 from policypath.macro.nowcast import nowcast
 from policypath.macro.vintage import VintagePanel
 
-CCY = "USD"
-spec = config.currency(CCY)["macro"]
-day = pd.Timestamp(sys.argv[1] if len(sys.argv) > 1 else "2024-01-20")
-panel = VintagePanel.from_cache(CCY)
-n = nowcast(day, CCY, panel)
+parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+parser.add_argument("date", nargs="?", default="2024-01-20")
+parser.add_argument("--ccy", default=config.enabled()[0], help="default: the first enabled currency")
+args = parser.parse_args()
+spec = config.currency(args.ccy)["macro"]
+day = pd.Timestamp(args.date)
+panel = VintagePanel.from_cache(args.ccy)
+n = nowcast(day, args.ccy, panel)
 
+
+def show(v):
+    if isinstance(v, pd.Timestamp):
+        return f"{v:%Y-%m-%d}"
+    return f"{v:.3f}" if isinstance(v, float) else str(v)
+
+
+def group(field):
+    if field.startswith(("infl_", "target_", "bridge_", "wages_")) or field == "n_bridged":
+        return "inflation"
+    return "gap" if field in ("gap_month", "u", "u_star", "u_gap") else "activity"
+
+
+print(f"as_of {show(n['as_of'])}   published {show(n['published'])}")
+for name in ["inflation", "gap", "activity"]:
+    fields = {k: v for k, v in n.items() if k not in ("as_of", "published") and group(k) == name}
+    if fields:
+        print(f"{name:<11} " + "  ".join(f"{k} {show(v)}" for k, v in fields.items()))
 months = {s: f"{panel.series(s, day).dropna().index[-1]:%Y-%m}" for s in spec["series"] if s not in spec["projections"]}
-activity = spec["activity"]["series"]
-used = ", ".join(f"{s} {n[f'{s}_months']}" for s in activity)
-print(f"as_of {n['as_of']:%Y-%m-%d}   published {n['published']:%Y-%m-%d}")
-print(f"inflation   core PCE 12m {n['infl_12m']:.2f}%  (to {n['infl_month']:%Y-%m}, "
-      f"{n['n_bridged']} month{'s' * (n['n_bridged'] != 1)} bridged from CPI; "
-      f"PCE printed to {n['target_month']:%Y-%m})")
-print(f"            3m ann {n['infl_3m_ann']:.2f}%  6m ann {n['infl_6m_ann']:.2f}%   "
-      f"bridge {n['bridge_intercept']:.2f} + {n['bridge_slope']:.2f} x CPI   "
-      f"wages 12m {n['wages_12m']:.2f}% (to {n['wages_month']:%Y-%m})")
-print(f"gap         u {n['u']:.1f} ({n['gap_month']:%Y-%m})  u* {n['u_star']:.2f}  u - u* = {n['u_gap']:+.2f}pp")
-print(f"activity    {n['activity_quarter'].to_period('Q')}: z {n['activity_z']:+.2f} from {n['activity_n']} series  "
-      f"(months in quarter: {used})")
-print("\nlast month  " + "  ".join(f"{s} {m}" for s, m in months.items()))
-for s in activity:
-    print(f"            {s:<9} growth {n[f'{s}_growth']:+6.2f}% ann   z {n[f'{s}_z']:+.2f}")
+print("last month  " + "  ".join(f"{s} {m}" for s, m in months.items()))

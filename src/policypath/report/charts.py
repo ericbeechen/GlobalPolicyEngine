@@ -15,9 +15,7 @@ import pandas as pd
 from matplotlib.lines import Line2D
 from policypath.report.figures import THEMES, _style, _title
 
-# The words a chart uses for a currency (config ``report.labels``); these are USD's.
-LABELS = {"market": "ZQ", "rate": "EFFR", "rule": "Fed's own rule", "policy": "fed funds",
-          "meetings": "FOMC", "bank": "the Fed"}
+
 
 
 
@@ -27,9 +25,9 @@ def _dates(ax):
     ax.tick_params(axis="both", length=0)
 
 
-def paths_now(ax, today, effr, t, lead_days=150, tail_days=40, labels=None):
+def paths_now(ax, today, effr, t, labels, lead_days=150, tail_days=40):
     """Market and model step paths as of one session, after the realized overnight rate."""
-    w = {**LABELS, **(labels or {})}
+    w = labels
     day = today["session"]
     m = today["meetings"]
     realized = effr.set_index("date")["value"]
@@ -106,7 +104,7 @@ def gap_history(ax, signal, k, t, moments=()):
     _dates(ax)
 
 
-def ship(today, effr, signal, k, path=None, theme="light", axes=None, moments=(), labels=None):
+def ship(today, effr, signal, k, labels, path=None, theme="light", axes=None, moments=()):
     """The one figure: paths as of today on top, the gap's history underneath."""
     t = _style(theme)
     if axes is None:
@@ -114,8 +112,8 @@ def ship(today, effr, signal, k, path=None, theme="light", axes=None, moments=()
                                           gridspec_kw={"height_ratios": [1.35, 1], "hspace": 0.42})
     else:
         fig, (top, bottom) = axes[0].figure, axes
-    w = {**LABELS, **(labels or {})}
-    paths_now(top, today, effr, t, labels=w)
+    w = labels
+    paths_now(top, today, effr, t, w)
     day = today["session"]
     _title(top, f"The {w['policy']} path: market against {w['rule'][0].lower() + w['rule'][1:]}, {day:%d %B %Y}",
            f"Next {len(today['meetings'])} {w['meetings']} meetings. The rule uses only data public on the day, "
@@ -151,13 +149,14 @@ def equity(result, summary, k, path, theme="light"):
     plt.close(fig)
 
 
-def write_all(today, effr, signal, result, summary, k, out_dir, ccy, moments=(), labels=None):
+def write_all(today, effr, signal, result, summary, k, out_dir, ccy, labels, moments=()):
+    """The ship chart and the equity curve, light and dark. `labels` is the config's ``report.labels``."""
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     written = []
     for theme in THEMES:
         p = out_dir / f"model_vs_market_{ccy}_{theme}.png"
-        ship(today, effr, signal, k, p, theme, moments=moments, labels=labels)
+        ship(today, effr, signal, k, labels, p, theme, moments=moments)
         q = out_dir / f"backtest_{ccy}_{theme}.png"
         equity(result, summary, k, q, theme)
         written += [p, q]

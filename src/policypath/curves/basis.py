@@ -120,11 +120,12 @@ def cover_end(meetings, session_meetings):
     return min(later.min(), horizon_end) if len(later) else horizon_end
 
 
-def build(sessions, meetings_panel, meetings, futures_log, sofr, effr, shape):
+def build(sessions, meetings_panel, meetings, futures_log, sofr, effr, shape, bday, after=1):
     """Implied basis for every solved session. One row per session and SOFR contract.
 
     `futures_log` is the cached settle log of the SOFR futures root, `shape`
-    what it settles to.
+    what it settles to; `bday` and `after` read its settles as the market path
+    reads its own (`market.settles_on`).
 
     ``realized_bp`` is the SOFR - EFFR basis that later printed over the same
     unknown days, where they have all printed: an ex-post yardstick, never an input.
@@ -140,7 +141,7 @@ def build(sessions, meetings_panel, meetings, futures_log, sofr, effr, shape):
         path = pd.Series([row["rate_now"], *m["rate"]],
                          index=pd.DatetimeIndex([row["first_unknown"], *m["effective_date"]]))
         through = cover_end(known_meetings(meetings, day), m)
-        b = implied_basis(day, path, through, settles_on(by_date[day], day), sofr, shape)
+        b = implied_basis(day, path, through, settles_on(by_date[day], day, bday, after), sofr, shape)
         frames.append(b.assign(session=day))
     out = pd.concat(frames, ignore_index=True)
     printed = min(sofr["date"].max(), effr["date"].max())

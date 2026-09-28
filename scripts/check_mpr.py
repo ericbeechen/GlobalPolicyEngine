@@ -1,10 +1,13 @@
-"""Check the GBP path against the Bank of England's own MPR conditioning paths, and report.
+"""Check the path against the central bank's own published conditioning paths, and report.
 
-Reads data/panel/GBP_*.parquet (run scripts/build_panel.py --ccy GBP first),
-SONIA from the cache and the committed ground truth in tests/data/boe/.
-Writes reports/mpr_check_GBP.md and prints the summary.
+For every enabled currency whose config has ``validation.conditioning`` (GBP:
+the Bank of England's MPR conditioning paths). Reads data/panel/<ccy>_*.parquet
+(run scripts/build_panel.py --ccy <ccy> first), the overnight fixings from the
+cache and the committed ground truth the config names. Writes
+reports/mpr_check_<ccy>.md and prints the summary.
 
     uv run python scripts/check_mpr.py
+    uv run python scripts/check_mpr.py --ccy GBP
 """
 
 import argparse
@@ -15,20 +18,26 @@ from policypath.report import conditioning
 from policypath.sources import cache
 
 ROOT = Path(__file__).resolve().parents[1]
-TRUTH = ROOT / "tests" / "data" / "boe" / "conditioning_paths.csv"
-EXAMPLES = ["August 2019", "February 2023", "August 2024"]
 
 parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-parser.add_argument("--ccy", default="GBP")
+parser.add_argument("--ccy", nargs="+", default=None, help="default: every enabled currency with a conditioning check")
 args = parser.parse_args()
-cfg = config.currency(args.ccy)
+currencies = args.ccy or [c for c in config.enabled() if "conditioning" in config.currency(c).get("validation", {})]
+if not currencies:
+    raise SystemExit("no enabled currency has validation.conditioning in config/currencies.yml")
 
-sessions, meetings = panel.load(args.ccy, "sessions"), panel.load(args.ccy, "meetings")
-fixings = cache.log(cfg["overnight"]["source"], cfg["overnight"]["series"], args.ccy)
-summary, detail = conditioning.checks(conditioning.truth(TRUTH), sessions, meetings, fixings,
-                                      BDAYS[cfg["calendar"]])
-out = ROOT / "reports" / f"mpr_check_{args.ccy}.md"
-out.write_text(conditioning.markdown(args.ccy, summary, detail, EXAMPLES))
-print(summary.round(2).to_string(index=False))
-print(f"\nall quarters: mean {detail['diff_bp'].mean():+.2f}bp, mean abs {detail['diff_bp'].abs().mean():.2f}bp")
-print(f"wrote {out}")
+for ccy in currencies:
+    cfg = config.currency(ccy)
+    check = cfg.get("validation", {}).get("conditioning")
+    if check is None:
+        raise SystemExit(f"{ccy} has no validation.conditioning in config/currencies.yml")
+    sessions, meetings = panel.load(ccy, "sessions"), panel.load(ccy, "meetings")
+    fixings = cache.log(cfg["overnight"]["source"], cfg["overnight"]["series"], ccy)
+    summary, detail = conditioning.checks(conditioning.truth(ROOT / check["truth"]), sessions, meetings, fixings,
+                                          BDAYS[cfg["calendar"]])
+    out = ROOT / "reports" / f"mpr_check_{ccy}.md"
+    out.write_text(conditioning.markdown(ccy, summary, detail, check["examples"]))
+    print(summary.round(2).to_string(index=False))
+    diff = detail["diff_bp"]
+    print(f"\n{ccy} all quarters: mean {diff.mean():+.2f}bp, mean abs {diff.abs().mean():.2f}bp")
+    print(f"wrote {out}")

@@ -23,6 +23,7 @@ Only `sources/` writes here. Everything downstream reads through `read` or `log`
 import json
 from pathlib import Path
 import time
+import numpy as np
 import pandas as pd
 from policypath.sources.base import VINTAGE_COLUMNS, require_published
 
@@ -209,6 +210,39 @@ def view(vintages, as_of, keys=("date",)):
     return known.drop(columns="retrieved").sort_values(keys).reset_index(drop=True)
 
 
+class Presorted:
+    """A vintage log sorted once, for reads at many dates in a row.
+
+    `view(as_of)` returns exactly what ``view(log, as_of)`` does, and
+    `latest(as_of)` the latest vintage of each date published by the end of
+    `as_of`, indexed by date (what `model.path.known` returns). The panel reads
+    the same few logs on every one of thousands of sessions; sorting each log
+    once instead of on every read is most of the difference. Both sorts are
+    pandas' multi-key sort, which is stable (``np.lexsort``), so filtering the
+    sorted log keeps the order that sorting the filtered log would give, and the
+    rows published by a date are a prefix of the log sorted by publication.
+    """
+
+    def __init__(self, vintages, keys=("date",)):
+        self.keys = list(keys)
+        self._by_published = vintages.sort_values(["published", "retrieved"]) if "retrieved" in vintages else None
+        if self._by_published is not None:
+            self._published = self._by_published["published"].to_numpy()
+        self._by_date = vintages.sort_values(["date", "published"])
+        self._date_published = self._by_date["published"].to_numpy()
+
+    def view(self, as_of):
+        cutoff = np.datetime64(pd.Timestamp(as_of).normalize() + DAY)
+        known = self._by_published.iloc[:np.searchsorted(self._published, cutoff, side="left")]
+        known = known.drop_duplicates(self.keys, keep="last")
+        return known.drop(columns="retrieved").sort_values(self.keys).reset_index(drop=True)
+
+    def latest(self, as_of):
+        cutoff = np.datetime64(pd.Timestamp(as_of).normalize() + DAY)
+        f = self._by_date[self._date_published < cutoff]
+        return f.drop_duplicates("date", keep="last").set_index("date")
+
+
 def read(source, series, currency, as_of, root=CACHE_DIR):
     """The series as it was knowable at the end of `as_of`: one row per observation."""
     return view(log(source, series, currency, root), as_of, _keys(source, series, currency, root))
@@ -226,6 +260,10 @@ def metadata(source, series, currency, root=CACHE_DIR):
 # real-time vintages (ALFRED)
 # --------------------------------------------------------------------------
 
+# Two pulls' values of one vintage closer than this, relative, are one value printed two ways.
+SAME_VALUE = 1e-12
+
+
 def write_vintages(df, source, series, currency, meta=None, root=CACHE_DIR):
     """Replace one series' vintage file with a fresh full pull. Returns the rows added.
 
@@ -233,6 +271,12 @@ def write_vintages(df, source, series, currency, meta=None, root=CACHE_DIR):
     whole history again. It may add vintages and close an interval that was
     open, but it must not drop, change or re-date a vintage already cached:
     that raises, and the file is left as it was.
+
+    "Change" means by more than `SAME_VALUE` relative. ALFRED re-prints old
+    vintages from time to time (NROU's ``5.693902493`` came back in 2026 as
+    ``5.6939024929999995``): the same number, one ulp apart once parsed. Such a
+    vintage keeps the bits already cached, so outputs frozen on the cache stay
+    bit-identical, and only a real revision fails.
     """
     absent = [c for c in VINTAGE_COLUMNS if c not in df.columns]
     if absent:
@@ -244,13 +288,17 @@ def write_vintages(df, source, series, currency, meta=None, root=CACHE_DIR):
         old = pd.read_parquet(path)
         both = old.merge(df, on=["date", "realtime_start"], how="left", suffixes=("", "_new"), indicator=True)
         lost = both["_merge"] == "left_only"
-        same = (both["value"] == both["value_new"]) | (both["value"].isna() & both["value_new"].isna())
+        same = (np.isclose(both["value"], both["value_new"], rtol=SAME_VALUE, atol=0.0)
+                | (both["value"].isna() & both["value_new"].isna()))
         reended = both["realtime_end"].notna() & (both["realtime_end"] != both["realtime_end_new"])
         bad = lost | (~lost & (~same | reended))
         if bad.any():
             raise ValueError(f"{_key(source, series, currency)}: the new pull drops or changes "
                              f"{bad.sum()} cached vintages; not written")
         added = len(df) - len(old)
+        cached = old.set_index(["date", "realtime_start"])["value"]
+        cached = cached.reindex(pd.MultiIndex.from_frame(df[["date", "realtime_start"]])).to_numpy()
+        df["value"] = np.where(pd.notna(cached), cached, df["value"])
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_suffix(".tmp")
     df.to_parquet(tmp, index=False)

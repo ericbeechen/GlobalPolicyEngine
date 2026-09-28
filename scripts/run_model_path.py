@@ -19,7 +19,7 @@ from policypath.model import path
 
 parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
 parser.add_argument("date", nargs="?", default="2024-09-17")
-parser.add_argument("--ccy", default="USD")
+parser.add_argument("--ccy", default=config.enabled()[0], help="default: the first enabled currency")
 args = parser.parse_args()
 cfg = config.currency(args.ccy)
 rule, w = cfg["rule"], cfg["report"]["labels"]
@@ -43,9 +43,9 @@ inputs = path.inputs(args.ccy)
 macro = nowcast.nowcast(macro_day, args.ccy)
 summary, model = path.model_path(session, m["effective_date"], macro, inputs["sep"], inputs["target"],
                                  inputs["fixings"], rule)
-src = "constant" if pd.isna(summary["sep_date"]) else f"SEP {summary['sep_date']:%Y-%m-%d}"
+src = "constant" if pd.isna(summary["sep_date"]) else f"{rule['rstar']['label']} {summary['sep_date']:%Y-%m-%d}"
 if pd.isna(summary["sep_date"]) and "before_first" in rule["rstar"]:
-    src = "none yet: Taylor's 2%"
+    src = f"none yet: {rule['rstar']['before_first_label']}"
 print(f"{w['inflation']} {summary['inflation']:.2f}% ({macro['infl_month']:%Y-%m}), "
       f"u - u* {summary['u_gap']:+.2f}pp ({macro['gap_month']:%Y-%m}), r* {summary['rstar']:.2f} ({src})")
 print(f"rule's notional rate {summary['notional']:.2f}%"

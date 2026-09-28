@@ -19,16 +19,16 @@ ZQ's short first regime is pinned (`curves/policy_path.py`).
 import numpy as np
 import pandas as pd
 
-YEAR_DAYS = 365.0   # SONIA accrues Act/365
 
-
-def forward_path(spot, as_of, effective_dates, end, last_fixing=None, min_regime_days=0, pin_always=False):
+def forward_path(spot, as_of, effective_dates, end, year_days, last_fixing=None, min_regime_days=0,
+                 pin_always=False):
     """Piecewise-constant overnight rate between meeting effective dates, from one day's spot curve.
 
     `spot` is the curve on `as_of`: percent, continuously compounded, indexed
     by maturity in months. `effective_dates` are the meetings ahead, after
     `as_of`; `end` closes the last regime (the meeting after the last, or a
-    date past it). The first regime is pinned to `last_fixing` when the first
+    date past it). `year_days` turns days into the curve's years (365: the
+    Bank's curve is on SONIA's Act/365). The first regime is pinned to `last_fixing` when the first
     meeting comes before the curve's first maturity, or less than
     `min_regime_days` away, or always with `pin_always`: no meeting falls
     inside it, so its rate is the rate in force, and reading it off the curve
@@ -49,7 +49,7 @@ def forward_path(spot, as_of, effective_dates, end, last_fixing=None, min_regime
     dates = pd.DatetimeIndex([*effective_dates, end])
     if (dates <= as_of).any() or not dates.is_monotonic_increasing:
         raise ValueError(f"meeting dates must be after {as_of.date()} and increasing")
-    t = (dates - as_of).days.to_numpy() / YEAR_DAYS
+    t = (dates - as_of).days.to_numpy() / float(year_days)
     if t[-1] > nodes[-1]:
         raise ValueError(f"the curve on {as_of.date()} ends at {spot.index[-1]} months, "
                          f"short of {dates[-1].date()}")

@@ -8,12 +8,13 @@ Reads only the cache (run scripts/update_data.py --macro-only first).
 import argparse
 from pathlib import Path
 import pandas as pd
+from policypath import config
 from policypath.report import vintages
 
 ROOT = Path(__file__).resolve().parents[1]
 
 parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-parser.add_argument("--ccy", default="USD")
+parser.add_argument("--ccy", default=config.enabled()[0], help="default: the first enabled currency")
 parser.add_argument("--as-of", default=None, help="catalogue the cache as it stood on this date")
 args = parser.parse_args()
 as_of = pd.Timestamp(args.as_of) if args.as_of else pd.Timestamp.today().normalize()

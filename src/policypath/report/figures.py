@@ -33,7 +33,9 @@ THEMES = {
 def _style(theme):
     t = THEMES[theme]
     plt.rcParams.update({
-        "font.family": ["Segoe UI", "DejaVu Sans"], "font.size": 10,
+        # Segoe UI where it exists (Windows), else Arial, which sets text at about the same width, so
+        # the one-page documents still fit on one page (DejaVu Sans is wider and overflows them).
+        "font.family": ["Segoe UI", "Arial", "DejaVu Sans"], "font.size": 10,
         "figure.facecolor": t["surface"], "axes.facecolor": t["surface"],
         "savefig.facecolor": t["surface"], "text.color": t["ink"],
         "axes.edgecolor": t["axis"], "axes.labelcolor": t["secondary"],
@@ -67,15 +69,15 @@ def monthly_paths(sessions, meetings, tail_days=45):
     return out
 
 
-def implied_paths(sessions, meetings, effr, path, theme="light", market=None):
+def implied_paths(sessions, meetings, effr, path, market, theme="light"):
     """Monthly implied paths over the realized overnight rate, and the implied move by meeting horizon.
 
-    `market` is the config's market block: ``label`` names the source in the
-    title, ``overnight_label`` the realized rate, ``figure_note`` adds to the subtitle.
+    `market` is the config's market block with the report's words added: ``label``
+    names the source in the title, ``overnight_label`` the realized rate,
+    ``policy`` the policy rate, ``annotate_from`` the first session the one
+    annotation may sit on; ``figure_note``, if there, adds to the subtitle.
     """
-    market = market or {}
-    label = market.get("label", "ZQ futures")
-    rate = market.get("overnight_label", "EFFR")
+    label, rate = market["label"], market["overnight_label"]
     t = _style(theme)
     fig, (top, bottom) = plt.subplots(2, 1, figsize=(11, 8.2), sharex=True,
                                       gridspec_kw={"height_ratios": [2.1, 1], "hspace": 0.32})
@@ -94,8 +96,9 @@ def implied_paths(sessions, meetings, effr, path, theme="light", market=None):
                                label="Implied path, first session of each month (next 8 meetings)")],
                loc="upper left", fontsize=9, labelcolor=t["secondary"])
 
-    # The one annotation: what the market priced a year out, just before 2022.
-    day, dates, rates = next(p for p in paths if p[0] >= pd.Timestamp("2021-12-01"))
+    # The one annotation: what the market priced a year out, from the first monthly path on or after
+    # the config's date (just before 2022 for both: the year the priced path was most wrong).
+    day, dates, rates = next(p for p in paths if p[0] >= pd.Timestamp(market["annotate_from"]))
     target = day + pd.DateOffset(years=1)
     priced = pd.Series(rates, index=pd.DatetimeIndex(dates)).asof(target)
     printed = realized.asof(target)
@@ -104,7 +107,7 @@ def implied_paths(sessions, meetings, effr, path, theme="light", market=None):
                  xy=(target, priced), xytext=(12, -2), textcoords="offset points",
                  va="center", fontsize=9, color=t["secondary"])
     top.plot([target], [priced], "o", ms=6, color=t["series"][0], mec=t["surface"], mew=2)
-    _title(top, f"The {market.get('policy', 'policy')} path implied by {label}, {paths[0][0].year}-{paths[-1][0].year}",
+    _title(top, f"The {market['policy']} path implied by {label}, {paths[0][0].year}-{paths[-1][0].year}",
            "Each blue step is one session's solved path; the heavy line is what the rate then did. "
            + market.get("figure_note", ""), t)
 
@@ -134,39 +137,13 @@ def implied_paths(sessions, meetings, effr, path, theme="light", market=None):
     plt.close(fig)
 
 
-def sofr_basis(nq, root, path, theme="light"):
-    """The SOFR - EFFR basis implied by `root` against the ZQ path, and what then printed."""
-    t = _style(theme)
-    fig, ax = plt.subplots(figsize=(11, 4.4))
-    ax.axhline(0, color=t["axis"], lw=1)
-    ax.plot(nq.index, nq["basis_bp"], color=t["series"][0], lw=1.5, label=f"Implied by {root} and ZQ")
-    ax.plot(nq.index, nq["realized_bp"], color=t["series"][1], lw=2,
-            label="Realized over the same days, ex post")
-    ax.set_ylabel("bp")
-    ax.legend(loc="upper left", fontsize=9, labelcolor=t["secondary"])
-    last = nq["basis_bp"].dropna()
-    ax.annotate(f"{last.iloc[-1]:+.1f}bp", xy=(last.index[-1], last.iloc[-1]), xytext=(6, 0),
-                textcoords="offset points", va="center", fontsize=9, color=t["secondary"])
-    ax.xaxis.set_major_locator(mdates.YearLocator())
-    ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
-    ax.tick_params(axis="both", length=0)
-    _title(ax, f"SOFR minus EFFR: what {root} implies against the ZQ path",
-           f"First {root} contract wholly ahead of each session. A wrong ZQ path would show up as noise here.", t)
-    fig.savefig(path, dpi=150, bbox_inches="tight")
-    plt.close(fig)
-
-
-def write_all(sessions, meetings, effr, nq, root, out_dir, ccy, market=None):
-    """The path figure, and the SOFR basis figure where there is a cross-check (`nq` not None)."""
+def write_all(sessions, meetings, effr, out_dir, ccy, market):
+    """The path figure, light and dark. `market` as `implied_paths` takes it."""
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     written = []
     for theme in THEMES:
         p = out_dir / f"implied_paths_{ccy}_{theme}.png"
-        implied_paths(sessions, meetings, effr, p, theme, market)
+        implied_paths(sessions, meetings, effr, p, market, theme)
         written.append(p)
-        if nq is not None:
-            q = out_dir / f"sofr_basis_{ccy}_{theme}.png"
-            sofr_basis(nq, root, q, theme)
-            written.append(q)
     return written
