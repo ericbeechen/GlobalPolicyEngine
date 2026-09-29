@@ -11,16 +11,26 @@ target range), or a dated schedule of either where the operative rate changed
 inside the sample (the ECB's MRO, then its deposit rate). The market settles on
 the overnight rate, so the model path is moved onto it by the operating spread
 between the two, held flat like the macro inputs.
+
+Two robustness variants (week 9) are optional keys of the rule block, and
+without them the path is built exactly as before. ``conditioning: {converge:
+{half_life_quarters: h}}`` lets inflation close on its target and the
+unemployment gap on zero, each halving its distance every h quarters, so the
+rule's goal moves meeting by meeting (`converge_goals`). ``estimate:
+{prior_quarters: n0}`` replaces the imposed coefficients on each session with
+ones estimated from the quarters before it (`model/estimate.py`).
 """
 
 import numpy as np
 import pandas as pd
 from policypath import config
-from policypath.model.reaction import floor_at_elb, inertial_path, lower_bound, notional
+from policypath.model import estimate
+from policypath.model.reaction import floor_at_elb, inertial_path, lower_bound, notional, on
 from policypath.model.rstar import rstar
 from policypath.sources import cache
 
 DAY = pd.Timedelta(days=1)
+QUARTER_DAYS = 365.25 / 4
 
 
 def known(frame, as_of):
@@ -68,14 +78,16 @@ def policy_rate_log(spec, ccy, root=cache.CACHE_DIR):
     return pd.concat(frames, ignore_index=True) if len(frames) > 1 else frames[0].reset_index(drop=True)
 
 
-def inputs(ccy, root=cache.CACHE_DIR):
+def inputs(ccy, root=cache.CACHE_DIR, rule=None):
     """The rule's non-macro inputs from the cache, as full vintage logs.
 
-    ``target`` is the policy rate in force (`policy_rate_log`); ``sep`` is None
-    where r* is a constant.
+    ``target`` is the policy rate in force (`policy_rate_log`); ``sep`` is the
+    log r* is read from (the SEP's, or HLW's under a robustness override), None
+    where r* is a constant. `rule` replaces the config's ``rule`` block (a
+    variant's, merged by the caller); by default the config's own.
     """
     cfg = config.currency(ccy)
-    rule = cfg["rule"]
+    rule = cfg["rule"] if rule is None else rule
     rs = rule["rstar"]
     return {"sep": None if "constant" in rs else cache.log(rs["source"], rs["series"], ccy, root),
             "target": policy_rate_log(rule["policy_rate"], ccy, root),
@@ -116,20 +128,44 @@ def operating_spread(fixings, target, as_of, n, breaks=(), seen=None):
     return float(spread.median())
 
 
+def converge_goals(as_of, dates, inflation, u_gap, r_star, spec):
+    """The rule's floored goal at each meeting in `dates` under converge-to-target conditioning.
+
+    Inflation closes on its target and the unemployment gap on zero, each
+    halving its distance every ``conditioning.converge.half_life_quarters``:
+    x_k = x* + (x_0 - x*) 0.5 ** (q_k / h), with q_k the quarters (91.3125 days)
+    from `as_of` to meeting k. r* stays flat. Every dated schedule (the target,
+    the floor) is read as it stood on `as_of`: a change the config dates after
+    it was not known then, so it cannot move the path.
+    """
+    half_life = spec["conditioning"]["converge"]["half_life_quarters"]
+    decay = 0.5 ** ((dates - as_of).days.to_numpy() / QUARTER_DAYS / half_life)
+    pi_star = on(spec["inflation_target"], as_of)
+    rates = notional(pi_star + (inflation - pi_star) * decay, u_gap * decay, r_star, spec, as_of)
+    return np.maximum(rates, lower_bound(spec, as_of))
+
+
 def model_path(as_of, effective_dates, macro, sep, target, fixings, spec):
     """The rule's path over `effective_dates` from session `as_of`, in the overnight rate's terms.
 
     `macro` is the nowcast as of the session (a row of ``nowcast.build``), `sep`,
     `target` and `fixings` are logs with ``published``; `spec` is the rule
     block. Returns (summary, frame of k, effective_date, model, model_mid).
+    The summary is today's picture under either conditioning: its notional
+    and goal are the rule's at today's inflation and gap. ``at_elb`` says the
+    goal is on the floor at every meeting ahead, so a rate on the floor stays
+    there and the path has no view: under hold-flat, today's notional below the
+    floor; under converge, every meeting's goal on it (the ELB state moves with
+    the conditioning as it does with r*).
     """
     as_of = pd.Timestamp(as_of)
     if pd.Timestamp(macro["as_of"]) > as_of:
         raise ValueError(f"nowcast as of {macro['as_of']:%Y-%m-%d} is after the session {as_of.date()}")
     r = rstar(sep, as_of, spec)
-    # Hold-flat conditioning: inflation, the gap and r* stay at today's values at
-    # every meeting ahead, so R* is one number for the whole path. The path answers
-    # "if the macro picture does not change, where does the rule take policy?".
+    # Hold-flat conditioning, unless the rule block says otherwise: inflation, the gap
+    # and r* stay at today's values at every meeting ahead, so R* is one number for the
+    # whole path. The path answers "if the macro picture does not change, where does
+    # the rule take policy?".
     pi, gap = macro[spec["inflation"]], macro[spec["gap"]]
     unconstrained = notional(pi, gap, r["rstar"], spec, as_of)
     elb = lower_bound(spec, as_of)
@@ -138,11 +174,16 @@ def model_path(as_of, effective_dates, macro, sep, target, fixings, spec):
     r0, r0_date = policy_rate(target, as_of, seen)
     spread = operating_spread(fixings, target, as_of, spec["spread_fixings"], spec.get("spread_breaks", ()), seen)
     dates = pd.DatetimeIndex(effective_dates)
-    mid = inertial_path(r0, goal, len(dates), spec, as_of)
+    if "conditioning" in spec:
+        goals = converge_goals(as_of, dates, pi, gap, r["rstar"], spec)
+        at_elb = bool((goals <= elb).all())   # the goals are floored: on the floor at every meeting
+    else:
+        goals, at_elb = goal, unconstrained < elb
+    mid = inertial_path(r0, goals, len(dates), spec, as_of)
     frame = pd.DataFrame({"k": np.arange(1, len(dates) + 1), "effective_date": dates,
                           "model": mid + spread, "model_mid": mid})
     summary = {"macro_as_of": pd.Timestamp(macro["as_of"]), "inflation": pi, "u_gap": gap, **r,
-               "notional": unconstrained, "at_elb": unconstrained < elb, "elb": elb, "goal": goal,
+               "notional": unconstrained, "at_elb": at_elb, "elb": elb, "goal": goal,
                "r0": r0, "r0_date": r0_date, "spread_bp": spread * 100.0,
                "macro_published": pd.Timestamp(macro["published"])}
     return summary, frame
@@ -156,6 +197,10 @@ def build(sessions, meetings, macro, sep, target, fixings, spec):
     trades (Columbus, Veterans Day) takes the business day before's, when
     nothing new was published. Returns (summaries, paths): one row per session,
     and one per session and meeting with ``market`` and ``model`` side by side.
+
+    With ``estimate`` in `spec`, the imposed rule runs first; its quarter ends
+    give each session's coefficients (`estimate.coefficients`), and the rule
+    runs again with them. The summaries then carry the estimates.
     """
     ok = sessions[sessions["error"].isna()][["session"]].sort_values("session")
     ok = ok.astype({"session": "datetime64[ns]"})
@@ -166,12 +211,26 @@ def build(sessions, meetings, macro, sep, target, fixings, spec):
     by = dict(tuple(meetings.groupby("session")))
     # Every session reads the same two logs: sorted once here rather than on each read.
     target, fixings = cache.Presorted(target), cache.Presorted(fixings)
+    summaries, paths = _run(ok, by, sep, target, fixings, spec)
+    if "estimate" not in spec:
+        return summaries, paths
+    coefficients = estimate.coefficients(summaries, spec)
+    summaries, paths = _run(ok, by, sep, target, fixings, spec, coefficients)
+    return summaries.merge(coefficients, on="session", how="left"), paths
+
+
+def _run(ok, by, sep, target, fixings, spec, coefficients=None):
+    """`model_path` on every row of `ok`, with the imposed coefficients or each session's from `coefficients`."""
+    rules = None if coefficients is None else {
+        day: {**spec, "coefficients": {"inflation_gap": a, "unemployment_gap": b}}
+        for day, a, b in coefficients[["session", "coef_inflation_gap", "coef_unemployment_gap"]]
+        .itertuples(index=False)}
     summaries, frames = [], []
     for row in ok.to_dict("records"):
         day = row["session"]
         m = by[day].sort_values("k")
         summary, frame = model_path(day, m["effective_date"], {**row, "as_of": row["macro_as_of"]},
-                                    sep, target, fixings, spec)
+                                    sep, target, fixings, spec if rules is None else rules[day])
         summaries.append({"session": day, **summary})
         frames.append(m[["session", "k", "announcement_date", "effective_date"]]
                       .assign(market=m["rate"].to_numpy(), model=frame["model"].to_numpy(),

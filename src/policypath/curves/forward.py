@@ -14,10 +14,34 @@ flat between two nodes, which a meeting window then averages over. Below the
 first node the curve says nothing about where inside the month a move lands,
 so a first meeting before it pins today-until-then to the last fixing, as
 ZQ's short first regime is pinned (`curves/policy_path.py`).
+
+`log_discount` and `window_rates` are the two steps every forward off such a
+curve takes, shared with the expression layer's forward legs
+(`strategy/instruments.py`), so a traded forward and the path's rate at the
+same meeting are one computation.
 """
 
 import numpy as np
 import pandas as pd
+
+
+def log_discount(spot):
+    """A day's spot curve as -log P at its nodes, with 0 at maturity 0: (nodes in years, -log P at each).
+
+    `spot` is percent, continuously compounded, by maturity in months, without
+    NaN. -log P = s t, read between nodes with `np.interp` (linear in t: the
+    forward is flat between two nodes).
+    """
+    tenors = spot.index.to_numpy(dtype=float) / 12.0
+    return np.concatenate([[0.0], tenors]), np.concatenate([[0.0], spot.to_numpy() / 100.0 * tenors])
+
+
+def window_rates(t, at):
+    """The average rate, percent, over each window between consecutive maturities `t` (years), from -log P `at` there.
+
+    [s(t2) t2 - s(t1) t1] / (t2 - t1), continuously compounded: exact from the two log discount factors.
+    """
+    return (at[1:] - at[:-1]) / (t[1:] - t[:-1]) * 100.0
 
 
 def forward_path(spot, as_of, effective_dates, end, year_days, last_fixing=None, min_regime_days=0,
@@ -42,9 +66,8 @@ def forward_path(spot, as_of, effective_dates, end, year_days, last_fixing=None,
     spot = spot.dropna().sort_index()
     if spot.empty:
         raise ValueError(f"no spot rates on {as_of.date()}")
-    tenors = spot.index.to_numpy(dtype=float) / 12.0
-    log_df = np.concatenate([[0.0], spot.to_numpy() / 100.0 * tenors])   # -log P, at 0 and each node
-    nodes = np.concatenate([[0.0], tenors])
+    nodes, log_df = log_discount(spot)
+    tenors = nodes[1:]
 
     dates = pd.DatetimeIndex([*effective_dates, end])
     if (dates <= as_of).any() or not dates.is_monotonic_increasing:
@@ -59,9 +82,7 @@ def forward_path(spot, as_of, effective_dates, end, year_days, last_fixing=None,
                                           or (dates[0] - as_of).days < min_regime_days)
     if pinned:
         at[0] = last_fixing / 100.0 * t[0]
-    starts = np.concatenate([[0.0], t[:-1]])
-    before = np.concatenate([[0.0], at[:-1]])
-    rates = (at - before) / (t - starts) * 100.0
+    rates = window_rates(np.concatenate([[0.0], t]), np.concatenate([[0.0], at]))
 
     path = pd.Series(rates, index=pd.DatetimeIndex([as_of, *dates[:-1]]), name="rate")
     path.attrs = {"pinned": bool(pinned), "residual_bp": np.nan, "nodes": len(spot)}

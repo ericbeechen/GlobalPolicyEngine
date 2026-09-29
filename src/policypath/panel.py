@@ -21,17 +21,18 @@ PANEL_DIR = Path(__file__).resolve().parents[2] / "data" / "panel"
 COLUMNS = ["session", "k", "announcement_date", "effective_date", "scheduled", "rate", "step_bp", "cum_bp"]
 
 
-def build(ccy, start=None, end=None, root=cache.CACHE_DIR, calendar=None, **overrides):
+def build(ccy, start=None, end=None, root=cache.CACHE_DIR, calendar=None, cfg=None, **overrides):
     """Solve every session in the cache. Returns (sessions, meetings), both long frames.
 
     `sessions` has one row per trade date, solved or not; a failed solve keeps
     its row with the reason in ``error``. `meetings` has one row per session
     and upcoming meeting. `calendar` replaces the config's meeting calendar;
-    `overrides` replace keys of the config's ``path`` block.
+    `cfg` replaces the currency's whole config block (a variant's, merged);
+    `overrides` replace keys of the ``path`` block.
     Only `ValueError` (a short strip or curve, an underdetermined solve) and
     `LinAlgError` are recorded as failures; anything else is a bug and raises.
     """
-    ext = extractor(ccy, root, calendar)
+    ext = extractor(ccy, root, calendar, cfg)
     ext.spec = {**ext.spec, **overrides}
     dates = ext.sessions()
     if start is not None:

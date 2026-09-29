@@ -8,7 +8,10 @@ not different parameters, so each is its own extractor:
   squares with realized days substituted (`curves/policy_path.py`).
 - `ForwardCurveExtractor`: a fitted spot OIS curve at fixed maturities (the
   Bank of England's). The rate between meetings is the forward over that
-  window, exact from two spot rates (`curves/forward.py`).
+  window, exact from two spot rates (`curves/forward.py`). With
+  ``market.curve.method: nss`` (a week 9 robustness variant) the day's nodes
+  are first replaced by a Nelson-Siegel-Svensson fit (`curves/nss.py`); P&L is
+  still marked on the published nodes (`marked`).
 
 Both return a `PolicyPath`: the rate in force now and after each of the next
 n meetings, by effective date, in the market's overnight rate. The config's
@@ -27,6 +30,7 @@ import numpy as np
 import pandas as pd
 from policypath import config
 from policypath.calendars import BDAYS, known_daily, known_meetings
+from policypath.curves import nss
 from policypath.curves.forward import forward_path
 from policypath.curves.policy_path import implied_path
 from policypath.sources import cache
@@ -225,7 +229,13 @@ def solve_curve(session, spot, meetings, fixings, n_meetings, bday, year_days, t
 
 
 class ForwardCurveExtractor:
-    """A spot OIS curve by maturity in months, from the cache (config: ``market.curve``)."""
+    """A spot OIS curve by maturity in months, from the cache (config: ``market.curve``).
+
+    ``market.curve.method`` says how the day's nodes are read between
+    maturities: ``log_linear`` (the default: s t linear between the published
+    nodes) or ``nss`` (a Nelson-Siegel-Svensson fit to them, `curves/nss.py`,
+    whose tau1, tau2, node RMSE and grid edge go into the session's summary).
+    """
 
     def __init__(self, ccy, cfg, root=cache.CACHE_DIR, calendar=None):
         self.spec, self.bday = cfg["path"], BDAYS[cfg["calendar"]]
@@ -233,6 +243,7 @@ class ForwardCurveExtractor:
         self.calendar = config.meetings(ccy) if calendar is None else calendar
         curve = cfg["market"]["curve"]
         self.year_days = curve["year_days"]
+        self.method = curve.get("method", "log_linear")
         rows = cache.log(curve["source"], curve["series"], ccy, root)
         # Read on every session: sorted once (`cache.Presorted`), not on each read.
         self.fixings = cache.Presorted(cache.log(cfg["overnight"]["source"], cfg["overnight"]["series"], ccy, root))
@@ -259,22 +270,49 @@ class ForwardCurveExtractor:
     def session(self, day):
         rows = self._curve(day)
         spot = rows.set_index("tenor")["value"].sort_index()
+        if self.method == "nss":
+            return self._nss_session(day, spot.dropna())
+        return self._solve(day, spot)
+
+    def _solve(self, day, spot):
         return solve_curve(day, spot, self.calendar, self.fixings.view(day), self.spec["n_meetings"],
                            self.bday, self.year_days, self.spec["tail_days"], self.spec["min_regime_days"],
                            policy=self.policy, pin_always=self.pin_always)
+
+    def _nss_session(self, day, spot):
+        """The path off the NSS fit to the day's nodes, on a node a day between its first and last maturity."""
+        fitted = nss.fit(spot.index.to_numpy(dtype=float) / 12.0, spot.to_numpy())
+        result = self._solve(day, nss.daily(fitted, spot.index[0], spot.index[-1], self.year_days))
+        summary = {**result.summary, "n_nodes": len(spot), "nss_tau1": fitted["tau1"], "nss_tau2": fitted["tau2"],
+                   "nss_rmse_bp": fitted["rmse_bp"], "nss_edge": fitted["edge"]}
+        return PolicyPath(summary, result.meetings)
 
 
 EXTRACTORS = {"futures_strip": FuturesStripExtractor, "forward_curve": ForwardCurveExtractor}
 
 
-def extractor(ccy, root=cache.CACHE_DIR, calendar=None):
+def extractor(ccy, root=cache.CACHE_DIR, calendar=None, cfg=None):
     """The backend the config names for `ccy`, loaded from the cache.
 
     `calendar` replaces the config's meeting calendar (the look-ahead test adds a
-    meeting announced after the day it truncates at).
+    meeting announced after the day it truncates at). `cfg` replaces the
+    currency's config block (a robustness variant's, merged by the caller).
     """
-    cfg = config.currency(ccy)
+    cfg = config.currency(ccy) if cfg is None else cfg
     return EXTRACTORS[cfg["market"]["extractor"]](ccy, cfg, root, calendar)
+
+
+def marked(cfg):
+    """`cfg` as P&L is marked: with its market path read off the published curve.
+
+    A curve-fitting variant (``market.curve.method: nss``) changes the market
+    path the signal reads, not the marks: they stay on the Bank's own curve,
+    log-linear between its nodes. Returns `cfg` itself where it already reads that.
+    """
+    curve = cfg["market"].get("curve", {})
+    if curve.get("method", "log_linear") == "log_linear":
+        return cfg
+    return {**cfg, "market": {**cfg["market"], "curve": {k: v for k, v in curve.items() if k != "method"}}}
 
 
 def path(date, ccy, root=cache.CACHE_DIR):

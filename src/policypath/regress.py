@@ -29,7 +29,7 @@ import tempfile
 import time
 import numpy as np
 import pandas as pd
-from policypath import config, fixtures
+from policypath import config, fixtures, market
 from policypath import panel as market_panel
 from policypath.backtest import policy
 from policypath.macro import nowcast
@@ -42,13 +42,17 @@ ROOT = Path(__file__).resolve().parents[2]
 FULL_DIR = ROOT / "data" / "reference"
 FIXTURE_REF = fixtures.FIXTURE_DIR / "reference"
 STAGES = ["sessions", "meetings", "macro", "model", "paths", "signal", "backtest"]
+# Blocks an override replaces whole instead of merging into. An r* block is one of two
+# shapes: HLW merged into GBP's ``{constant: -1.6}`` would leave the constant in force.
+REPLACE = {("rule", "rstar")}
 
 
-def merge(base, over):
-    """`base` with `over`'s keys replaced, recursively into nested dicts."""
+def merge(base, over, at=()):
+    """`base` with `over`'s keys replaced, recursively into nested dicts except the `REPLACE` blocks."""
     out = dict(base)
     for key, value in (over or {}).items():
-        out[key] = merge(base[key], value) if isinstance(value, dict) and isinstance(base.get(key), dict) else value
+        nested = isinstance(value, dict) and isinstance(base.get(key), dict) and (*at, key) not in REPLACE
+        out[key] = merge(base[key], value, (*at, key)) if nested else value
     return out
 
 
@@ -57,12 +61,22 @@ def outputs(ccy, root=cache.CACHE_DIR, end=None, macro_days=None, overrides=None
 
     `macro_days` are the dates to nowcast; by default every business day from
     the config's ``macro.start`` to `end`, as ``scripts/build_nowcast.py`` does.
-    `overrides` replace config keys, nested (``{"rule": {"spread_fixings": 1}}``).
+    `overrides` replace config keys, nested (``{"rule": {"spread_fixings": 1}}``), and
+    the merged block is what every stage reads: a robustness variant is an override.
+    The merged block must pass `config.validate`, so a mistyped key raises instead of
+    leaving the baseline in place. The crude backtest marks on the published curve
+    whatever ``market.curve.method`` the signal reads (`market.marked`).
     `calendar` replaces the config's meeting calendar.
     """
     cfg, root = merge(config.currency(ccy), overrides), Path(root)
+    problems = config.validate(ccy, cfg) if overrides else []
+    if problems:
+        raise config.ConfigError(f"{ccy} with {overrides} fails its schema:\n  " + "\n  ".join(problems))
     sessions, meetings = market_panel.build(ccy, start=cfg["path"]["start"], end=end, root=root, calendar=calendar,
-                                            **(overrides or {}).get("path", {}))
+                                            cfg=cfg)
+    marked = market.marked(cfg)
+    marks = (sessions, meetings) if marked is cfg else market_panel.build(
+        ccy, start=cfg["path"]["start"], end=end, root=root, calendar=calendar, cfg=marked)
     # The last session built, not `end` as given: date_range takes its resolution from its end point,
     # so a date parsed from meta.json would give the nowcast a different dtype than a freeze did.
     end = sessions["session"].max()
@@ -71,26 +85,28 @@ def outputs(ccy, root=cache.CACHE_DIR, end=None, macro_days=None, overrides=None
         macro = nowcast.build(ccy, cfg["macro"]["start"], end, panel, cfg["macro"])
     else:
         macro = pd.DataFrame([nowcast.nowcast(d, ccy, panel, cfg["macro"]) for d in macro_days])
-    inputs = model_path.inputs(ccy, root)
+    inputs = model_path.inputs(ccy, root, rule=cfg["rule"])
     summaries, paths = model_path.build(sessions, meetings, macro, inputs["sep"], inputs["target"],
                                         inputs["fixings"], cfg["rule"])
     signal = gap.build(paths, cfg["signal"])
-    backtest = pd.concat({k: policy.run(signal, sessions, meetings, k, cfg["backtest"])
+    backtest = pd.concat({k: policy.run(signal, *marks, k, cfg["backtest"])
                           for k in sorted(signal["k"].unique())}, names=["k", "session"]).reset_index()
     return {"sessions": sessions, "meetings": meetings, "macro": macro, "model": summaries,
             "paths": paths, "signal": signal, "backtest": backtest}
 
 
-def fixture_outputs(ccy, logs=None, vintages=None, macro_days=None, calendar=None):
+def fixture_outputs(ccy, logs=None, vintages=None, macro_days=None, calendar=None, overrides=None):
     """`outputs` on the committed fixtures (or frames given in their place), in a scratch cache.
 
     The nowcast is read on the fixture sessions (or `macro_days`), not every business day.
+    `overrides` go on top of the fixtures' own (a variant, on the fixtures).
     """
     spec = fixtures.spec(ccy)
     days = fixtures.sessions(ccy) if macro_days is None else macro_days
     with tempfile.TemporaryDirectory() as tmp:
         fixtures.write(ccy, tmp, logs, vintages)
-        return outputs(ccy, tmp, macro_days=days, overrides=spec.get("overrides"), calendar=calendar)
+        return outputs(ccy, tmp, macro_days=days, overrides=merge(spec.get("overrides") or {}, overrides),
+                       calendar=calendar)
 
 
 def _roundtrip(frame):

@@ -64,10 +64,17 @@ def per_meeting_inertia(spec, as_of=None):
 
 
 def inertial_path(r0, target, n, spec, as_of=None):
-    """The rate after each of the next `n` meetings, from `r0` in force today toward `target`."""
+    """The rate after each of the next `n` meetings, from `r0` in force today toward `target`.
+
+    `target` is one rate for every meeting (hold-flat), or one per meeting
+    (converge-to-target conditioning moves the goal as the macro picture does).
+    """
     rho = per_meeting_inertia(spec, as_of)
+    goals = [target] * n if np.ndim(target) == 0 else list(target)
+    if len(goals) != n:
+        raise ValueError(f"{len(goals)} targets for {n} meetings")
     out, r = [], r0
-    for _ in range(n):
-        r = rho * r + (1.0 - rho) * target
+    for goal in goals:
+        r = rho * r + (1.0 - rho) * goal
         out.append(r)
     return np.array(out)

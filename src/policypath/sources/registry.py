@@ -1,11 +1,11 @@
 """Which `Source` a config's ``sources`` block means, by name.
 
 A currency's config lists what to cache under ``sources`` (daily series with
-their publication lags, fitted curves, futures roots) and ``macro.source``; the
-names there are the keys here. Adding a data provider is a module in
-``sources/`` and a line in one of these tables; ``scripts/update_data.py`` is not
-edited. Imports are deferred so that reading the registry does not pull in
-every provider's client library.
+their publication lags, fitted curves, futures roots, quarterly estimates with
+theirs) and ``macro.source``; the names there are the keys here. Adding a data
+provider is a module in ``sources/`` and a line in one of these tables;
+``scripts/update_data.py`` is not edited. Imports are deferred so that reading
+the registry does not pull in every provider's client library.
 """
 
 
@@ -22,6 +22,11 @@ def _boe(lag):
 def _boe_curve():
     from policypath.sources import boe
     return boe.BoeCurve()
+
+
+def _nyfed(lag_days):
+    from policypath.sources import nyfed
+    return nyfed.Hlw(lag_days=lag_days)
 
 
 def _databento():
@@ -55,6 +60,9 @@ DAILY = {"fred": _fred, "boe": _boe}
 CURVES = {"boe": _boe_curve}
 # ``sources.futures``: name -> f() -> a Source of one futures root's settles, keyed by (date, contract).
 FUTURES = {"databento": _databento}
+# ``sources.estimates``: name -> f(calendar days from the end of a vintage's quarter to its release)
+# -> a Source of one quarterly estimate, one row per vintage.
+ESTIMATES = {"nyfed": _nyfed}
 # ``macro.source``: name -> f(series, start) -> (every vintage, manifest metadata).
 MACRO = {"alfred": _alfred, "ons": _ons}
 
