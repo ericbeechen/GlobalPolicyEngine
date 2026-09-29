@@ -1,0 +1,4107 @@
+{
+ "USD": {
+  "headline": {
+   "k": 4,
+   "h_short": 21,
+   "h_long": 63,
+   "weekly_lags": 4,
+   "control_sessions": 5,
+   "min_weeks": 13,
+   "week_ends": "Wednesday",
+   "primary_label": "Baa - Aaa",
+   "first_week": "2011-03-16",
+   "last_week": "2026-09-16",
+   "weeks": 810,
+   "first_session": "2012-02-29",
+   "last_session": "2026-09-21",
+   "sessions": 3671,
+   "elb_sessions": 727,
+   "elb_share_pct": 20,
+   "exclude_name": "crash_2020",
+   "exclude_first": "2020-02-15",
+   "exclude_last": "2020-04-30",
+   "quality_first_print": "2010-01-04",
+   "baa_30y_first_print": "2010-01-04",
+   "baa_10y_first_print": "2010-01-04",
+   "ig_oas_first_print": "2023-09-29",
+   "hy_oas_first_print": "2023-09-29",
+   "stale_band": "0.069",
+   "stale_spreads": "Baa - 30y Treasury, Baa - 10y Treasury",
+   "stale_primary": "does not show",
+   "stale_quality_ar1": "+0.04",
+   "stale_quality_lag1": "-0.02",
+   "stale_quality_lag0": "-0.07",
+   "stale_quality_ar1_ex_crash_2020": "+0.03",
+   "stale_baa_30y_ar1": "+0.42",
+   "stale_baa_30y_lag1": "-0.09",
+   "stale_baa_30y_lag0": "-0.11",
+   "stale_baa_30y_ar1_ex_crash_2020": "+0.27",
+   "stale_baa_10y_ar1": "+0.27",
+   "stale_baa_10y_lag1": "-0.07",
+   "stale_baa_10y_lag0": "-0.24",
+   "stale_baa_10y_ar1_ex_crash_2020": "+0.07",
+   "stale_ig_oas_ar1": "+0.02",
+   "stale_ig_oas_lag1": "-0.01",
+   "stale_ig_oas_lag0": "-0.13",
+   "stale_ig_oas_ar1_ex_crash_2020": "+0.02",
+   "stale_hy_oas_ar1": "-0.09",
+   "stale_hy_oas_lag1": "+0.10",
+   "stale_hy_oas_lag0": "-0.03",
+   "stale_hy_oas_ar1_ex_crash_2020": "-0.09",
+   "t1_quality_weeks": 755,
+   "t1_quality_first": "2012-03-07",
+   "t1_quality_r2_market_pct": "0.3",
+   "t1_quality_r2_components_pct": "0.8",
+   "t1_quality_r2_control_pct": "1.5",
+   "t1_quality_market_coef": "-0.025",
+   "t1_quality_market_t": "-1.04",
+   "t1_quality_control_coef": "-0.114",
+   "t1_quality_control_t": "-2.01",
+   "t1_quality_r2_ex_crash_2020_pct": "0.0",
+   "t1_baa_30y_weeks": 755,
+   "t1_baa_30y_first": "2012-03-07",
+   "t1_baa_30y_r2_market_pct": "2.4",
+   "t1_baa_30y_r2_components_pct": "6.0",
+   "t1_baa_30y_r2_control_pct": "7.5",
+   "t1_baa_30y_market_coef": "-0.101",
+   "t1_baa_30y_market_t": "-2.13",
+   "t1_baa_30y_control_coef": "-0.236",
+   "t1_baa_30y_control_t": "-1.33",
+   "t1_baa_30y_r2_ex_crash_2020_pct": "2.1",
+   "t1_baa_10y_weeks": 755,
+   "t1_baa_10y_first": "2012-03-07",
+   "t1_baa_10y_r2_market_pct": "15.4",
+   "t1_baa_10y_r2_components_pct": "22.7",
+   "t1_baa_10y_r2_control_pct": "33.9",
+   "t1_baa_10y_market_coef": "-0.301",
+   "t1_baa_10y_market_t": "-7.08",
+   "t1_baa_10y_control_coef": "+0.764",
+   "t1_baa_10y_control_t": "+4.32",
+   "t1_baa_10y_r2_ex_crash_2020_pct": "20.1",
+   "t1_ig_oas_weeks": 154,
+   "t1_ig_oas_first": "2023-10-11",
+   "t1_ig_oas_r2_market_pct": "8.4",
+   "t1_ig_oas_r2_components_pct": "13.6",
+   "t1_ig_oas_r2_control_pct": "14.2",
+   "t1_ig_oas_market_coef": "-0.119",
+   "t1_ig_oas_market_t": "-3.81",
+   "t1_ig_oas_control_coef": "+0.112",
+   "t1_ig_oas_control_t": "+1.19",
+   "t1_ig_oas_r2_ex_crash_2020_pct": "13.6",
+   "t1_hy_oas_weeks": 154,
+   "t1_hy_oas_first": "2023-10-11",
+   "t1_hy_oas_r2_market_pct": "4.5",
+   "t1_hy_oas_r2_components_pct": "8.9",
+   "t1_hy_oas_r2_control_pct": "10.9",
+   "t1_hy_oas_market_coef": "-0.357",
+   "t1_hy_oas_market_t": "-2.12",
+   "t1_hy_oas_control_coef": "+0.828",
+   "t1_hy_oas_control_t": "+2.18",
+   "t1_hy_oas_r2_ex_crash_2020_pct": "8.9",
+   "t2_quality_h21_z_all_slope": "-0.97",
+   "t2_quality_h21_z_all_t": "-1.78",
+   "t2_quality_h21_z_all_n": 3649,
+   "t2_quality_h21_z_all_nonoverlap_mean": "-0.97",
+   "t2_quality_h21_z_all_nonoverlap_t": "-1.43",
+   "t2_quality_h21_z_all_sign": "the registered sign",
+   "t2_quality_h21_z_ex_crash_2020_slope": "-0.51",
+   "t2_quality_h21_z_ex_crash_2020_t": "-1.45",
+   "t2_quality_h21_z_ex_crash_2020_n": 3577,
+   "t2_quality_h21_z_ex_crash_2020_nonoverlap_mean": "-0.52",
+   "t2_quality_h21_z_ex_crash_2020_nonoverlap_t": "-1.18",
+   "t2_quality_h21_z_ex_crash_2020_sign": "the registered sign",
+   "t2_quality_h21_z_ex_elb_slope": "-0.67",
+   "t2_quality_h21_z_ex_elb_t": "-1.20",
+   "t2_quality_h21_z_ex_elb_n": 2922,
+   "t2_quality_h21_z_ex_elb_nonoverlap_mean": "-0.67",
+   "t2_quality_h21_z_ex_elb_nonoverlap_t": "-0.90",
+   "t2_quality_h21_z_ex_elb_sign": "the registered sign",
+   "t2_quality_h21_gap_bp_all_slope": "-0.044",
+   "t2_quality_h21_gap_bp_all_t": "-1.47",
+   "t2_quality_h21_gap_bp_all_n": 3649,
+   "t2_quality_h21_gap_bp_all_nonoverlap_mean": "-0.044",
+   "t2_quality_h21_gap_bp_all_nonoverlap_t": "-1.24",
+   "t2_quality_h21_gap_bp_all_sign": "the registered sign",
+   "t2_quality_h21_gap_bp_ex_crash_2020_slope": "-0.015",
+   "t2_quality_h21_gap_bp_ex_crash_2020_t": "-1.15",
+   "t2_quality_h21_gap_bp_ex_crash_2020_n": 3577,
+   "t2_quality_h21_gap_bp_ex_crash_2020_nonoverlap_mean": "-0.015",
+   "t2_quality_h21_gap_bp_ex_crash_2020_nonoverlap_t": "-0.93",
+   "t2_quality_h21_gap_bp_ex_crash_2020_sign": "the registered sign",
+   "t2_quality_h21_gap_bp_ex_elb_slope": "-0.027",
+   "t2_quality_h21_gap_bp_ex_elb_t": "-0.75",
+   "t2_quality_h21_gap_bp_ex_elb_n": 2922,
+   "t2_quality_h21_gap_bp_ex_elb_nonoverlap_mean": "-0.028",
+   "t2_quality_h21_gap_bp_ex_elb_nonoverlap_t": "-0.54",
+   "t2_quality_h21_gap_bp_ex_elb_sign": "the registered sign",
+   "t2_quality_h63_z_all_slope": "-2.20",
+   "t2_quality_h63_z_all_t": "-2.09",
+   "t2_quality_h63_z_all_n": 3607,
+   "t2_quality_h63_z_all_nonoverlap_mean": "-2.25",
+   "t2_quality_h63_z_all_nonoverlap_t": "-1.58",
+   "t2_quality_h63_z_all_sign": "the registered sign",
+   "t2_quality_h63_z_ex_crash_2020_slope": "-1.99",
+   "t2_quality_h63_z_ex_crash_2020_t": "-1.88",
+   "t2_quality_h63_z_ex_crash_2020_n": 3493,
+   "t2_quality_h63_z_ex_crash_2020_nonoverlap_mean": "-2.04",
+   "t2_quality_h63_z_ex_crash_2020_nonoverlap_t": "-1.48",
+   "t2_quality_h63_z_ex_crash_2020_sign": "the registered sign",
+   "t2_quality_h63_z_ex_elb_slope": "-1.56",
+   "t2_quality_h63_z_ex_elb_t": "-1.53",
+   "t2_quality_h63_z_ex_elb_n": 2880,
+   "t2_quality_h63_z_ex_elb_nonoverlap_mean": "-1.65",
+   "t2_quality_h63_z_ex_elb_nonoverlap_t": "-1.21",
+   "t2_quality_h63_z_ex_elb_sign": "the registered sign",
+   "t2_quality_h63_gap_bp_all_slope": "-0.092",
+   "t2_quality_h63_gap_bp_all_t": "-2.06",
+   "t2_quality_h63_gap_bp_all_n": 3607,
+   "t2_quality_h63_gap_bp_all_nonoverlap_mean": "-0.098",
+   "t2_quality_h63_gap_bp_all_nonoverlap_t": "-1.56",
+   "t2_quality_h63_gap_bp_all_sign": "the registered sign",
+   "t2_quality_h63_gap_bp_ex_crash_2020_slope": "-0.075",
+   "t2_quality_h63_gap_bp_ex_crash_2020_t": "-1.76",
+   "t2_quality_h63_gap_bp_ex_crash_2020_n": 3493,
+   "t2_quality_h63_gap_bp_ex_crash_2020_nonoverlap_mean": "-0.078",
+   "t2_quality_h63_gap_bp_ex_crash_2020_nonoverlap_t": "-1.43",
+   "t2_quality_h63_gap_bp_ex_crash_2020_sign": "the registered sign",
+   "t2_quality_h63_gap_bp_ex_elb_slope": "-0.042",
+   "t2_quality_h63_gap_bp_ex_elb_t": "-0.85",
+   "t2_quality_h63_gap_bp_ex_elb_n": 2880,
+   "t2_quality_h63_gap_bp_ex_elb_nonoverlap_mean": "-0.048",
+   "t2_quality_h63_gap_bp_ex_elb_nonoverlap_t": "-0.74",
+   "t2_quality_h63_gap_bp_ex_elb_sign": "the registered sign",
+   "t2_baa_30y_h63_z_all_slope": "-3.89",
+   "t2_baa_30y_h63_z_all_t": "-2.45",
+   "t2_baa_30y_h63_z_all_n": 3607,
+   "t2_baa_30y_h63_z_all_nonoverlap_mean": "-4.03",
+   "t2_baa_30y_h63_z_all_nonoverlap_t": "-1.88",
+   "t2_baa_30y_h63_z_all_sign": "the registered sign",
+   "t2_baa_10y_h63_z_all_slope": "-3.64",
+   "t2_baa_10y_h63_z_all_t": "-2.48",
+   "t2_baa_10y_h63_z_all_n": 3607,
+   "t2_baa_10y_h63_z_all_nonoverlap_mean": "-3.79",
+   "t2_baa_10y_h63_z_all_nonoverlap_t": "-1.77",
+   "t2_baa_10y_h63_z_all_sign": "the registered sign",
+   "t2_ig_oas_h63_z_all_slope": "+3.63",
+   "t2_ig_oas_h63_z_all_t": "+1.26",
+   "t2_ig_oas_h63_z_all_n": 685,
+   "t2_ig_oas_h63_z_all_nonoverlap_mean": "+3.96",
+   "t2_ig_oas_h63_z_all_nonoverlap_t": "+0.81",
+   "t2_ig_oas_h63_z_all_sign": "the other sign",
+   "t2_hy_oas_h63_z_all_slope": "+12.70",
+   "t2_hy_oas_h63_z_all_t": "+1.26",
+   "t2_hy_oas_h63_z_all_n": 685,
+   "t2_hy_oas_h63_z_all_nonoverlap_mean": "+14.90",
+   "t2_hy_oas_h63_z_all_nonoverlap_t": "+0.77",
+   "t2_hy_oas_h63_z_all_sign": "the other sign",
+   "t2_cells": 11,
+   "t2_cells_negative": 11,
+   "t2_cells_clearing_n": 1,
+   "t2_cells_clearing": "the gap in bp at h = 63, every session with a z",
+   "t2_slope": "-2.20",
+   "t2_t": "-2.09",
+   "t2_n": 3607,
+   "t2_r2_pct": "2.7",
+   "t2_change_sd": "17.8",
+   "t2_nonoverlap_mean": "-2.25",
+   "t2_nonoverlap_min": "-3.84",
+   "t2_nonoverlap_max": "-0.47",
+   "t2_nonoverlap_t": "-1.58",
+   "t2_nonoverlap_n": 57,
+   "t2_nonoverlap_negative_pct": 100,
+   "t2_verdict": "passes",
+   "t2_threshold": "-1.96",
+   "t2_years": 15,
+   "t2_years_failing": 7,
+   "t2_years_passing": 8,
+   "t2_years_negative": 15,
+   "t2_years_slope_min": "-3.16",
+   "t2_years_slope_max": "-1.35",
+   "t2_without_year1": "2014",
+   "t2_without_year1_slope": "-1.54",
+   "t2_without_year1_t": "-1.17",
+   "t2_without_year2": "2020",
+   "t2_without_year2_slope": "-1.35",
+   "t2_without_year2_t": "-1.29",
+   "t2_nonoverlap_offsets": 63,
+   "t2_nonoverlap_clearing": 19,
+   "t2_z_clip": 3,
+   "t2_floor_sessions": 561,
+   "t2_kernel_sentence": "The pass depends on the kernel D1 registered: with Hansen-Hodrick's equal weights the t is -1.72, and with Bartlett at lag 126 it is -1.81.",
+   "t2_z_checks_words": "both more negative than the headline's, so the inflated z's do not carry it",
+   "t2_bartlett_2h_slope": "-2.20",
+   "t2_bartlett_2h_t": "-1.81",
+   "t2_bartlett_2h_n": 3607,
+   "t2_bartlett_2h_line": "does not clear",
+   "t2_uniform_slope": "-2.20",
+   "t2_uniform_t": "-1.72",
+   "t2_uniform_n": 3607,
+   "t2_uniform_line": "does not clear",
+   "t2_z_clipped_slope": "-2.50",
+   "t2_z_clipped_t": "-2.12",
+   "t2_z_clipped_n": 3607,
+   "t2_z_clipped_line": "clears",
+   "t2_above_floor_slope": "-2.59",
+   "t2_above_floor_t": "-2.30",
+   "t2_above_floor_n": 3046,
+   "t2_above_floor_line": "clears",
+   "t2_placebo_shifts": 634,
+   "t2_placebo_reject_pct": 25,
+   "t2_placebo_reject_negative_pct": 11,
+   "t2_placebo_critical": "-2.37",
+   "t2_placebo_p": "0.07",
+   "t2_placebo_p_pct": 7,
+   "t2_placebo_line": "does not clear",
+   "t3_sentence": "The sign differs in one of the two cycles and not in the other: early negative and late positive, as the hypothesis has it.",
+   "t3_market_sentence": "The sign differs in each of the two cycles: the hypothesis's way in one of them.",
+   "t3_weeks": 609,
+   "t3_early_hiking_slope": "-0.010",
+   "t3_early_hiking_t": "-0.31",
+   "t3_early_hiking_weeks": 105,
+   "t3_late_hiking_slope": "+0.018",
+   "t3_late_hiking_t": "+0.54",
+   "t3_late_hiking_weeks": 176,
+   "t3_hold_after_hikes_slope": "-0.016",
+   "t3_hold_after_hikes_t": "-0.98",
+   "t3_hold_after_hikes_weeks": 40,
+   "t3_cutting_slope": "-0.057",
+   "t3_cutting_t": "-1.03",
+   "t3_cutting_weeks": 117,
+   "t3_hold_after_cuts_slope": "-0.022",
+   "t3_hold_after_cuts_t": "-1.14",
+   "t3_hold_after_cuts_weeks": 171,
+   "t3_diff": "+0.028",
+   "t3_diff_se": "0.051",
+   "t3_diff_t": "+0.55",
+   "t3_mde": "0.143",
+   "t3_cycle1_early_label": "Dec 2015 to Dec 2016",
+   "t3_cycle1_early_slope": "-0.061",
+   "t3_cycle1_early_t": "-0.69",
+   "t3_cycle1_early_weeks": 53,
+   "t3_cycle1_early_mde": "0.250",
+   "t3_cycle1_late_label": "Dec 2016 to Jun 2019",
+   "t3_cycle1_late_slope": "-0.036",
+   "t3_cycle1_late_t": "-1.05",
+   "t3_cycle1_late_weeks": 131,
+   "t3_cycle1_late_mde": "0.096",
+   "t3_cycle2_early_label": "Mar 2022 to Mar 2023",
+   "t3_cycle2_early_slope": "-0.007",
+   "t3_cycle2_early_t": "-0.21",
+   "t3_cycle2_early_weeks": 52,
+   "t3_cycle2_early_mde": "0.088",
+   "t3_cycle2_late_label": "Mar 2023 to Jan 2024",
+   "t3_cycle2_late_slope": "+0.095",
+   "t3_cycle2_late_t": "+1.958",
+   "t3_cycle2_late_weeks": 45,
+   "t3_cycle2_late_mde": "0.135",
+   "t3_cycles": 2,
+   "t3_episodes": 12,
+   "t3_early_signs": "negative in both cycles",
+   "t3_late_signs": "negative in the first cycle and positive in the second"
+  },
+  "spreads": [
+   "quality",
+   "baa_30y",
+   "baa_10y",
+   "ig_oas",
+   "hy_oas"
+  ],
+  "primary": "quality",
+  "regressors": [
+   "market",
+   "model",
+   "slope",
+   "differential"
+  ],
+  "k": 4,
+  "differentials": [
+   "GBP - USD 2y"
+  ],
+  "staleness": {
+   "quality": {
+    "n": 810,
+    "band": 0.068866,
+    "ar1": 0.043266,
+    "cross": {
+     "0": -0.068888,
+     "1": -0.015687,
+     "2": 0.009656
+    },
+    "shows": false
+   },
+   "baa_30y": {
+    "n": 810,
+    "band": 0.068866,
+    "ar1": 0.418339,
+    "cross": {
+     "0": -0.112971,
+     "1": -0.091517,
+     "2": -0.054221
+    },
+    "shows": true
+   },
+   "baa_10y": {
+    "n": 810,
+    "band": 0.068866,
+    "ar1": 0.272954,
+    "cross": {
+     "0": -0.240665,
+     "1": -0.06965,
+     "2": -0.053372
+    },
+    "shows": true
+   },
+   "ig_oas": {
+    "n": 154,
+    "band": 0.157938,
+    "ar1": 0.024954,
+    "cross": {
+     "0": -0.12532,
+     "1": -0.007219,
+     "2": 0.139896
+    },
+    "shows": false
+   },
+   "hy_oas": {
+    "n": 154,
+    "band": 0.157938,
+    "ar1": -0.086804,
+    "cross": {
+     "0": -0.025798,
+     "1": 0.096985,
+     "2": 0.042858
+    },
+    "shows": false
+   }
+  },
+  "staleness_ex": {
+   "quality": {
+    "crash_2020": {
+     "n": 798,
+     "band": 0.069382,
+     "ar1": 0.027553,
+     "cross": {
+      "0": -0.004425,
+      "1": -0.026381,
+      "2": 0.025945
+     },
+     "shows": false
+    }
+   },
+   "baa_30y": {
+    "crash_2020": {
+     "n": 798,
+     "band": 0.069382,
+     "ar1": 0.272041,
+     "cross": {
+      "0": -0.171975,
+      "1": -0.073437,
+      "2": 0.021916
+     },
+     "shows": true
+    }
+   },
+   "baa_10y": {
+    "crash_2020": {
+     "n": 798,
+     "band": 0.069382,
+     "ar1": 0.069125,
+     "cross": {
+      "0": -0.311044,
+      "1": -0.042769,
+      "2": 0.003691
+     },
+     "shows": false
+    }
+   },
+   "ig_oas": {
+    "crash_2020": {
+     "n": 154,
+     "band": 0.157938,
+     "ar1": 0.024954,
+     "cross": {
+      "0": -0.12532,
+      "1": -0.007219,
+      "2": 0.139896
+     },
+     "shows": false
+    }
+   },
+   "hy_oas": {
+    "crash_2020": {
+     "n": 154,
+     "band": 0.157938,
+     "ar1": -0.086804,
+     "cross": {
+      "0": -0.025798,
+      "1": 0.096985,
+      "2": 0.042858
+     },
+     "shows": false
+    }
+   }
+  },
+  "contemporaneous": {
+   "quality": {
+    "market": {
+     "coef": {
+      "const": -0.093609,
+      "market": -0.02519
+     },
+     "se": {
+      "const": 0.179833,
+      "market": 0.024266
+     },
+     "t": {
+      "const": -0.520531,
+      "market": -1.038053
+     },
+     "r2": 0.002985,
+     "n": 755,
+     "first": "2012-03-07",
+     "last": "2026-09-16"
+    },
+    "components": {
+     "coef": {
+      "const": -0.094008,
+      "market": -0.021754,
+      "model": -0.000431,
+      "slope": 0.031581,
+      "differential": 0.002911
+     },
+     "se": {
+      "const": 0.179927,
+      "market": 0.022747,
+      "model": 0.016857,
+      "slope": 0.024457,
+      "differential": 0.012322
+     },
+     "t": {
+      "const": -0.522477,
+      "market": -0.956337,
+      "model": -0.025547,
+      "slope": 1.291292,
+      "differential": 0.236262
+     },
+     "r2": 0.008425,
+     "n": 755,
+     "first": "2012-03-07",
+     "last": "2026-09-16"
+    },
+    "components_control": {
+     "coef": {
+      "const": -0.092072,
+      "market": -0.046746,
+      "model": -0.00058,
+      "slope": 0.020084,
+      "differential": 0.00035,
+      "control": -0.114223
+     },
+     "se": {
+      "const": 0.178703,
+      "market": 0.029095,
+      "model": 0.01724,
+      "slope": 0.021572,
+      "differential": 0.012105,
+      "control": 0.056697
+     },
+     "t": {
+      "const": -0.515222,
+      "market": -1.606684,
+      "model": -0.033623,
+      "slope": 0.931014,
+      "differential": 0.028873,
+      "control": -2.014607
+     },
+     "r2": 0.015396,
+     "n": 755,
+     "first": "2012-03-07",
+     "last": "2026-09-16"
+    }
+   },
+   "baa_30y": {
+    "market": {
+     "coef": {
+      "const": -0.067193,
+      "market": -0.100687
+     },
+     "se": {
+      "const": 0.303857,
+      "market": 0.047183
+     },
+     "t": {
+      "const": -0.221133,
+      "market": -2.133976
+     },
+     "r2": 0.024076,
+     "n": 755,
+     "first": "2012-03-07",
+     "last": "2026-09-16"
+    },
+    "components": {
+     "coef": {
+      "const": -0.182021,
+      "market": -0.065726,
+      "model": 0.096022,
+      "slope": -0.080978,
+      "differential": 0.048207,
+      "yield_lag": -0.03465
+     },
+     "se": {
+      "const": 0.24733,
+      "market": 0.030509,
+      "model": 0.096804,
+      "slope": 0.048902,
+      "differential": 0.035887,
+      "yield_lag": 0.030469
+     },
+     "t": {
+      "const": -0.735944,
+      "market": -2.154334,
+      "model": 0.99193,
+      "slope": -1.65592,
+      "differential": 1.343303,
+      "yield_lag": -1.137222
+     },
+     "r2": 0.060359,
+     "n": 755,
+     "first": "2012-03-07",
+     "last": "2026-09-16"
+    },
+    "components_control": {
+     "coef": {
+      "const": -0.179212,
+      "market": -0.117311,
+      "model": 0.095894,
+      "slope": -0.104432,
+      "differential": 0.043007,
+      "control": -0.235527,
+      "yield_lag": -0.031926
+     },
+     "se": {
+      "const": 0.245023,
+      "market": 0.06017,
+      "model": 0.097132,
+      "slope": 0.058376,
+      "differential": 0.032534,
+      "control": 0.176888,
+      "yield_lag": 0.029305
+     },
+     "t": {
+      "const": -0.731408,
+      "market": -1.949655,
+      "model": 0.987257,
+      "slope": -1.788937,
+      "differential": 1.321925,
+      "control": -1.331507,
+      "yield_lag": -1.089459
+     },
+     "r2": 0.0753,
+     "n": 755,
+     "first": "2012-03-07",
+     "last": "2026-09-16"
+    }
+   },
+   "baa_10y": {
+    "market": {
+     "coef": {
+      "const": -0.060512,
+      "market": -0.300961
+     },
+     "se": {
+      "const": 0.305146,
+      "market": 0.042506
+     },
+     "t": {
+      "const": -0.198304,
+      "market": -7.080428
+     },
+     "r2": 0.153654,
+     "n": 755,
+     "first": "2012-03-07",
+     "last": "2026-09-16"
+    },
+    "components": {
+     "coef": {
+      "const": -0.170094,
+      "market": -0.284744,
+      "model": 0.095478,
+      "slope": -0.180559,
+      "differential": 0.026132,
+      "yield_lag": -0.023085
+     },
+     "se": {
+      "const": 0.254893,
+      "market": 0.038369,
+      "model": 0.099532,
+      "slope": 0.054,
+      "differential": 0.034091,
+      "yield_lag": 0.033405
+     },
+     "t": {
+      "const": -0.667315,
+      "market": -7.421287,
+      "model": 0.959267,
+      "slope": -3.343715,
+      "differential": 0.766518,
+      "yield_lag": -0.691059
+     },
+     "r2": 0.227028,
+     "n": 755,
+     "first": "2012-03-07",
+     "last": "2026-09-16"
+    },
+    "components_control": {
+     "coef": {
+      "const": -0.179212,
+      "market": -0.117311,
+      "model": 0.095894,
+      "slope": -0.104432,
+      "differential": 0.043007,
+      "control": 0.764473,
+      "yield_lag": -0.031926
+     },
+     "se": {
+      "const": 0.245023,
+      "market": 0.06017,
+      "model": 0.097132,
+      "slope": 0.058376,
+      "differential": 0.032534,
+      "control": 0.176888,
+      "yield_lag": 0.029305
+     },
+     "t": {
+      "const": -0.731408,
+      "market": -1.949655,
+      "model": 0.987257,
+      "slope": -1.788937,
+      "differential": 1.321925,
+      "control": 4.321803,
+      "yield_lag": -1.089459
+     },
+     "r2": 0.339466,
+     "n": 755,
+     "first": "2012-03-07",
+     "last": "2026-09-16"
+    }
+   },
+   "ig_oas": {
+    "market": {
+     "coef": {
+      "const": -0.212479,
+      "market": -0.118651
+     },
+     "se": {
+      "const": 0.30018,
+      "market": 0.031162
+     },
+     "t": {
+      "const": -0.707838,
+      "market": -3.807517
+     },
+     "r2": 0.084494,
+     "n": 154,
+     "first": "2023-10-11",
+     "last": "2026-09-16"
+    },
+    "components": {
+     "coef": {
+      "const": -0.11334,
+      "market": -0.156881,
+      "model": -0.015266,
+      "slope": 0.042076,
+      "differential": -0.06402
+     },
+     "se": {
+      "const": 0.299622,
+      "market": 0.041307,
+      "model": 0.047275,
+      "slope": 0.042253,
+      "differential": 0.03588
+     },
+     "t": {
+      "const": -0.378277,
+      "market": -3.797917,
+      "model": -0.322922,
+      "slope": 0.9958,
+      "differential": -1.784274
+     },
+     "r2": 0.135776,
+     "n": 154,
+     "first": "2023-10-11",
+     "last": "2026-09-16"
+    },
+    "components_control": {
+     "coef": {
+      "const": -0.150805,
+      "market": -0.133959,
+      "model": -0.019706,
+      "slope": 0.048747,
+      "differential": -0.061862,
+      "control": 0.111829
+     },
+     "se": {
+      "const": 0.288382,
+      "market": 0.043374,
+      "model": 0.046923,
+      "slope": 0.04454,
+      "differential": 0.035514,
+      "control": 0.093964
+     },
+     "t": {
+      "const": -0.522935,
+      "market": -3.088493,
+      "model": -0.419967,
+      "slope": 1.09445,
+      "differential": -1.741915,
+      "control": 1.190137
+     },
+     "r2": 0.142023,
+     "n": 154,
+     "first": "2023-10-11",
+     "last": "2026-09-16"
+    }
+   },
+   "hy_oas": {
+    "market": {
+     "coef": {
+      "const": -0.727313,
+      "market": -0.356985
+     },
+     "se": {
+      "const": 1.114873,
+      "market": 0.1683
+     },
+     "t": {
+      "const": -0.652373,
+      "market": -2.121118
+     },
+     "r2": 0.044846,
+     "n": 154,
+     "first": "2023-10-11",
+     "last": "2026-09-16"
+    },
+    "components": {
+     "coef": {
+      "const": -0.255043,
+      "market": -0.522573,
+      "model": -0.086518,
+      "slope": 0.082305,
+      "differential": -0.254454
+     },
+     "se": {
+      "const": 1.124481,
+      "market": 0.224449,
+      "model": 0.185715,
+      "slope": 0.154395,
+      "differential": 0.145809
+     },
+     "t": {
+      "const": -0.22681,
+      "market": -2.328246,
+      "model": -0.465865,
+      "slope": 0.533082,
+      "differential": -1.745123
+     },
+     "r2": 0.088883,
+     "n": 154,
+     "first": "2023-10-11",
+     "last": "2026-09-16"
+    },
+    "components_control": {
+     "coef": {
+      "const": -0.532275,
+      "market": -0.35296,
+      "model": -0.119372,
+      "slope": 0.131672,
+      "differential": -0.238488,
+      "control": 0.827506
+     },
+     "se": {
+      "const": 1.077698,
+      "market": 0.229002,
+      "model": 0.185371,
+      "slope": 0.161098,
+      "differential": 0.141942,
+      "control": 0.379301
+     },
+     "t": {
+      "const": -0.4939,
+      "market": -1.541294,
+      "model": -0.643962,
+      "slope": 0.817339,
+      "differential": -1.680177,
+      "control": 2.18166
+     },
+     "r2": 0.10894,
+     "n": 154,
+     "first": "2023-10-11",
+     "last": "2026-09-16"
+    }
+   }
+  },
+  "contemporaneous_ex": {
+   "quality": {
+    "crash_2020": {
+     "coef": {
+      "const": -0.182878,
+      "market": -0.004306,
+      "model": -0.001691,
+      "slope": 0.003677,
+      "differential": -0.003675
+     },
+     "se": {
+      "const": 0.136217,
+      "market": 0.022353,
+      "model": 0.021225,
+      "slope": 0.017354,
+      "differential": 0.01042
+     },
+     "t": {
+      "const": -1.342546,
+      "market": -0.192644,
+      "model": -0.079683,
+      "slope": 0.211866,
+      "differential": -0.352651
+     },
+     "r2": 0.00029,
+     "n": 743,
+     "first": "2012-03-07",
+     "last": "2026-09-16"
+    }
+   },
+   "baa_30y": {
+    "crash_2020": {
+     "coef": {
+      "const": -0.224079,
+      "market": -0.044992,
+      "model": -0.009362,
+      "slope": -0.042146,
+      "differential": 0.013723,
+      "yield_lag": -0.011311
+     },
+     "se": {
+      "const": 0.20246,
+      "market": 0.027119,
+      "model": 0.028501,
+      "slope": 0.025614,
+      "differential": 0.022512,
+      "yield_lag": 0.017128
+     },
+     "t": {
+      "const": -1.106778,
+      "market": -1.659071,
+      "model": -0.328468,
+      "slope": -1.645414,
+      "differential": 0.60958,
+      "yield_lag": -0.660366
+     },
+     "r2": 0.020887,
+     "n": 743,
+     "first": "2012-03-07",
+     "last": "2026-09-16"
+    }
+   },
+   "baa_10y": {
+    "crash_2020": {
+     "coef": {
+      "const": -0.197877,
+      "market": -0.26515,
+      "model": -0.014959,
+      "slope": -0.130472,
+      "differential": -0.003464,
+      "yield_lag": -0.001634
+     },
+     "se": {
+      "const": 0.2245,
+      "market": 0.025362,
+      "model": 0.034789,
+      "slope": 0.030061,
+      "differential": 0.023918,
+      "yield_lag": 0.025253
+     },
+     "t": {
+      "const": -0.881412,
+      "market": -10.454498,
+      "model": -0.43,
+      "slope": -4.340197,
+      "differential": -0.144825,
+      "yield_lag": -0.064717
+     },
+     "r2": 0.201098,
+     "n": 743,
+     "first": "2012-03-07",
+     "last": "2026-09-16"
+    }
+   },
+   "ig_oas": {
+    "crash_2020": {
+     "coef": {
+      "const": -0.11334,
+      "market": -0.156881,
+      "model": -0.015266,
+      "slope": 0.042076,
+      "differential": -0.06402
+     },
+     "se": {
+      "const": 0.299622,
+      "market": 0.041307,
+      "model": 0.047275,
+      "slope": 0.042253,
+      "differential": 0.03588
+     },
+     "t": {
+      "const": -0.378277,
+      "market": -3.797917,
+      "model": -0.322922,
+      "slope": 0.9958,
+      "differential": -1.784274
+     },
+     "r2": 0.135776,
+     "n": 154,
+     "first": "2023-10-11",
+     "last": "2026-09-16"
+    }
+   },
+   "hy_oas": {
+    "crash_2020": {
+     "coef": {
+      "const": -0.255043,
+      "market": -0.522573,
+      "model": -0.086518,
+      "slope": 0.082305,
+      "differential": -0.254454
+     },
+     "se": {
+      "const": 1.124481,
+      "market": 0.224449,
+      "model": 0.185715,
+      "slope": 0.154395,
+      "differential": 0.145809
+     },
+     "t": {
+      "const": -0.22681,
+      "market": -2.328246,
+      "model": -0.465865,
+      "slope": 0.533082,
+      "differential": -1.745123
+     },
+     "r2": 0.088883,
+     "n": 154,
+     "first": "2023-10-11",
+     "last": "2026-09-16"
+    }
+   }
+  },
+  "predictive": {
+   "quality": {
+    "21": {
+     "z": {
+      "all": {
+       "slope": -0.967242,
+       "se": 0.541999,
+       "t": -1.784582,
+       "r2": 0.016358,
+       "n": 3649,
+       "change_sd": 10.105914,
+       "nonoverlap": {
+        "mean": -0.968015,
+        "min": -1.440682,
+        "max": -0.562589,
+        "mean_t": -1.426234,
+        "share_negative": 1.0,
+        "share_clearing": 0.0,
+        "offsets": 21,
+        "n": 173.761905
+       }
+      },
+      "ex_crash_2020": {
+       "slope": -0.514369,
+       "se": 0.354212,
+       "t": -1.452151,
+       "r2": 0.008478,
+       "n": 3577,
+       "change_sd": 7.476986,
+       "nonoverlap": {
+        "mean": -0.516208,
+        "min": -0.640334,
+        "max": -0.415613,
+        "mean_t": -1.183277,
+        "share_negative": 1.0,
+        "share_clearing": 0.0,
+        "offsets": 21,
+        "n": 170.333333
+       }
+      },
+      "ex_elb": {
+       "slope": -0.672546,
+       "se": 0.558821,
+       "t": -1.203509,
+       "r2": 0.008321,
+       "n": 2922,
+       "change_sd": 10.204387,
+       "nonoverlap": {
+        "mean": -0.673966,
+        "min": -1.380179,
+        "max": -0.150304,
+        "mean_t": -0.895436,
+        "share_negative": 1.0,
+        "share_clearing": 0.0,
+        "offsets": 21,
+        "n": 139.142857
+       }
+      }
+     },
+     "gap_bp": {
+      "all": {
+       "slope": -0.04365,
+       "se": 0.029657,
+       "t": -1.471838,
+       "r2": 0.023626,
+       "n": 3649,
+       "change_sd": 10.105914,
+       "nonoverlap": {
+        "mean": -0.043537,
+        "min": -0.068769,
+        "max": -0.022842,
+        "mean_t": -1.239086,
+        "share_negative": 1.0,
+        "share_clearing": 0.0,
+        "offsets": 21,
+        "n": 173.761905
+       }
+      },
+      "ex_crash_2020": {
+       "slope": -0.015356,
+       "se": 0.013337,
+       "t": -1.151309,
+       "r2": 0.00511,
+       "n": 3577,
+       "change_sd": 7.476986,
+       "nonoverlap": {
+        "mean": -0.015342,
+        "min": -0.022562,
+        "max": -0.007334,
+        "mean_t": -0.930437,
+        "share_negative": 1.0,
+        "share_clearing": 0.0,
+        "offsets": 21,
+        "n": 170.333333
+       }
+      },
+      "ex_elb": {
+       "slope": -0.027415,
+       "se": 0.036437,
+       "t": -0.752392,
+       "r2": 0.008076,
+       "n": 2922,
+       "change_sd": 10.204387,
+       "nonoverlap": {
+        "mean": -0.027619,
+        "min": -0.069835,
+        "max": 0.00182,
+        "mean_t": -0.537094,
+        "share_negative": 0.904762,
+        "share_clearing": 0.0,
+        "offsets": 21,
+        "n": 139.142857
+       }
+      }
+     }
+    },
+    "63": {
+     "z": {
+      "all": {
+       "slope": -2.204869,
+       "se": 1.053608,
+       "t": -2.092686,
+       "r2": 0.027195,
+       "n": 3607,
+       "change_sd": 17.812899,
+       "nonoverlap": {
+        "mean": -2.254899,
+        "min": -3.838359,
+        "max": -0.471528,
+        "mean_t": -1.58415,
+        "share_negative": 1.0,
+        "share_clearing": 0.301587,
+        "offsets": 63,
+        "n": 57.253968
+       }
+      },
+      "ex_crash_2020": {
+       "slope": -1.993785,
+       "se": 1.059436,
+       "t": -1.88193,
+       "r2": 0.033841,
+       "n": 3493,
+       "change_sd": 14.542579,
+       "nonoverlap": {
+        "mean": -2.037962,
+        "min": -3.429199,
+        "max": -0.836931,
+        "mean_t": -1.480135,
+        "share_negative": 1.0,
+        "share_clearing": 0.142857,
+        "offsets": 63,
+        "n": 55.444444
+       }
+      },
+      "ex_elb": {
+       "slope": -1.56287,
+       "se": 1.023505,
+       "t": -1.526979,
+       "r2": 0.01485,
+       "n": 2880,
+       "change_sd": 17.668182,
+       "nonoverlap": {
+        "mean": -1.649172,
+        "min": -4.11951,
+        "max": 0.484965,
+        "mean_t": -1.20712,
+        "share_negative": 0.888889,
+        "share_clearing": 0.206349,
+        "offsets": 63,
+        "n": 45.714286
+       }
+      }
+     },
+     "gap_bp": {
+      "all": {
+       "slope": -0.092407,
+       "se": 0.044761,
+       "t": -2.064458,
+       "r2": 0.034303,
+       "n": 3607,
+       "change_sd": 17.812899,
+       "nonoverlap": {
+        "mean": -0.098157,
+        "min": -0.153392,
+        "max": -0.007522,
+        "mean_t": -1.561206,
+        "share_negative": 1.0,
+        "share_clearing": 0.285714,
+        "offsets": 63,
+        "n": 57.253968
+       }
+      },
+      "ex_crash_2020": {
+       "slope": -0.074671,
+       "se": 0.04237,
+       "t": -1.762363,
+       "r2": 0.032146,
+       "n": 3493,
+       "change_sd": 14.542579,
+       "nonoverlap": {
+        "mean": -0.077736,
+        "min": -0.12634,
+        "max": -0.015794,
+        "mean_t": -1.426064,
+        "share_negative": 1.0,
+        "share_clearing": 0.095238,
+        "offsets": 63,
+        "n": 55.444444
+       }
+      },
+      "ex_elb": {
+       "slope": -0.041832,
+       "se": 0.049316,
+       "t": -0.848249,
+       "r2": 0.006275,
+       "n": 2880,
+       "change_sd": 17.668182,
+       "nonoverlap": {
+        "mean": -0.047919,
+        "min": -0.122879,
+        "max": 0.072261,
+        "mean_t": -0.739836,
+        "share_negative": 0.809524,
+        "share_clearing": 0.0,
+        "offsets": 63,
+        "n": 45.714286
+       }
+      }
+     }
+    }
+   },
+   "baa_30y": {
+    "21": {
+     "z": {
+      "all": {
+       "slope": -1.326301,
+       "se": 0.625864,
+       "t": -2.119152,
+       "r2": 0.01191,
+       "n": 3649,
+       "change_sd": 16.925741,
+       "nonoverlap": {
+        "mean": -1.311999,
+        "min": -1.703297,
+        "max": -0.996664,
+        "mean_t": -1.668465,
+        "share_negative": 1.0,
+        "share_clearing": 0.190476,
+        "offsets": 21,
+        "n": 173.761905
+       }
+      },
+      "ex_crash_2020": {
+       "slope": -1.080208,
+       "se": 0.542592,
+       "t": -1.990829,
+       "r2": 0.020155,
+       "n": 3577,
+       "change_sd": 11.287712,
+       "nonoverlap": {
+        "mean": -1.085483,
+        "min": -1.436149,
+        "max": -0.604425,
+        "mean_t": -1.675123,
+        "share_negative": 1.0,
+        "share_clearing": 0.333333,
+        "offsets": 21,
+        "n": 170.333333
+       }
+      },
+      "ex_elb": {
+       "slope": -0.812489,
+       "se": 0.604575,
+       "t": -1.343901,
+       "r2": 0.005127,
+       "n": 2922,
+       "change_sd": 17.623959,
+       "nonoverlap": {
+        "mean": -0.789766,
+        "min": -1.559847,
+        "max": -0.35058,
+        "mean_t": -0.981419,
+        "share_negative": 1.0,
+        "share_clearing": 0.0,
+        "offsets": 21,
+        "n": 139.142857
+       }
+      }
+     },
+     "gap_bp": {
+      "all": {
+       "slope": -0.057752,
+       "se": 0.039031,
+       "t": -1.479643,
+       "r2": 0.01581,
+       "n": 3649,
+       "change_sd": 16.925741,
+       "nonoverlap": {
+        "mean": -0.056991,
+        "min": -0.084524,
+        "max": -0.036431,
+        "mean_t": -1.189903,
+        "share_negative": 1.0,
+        "share_clearing": 0.0,
+        "offsets": 21,
+        "n": 173.761905
+       }
+      },
+      "ex_crash_2020": {
+       "slope": -0.034086,
+       "se": 0.023565,
+       "t": -1.446468,
+       "r2": 0.015054,
+       "n": 3577,
+       "change_sd": 11.287712,
+       "nonoverlap": {
+        "mean": -0.034288,
+        "min": -0.045111,
+        "max": -0.017536,
+        "mean_t": -1.196871,
+        "share_negative": 1.0,
+        "share_clearing": 0.0,
+        "offsets": 21,
+        "n": 170.333333
+       }
+      },
+      "ex_elb": {
+       "slope": -0.038101,
+       "se": 0.04587,
+       "t": -0.830631,
+       "r2": 0.006339,
+       "n": 2922,
+       "change_sd": 17.623959,
+       "nonoverlap": {
+        "mean": -0.037991,
+        "min": -0.084578,
+        "max": -0.007048,
+        "mean_t": -0.611697,
+        "share_negative": 1.0,
+        "share_clearing": 0.0,
+        "offsets": 21,
+        "n": 139.142857
+       }
+      }
+     }
+    },
+    "63": {
+     "z": {
+      "all": {
+       "slope": -3.889436,
+       "se": 1.588235,
+       "t": -2.448904,
+       "r2": 0.03329,
+       "n": 3607,
+       "change_sd": 28.398955,
+       "nonoverlap": {
+        "mean": -4.031883,
+        "min": -6.497347,
+        "max": -1.589731,
+        "mean_t": -1.876004,
+        "share_negative": 1.0,
+        "share_clearing": 0.619048,
+        "offsets": 63,
+        "n": 57.253968
+       }
+      },
+      "ex_crash_2020": {
+       "slope": -3.844223,
+       "se": 1.594655,
+       "t": -2.410693,
+       "r2": 0.062824,
+       "n": 3493,
+       "change_sd": 20.82045,
+       "nonoverlap": {
+        "mean": -3.944223,
+        "min": -6.548471,
+        "max": -2.238895,
+        "mean_t": -1.938738,
+        "share_negative": 1.0,
+        "share_clearing": 0.555556,
+        "offsets": 63,
+        "n": 55.444444
+       }
+      },
+      "ex_elb": {
+       "slope": -2.929938,
+       "se": 1.594273,
+       "t": -1.837789,
+       "r2": 0.020192,
+       "n": 2880,
+       "change_sd": 29.228642,
+       "nonoverlap": {
+        "mean": -3.140932,
+        "min": -7.154108,
+        "max": -0.133645,
+        "mean_t": -1.502752,
+        "share_negative": 1.0,
+        "share_clearing": 0.333333,
+        "offsets": 63,
+        "n": 45.714286
+       }
+      }
+     },
+     "gap_bp": {
+      "all": {
+       "slope": -0.136457,
+       "se": 0.078135,
+       "t": -1.746435,
+       "r2": 0.029895,
+       "n": 3607,
+       "change_sd": 28.398955,
+       "nonoverlap": {
+        "mean": -0.150028,
+        "min": -0.258777,
+        "max": -0.026786,
+        "mean_t": -1.450101,
+        "share_negative": 1.0,
+        "share_clearing": 0.301587,
+        "offsets": 63,
+        "n": 57.253968
+       }
+      },
+      "ex_crash_2020": {
+       "slope": -0.124893,
+       "se": 0.069042,
+       "t": -1.808943,
+       "r2": 0.046254,
+       "n": 3493,
+       "change_sd": 20.82045,
+       "nonoverlap": {
+        "mean": -0.131232,
+        "min": -0.222156,
+        "max": -0.069933,
+        "mean_t": -1.511635,
+        "share_negative": 1.0,
+        "share_clearing": 0.206349,
+        "offsets": 63,
+        "n": 55.444444
+       }
+      },
+      "ex_elb": {
+       "slope": -0.077592,
+       "se": 0.092592,
+       "t": -0.838,
+       "r2": 0.009355,
+       "n": 2880,
+       "change_sd": 29.228642,
+       "nonoverlap": {
+        "mean": -0.092249,
+        "min": -0.278421,
+        "max": 0.057419,
+        "mean_t": -0.835881,
+        "share_negative": 0.777778,
+        "share_clearing": 0.111111,
+        "offsets": 63,
+        "n": 45.714286
+       }
+      }
+     }
+    }
+   },
+   "baa_10y": {
+    "21": {
+     "z": {
+      "all": {
+       "slope": -1.094735,
+       "se": 0.667927,
+       "t": -1.639002,
+       "r2": 0.006793,
+       "n": 3649,
+       "change_sd": 18.962333,
+       "nonoverlap": {
+        "mean": -1.075218,
+        "min": -1.759369,
+        "max": -0.53852,
+        "mean_t": -1.230944,
+        "share_negative": 1.0,
+        "share_clearing": 0.047619,
+        "offsets": 21,
+        "n": 173.761905
+       }
+      },
+      "ex_crash_2020": {
+       "slope": -0.826701,
+       "se": 0.581031,
+       "t": -1.422817,
+       "r2": 0.010425,
+       "n": 3577,
+       "change_sd": 13.518615,
+       "nonoverlap": {
+        "mean": -0.828011,
+        "min": -1.172006,
+        "max": -0.464519,
+        "mean_t": -1.148594,
+        "share_negative": 1.0,
+        "share_clearing": 0.0,
+        "offsets": 21,
+        "n": 170.333333
+       }
+      },
+      "ex_elb": {
+       "slope": -0.532311,
+       "se": 0.655036,
+       "t": -0.812644,
+       "r2": 0.001844,
+       "n": 2922,
+       "change_sd": 19.940857,
+       "nonoverlap": {
+        "mean": -0.500983,
+        "min": -1.300797,
+        "max": 0.184422,
+        "mean_t": -0.512525,
+        "share_negative": 0.857143,
+        "share_clearing": 0.0,
+        "offsets": 21,
+        "n": 139.142857
+       }
+      }
+     },
+     "gap_bp": {
+      "all": {
+       "slope": -0.038652,
+       "se": 0.044099,
+       "t": -0.876485,
+       "r2": 0.006188,
+       "n": 3649,
+       "change_sd": 18.962333,
+       "nonoverlap": {
+        "mean": -0.038213,
+        "min": -0.07235,
+        "max": -0.009093,
+        "mean_t": -0.661624,
+        "share_negative": 1.0,
+        "share_clearing": 0.0,
+        "offsets": 21,
+        "n": 173.761905
+       }
+      },
+      "ex_crash_2020": {
+       "slope": -0.008744,
+       "se": 0.028887,
+       "t": -0.302699,
+       "r2": 0.004349,
+       "n": 3577,
+       "change_sd": 13.518615,
+       "nonoverlap": {
+        "mean": -0.009432,
+        "min": -0.022797,
+        "max": 0.006508,
+        "mean_t": -0.265861,
+        "share_negative": 0.809524,
+        "share_clearing": 0.0,
+        "offsets": 21,
+        "n": 170.333333
+       }
+      },
+      "ex_elb": {
+       "slope": -0.008118,
+       "se": 0.052701,
+       "t": -0.154031,
+       "r2": 0.000691,
+       "n": 2922,
+       "change_sd": 19.940857,
+       "nonoverlap": {
+        "mean": -0.008149,
+        "min": -0.057875,
+        "max": 0.034804,
+        "mean_t": -0.03081,
+        "share_negative": 0.52381,
+        "share_clearing": 0.0,
+        "offsets": 21,
+        "n": 139.142857
+       }
+      }
+     }
+    },
+    "63": {
+     "z": {
+      "all": {
+       "slope": -3.635716,
+       "se": 1.467932,
+       "t": -2.476761,
+       "r2": 0.024737,
+       "n": 3607,
+       "change_sd": 30.738596,
+       "nonoverlap": {
+        "mean": -3.789634,
+        "min": -6.540765,
+        "max": -1.097915,
+        "mean_t": -1.772672,
+        "share_negative": 1.0,
+        "share_clearing": 0.412698,
+        "offsets": 63,
+        "n": 57.253968
+       }
+      },
+      "ex_crash_2020": {
+       "slope": -3.416584,
+       "se": 1.440633,
+       "t": -2.371584,
+       "r2": 0.043808,
+       "n": 3493,
+       "change_sd": 22.563918,
+       "nonoverlap": {
+        "mean": -3.555725,
+        "min": -6.319524,
+        "max": -1.505179,
+        "mean_t": -1.778931,
+        "share_negative": 1.0,
+        "share_clearing": 0.365079,
+        "offsets": 63,
+        "n": 55.444444
+       }
+      },
+      "ex_elb": {
+       "slope": -2.48008,
+       "se": 1.529258,
+       "t": -1.621754,
+       "r2": 0.012215,
+       "n": 2880,
+       "change_sd": 32.135096,
+       "nonoverlap": {
+        "mean": -2.71581,
+        "min": -7.164722,
+        "max": 0.115259,
+        "mean_t": -1.247938,
+        "share_negative": 0.984127,
+        "share_clearing": 0.285714,
+        "offsets": 63,
+        "n": 45.714286
+       }
+      }
+     },
+     "gap_bp": {
+      "all": {
+       "slope": -0.109241,
+       "se": 0.076303,
+       "t": -1.431671,
+       "r2": 0.016395,
+       "n": 3607,
+       "change_sd": 30.738596,
+       "nonoverlap": {
+        "mean": -0.118253,
+        "min": -0.226678,
+        "max": 0.005677,
+        "mean_t": -1.074817,
+        "share_negative": 0.984127,
+        "share_clearing": 0.063492,
+        "offsets": 63,
+        "n": 57.253968
+       }
+      },
+      "ex_crash_2020": {
+       "slope": -0.074571,
+       "se": 0.062333,
+       "t": -1.196341,
+       "r2": 0.016521,
+       "n": 3493,
+       "change_sd": 22.563918,
+       "nonoverlap": {
+        "mean": -0.078638,
+        "min": -0.1784,
+        "max": -0.00989,
+        "mean_t": -0.952917,
+        "share_negative": 1.0,
+        "share_clearing": 0.079365,
+        "offsets": 63,
+        "n": 55.444444
+       }
+      },
+      "ex_elb": {
+       "slope": -0.022931,
+       "se": 0.088576,
+       "t": -0.258888,
+       "r2": 0.001708,
+       "n": 2880,
+       "change_sd": 32.135096,
+       "nonoverlap": {
+        "mean": -0.03215,
+        "min": -0.220341,
+        "max": 0.121637,
+        "mean_t": -0.308699,
+        "share_negative": 0.587302,
+        "share_clearing": 0.0,
+        "offsets": 63,
+        "n": 45.714286
+       }
+      }
+     }
+    }
+   },
+   "ig_oas": {
+    "21": {
+     "z": {
+      "all": {
+       "slope": 1.544232,
+       "se": 0.985733,
+       "t": 1.566583,
+       "r2": 0.02553,
+       "n": 727,
+       "change_sd": 7.695224,
+       "nonoverlap": {
+        "mean": 1.576144,
+        "min": 0.584083,
+        "max": 3.06644,
+        "mean_t": 1.213361,
+        "share_negative": 0.0,
+        "share_clearing": 0.0,
+        "offsets": 21,
+        "n": 34.619048
+       }
+      },
+      "ex_crash_2020": {
+       "slope": 1.544232,
+       "se": 0.985733,
+       "t": 1.566583,
+       "r2": 0.02553,
+       "n": 727,
+       "change_sd": 7.695224,
+       "nonoverlap": {
+        "mean": 1.576144,
+        "min": 0.584083,
+        "max": 3.06644,
+        "mean_t": 1.213361,
+        "share_negative": 0.0,
+        "share_clearing": 0.0,
+        "offsets": 21,
+        "n": 34.619048
+       }
+      },
+      "ex_elb": {
+       "slope": 1.544232,
+       "se": 0.985733,
+       "t": 1.566583,
+       "r2": 0.02553,
+       "n": 727,
+       "change_sd": 7.695224,
+       "nonoverlap": {
+        "mean": 1.576144,
+        "min": 0.584083,
+        "max": 3.06644,
+        "mean_t": 1.213361,
+        "share_negative": 0.0,
+        "share_clearing": 0.0,
+        "offsets": 21,
+        "n": 34.619048
+       }
+      }
+     },
+     "gap_bp": {
+      "all": {
+       "slope": 0.051256,
+       "se": 0.029311,
+       "t": 1.74871,
+       "r2": 0.02955,
+       "n": 727,
+       "change_sd": 7.695224,
+       "nonoverlap": {
+        "mean": 0.052805,
+        "min": 0.01385,
+        "max": 0.10692,
+        "mean_t": 1.303468,
+        "share_negative": 0.0,
+        "share_clearing": 0.0,
+        "offsets": 21,
+        "n": 34.619048
+       }
+      },
+      "ex_crash_2020": {
+       "slope": 0.051256,
+       "se": 0.029311,
+       "t": 1.74871,
+       "r2": 0.02955,
+       "n": 727,
+       "change_sd": 7.695224,
+       "nonoverlap": {
+        "mean": 0.052805,
+        "min": 0.01385,
+        "max": 0.10692,
+        "mean_t": 1.303468,
+        "share_negative": 0.0,
+        "share_clearing": 0.0,
+        "offsets": 21,
+        "n": 34.619048
+       }
+      },
+      "ex_elb": {
+       "slope": 0.051256,
+       "se": 0.029311,
+       "t": 1.74871,
+       "r2": 0.02955,
+       "n": 727,
+       "change_sd": 7.695224,
+       "nonoverlap": {
+        "mean": 0.052805,
+        "min": 0.01385,
+        "max": 0.10692,
+        "mean_t": 1.303468,
+        "share_negative": 0.0,
+        "share_clearing": 0.0,
+        "offsets": 21,
+        "n": 34.619048
+       }
+      }
+     }
+    },
+    "63": {
+     "z": {
+      "all": {
+       "slope": 3.627507,
+       "se": 2.869052,
+       "t": 1.264358,
+       "r2": 0.043993,
+       "n": 685,
+       "change_sd": 13.008093,
+       "nonoverlap": {
+        "mean": 3.962637,
+        "min": 0.910823,
+        "max": 12.784365,
+        "mean_t": 0.811556,
+        "share_negative": 0.0,
+        "share_clearing": 0.0,
+        "offsets": 63,
+        "n": 10.873016
+       }
+      },
+      "ex_crash_2020": {
+       "slope": 3.627507,
+       "se": 2.869052,
+       "t": 1.264358,
+       "r2": 0.043993,
+       "n": 685,
+       "change_sd": 13.008093,
+       "nonoverlap": {
+        "mean": 3.962637,
+        "min": 0.910823,
+        "max": 12.784365,
+        "mean_t": 0.811556,
+        "share_negative": 0.0,
+        "share_clearing": 0.0,
+        "offsets": 63,
+        "n": 10.873016
+       }
+      },
+      "ex_elb": {
+       "slope": 3.627507,
+       "se": 2.869052,
+       "t": 1.264358,
+       "r2": 0.043993,
+       "n": 685,
+       "change_sd": 13.008093,
+       "nonoverlap": {
+        "mean": 3.962637,
+        "min": 0.910823,
+        "max": 12.784365,
+        "mean_t": 0.811556,
+        "share_negative": 0.0,
+        "share_clearing": 0.0,
+        "offsets": 63,
+        "n": 10.873016
+       }
+      }
+     },
+     "gap_bp": {
+      "all": {
+       "slope": 0.11059,
+       "se": 0.07179,
+       "t": 1.540455,
+       "r2": 0.047,
+       "n": 685,
+       "change_sd": 13.008093,
+       "nonoverlap": {
+        "mean": 0.118781,
+        "min": -0.017869,
+        "max": 0.359269,
+        "mean_t": 0.94351,
+        "share_negative": 0.047619,
+        "share_clearing": 0.0,
+        "offsets": 63,
+        "n": 10.873016
+       }
+      },
+      "ex_crash_2020": {
+       "slope": 0.11059,
+       "se": 0.07179,
+       "t": 1.540455,
+       "r2": 0.047,
+       "n": 685,
+       "change_sd": 13.008093,
+       "nonoverlap": {
+        "mean": 0.118781,
+        "min": -0.017869,
+        "max": 0.359269,
+        "mean_t": 0.94351,
+        "share_negative": 0.047619,
+        "share_clearing": 0.0,
+        "offsets": 63,
+        "n": 10.873016
+       }
+      },
+      "ex_elb": {
+       "slope": 0.11059,
+       "se": 0.07179,
+       "t": 1.540455,
+       "r2": 0.047,
+       "n": 685,
+       "change_sd": 13.008093,
+       "nonoverlap": {
+        "mean": 0.118781,
+        "min": -0.017869,
+        "max": 0.359269,
+        "mean_t": 0.94351,
+        "share_negative": 0.047619,
+        "share_clearing": 0.0,
+        "offsets": 63,
+        "n": 10.873016
+       }
+      }
+     }
+    }
+   },
+   "hy_oas": {
+    "21": {
+     "z": {
+      "all": {
+       "slope": 3.273239,
+       "se": 3.759714,
+       "t": 0.870609,
+       "r2": 0.00726,
+       "n": 727,
+       "change_sd": 30.587595,
+       "nonoverlap": {
+        "mean": 3.460858,
+        "min": -3.63093,
+        "max": 11.629548,
+        "mean_t": 0.603687,
+        "share_negative": 0.380952,
+        "share_clearing": 0.0,
+        "offsets": 21,
+        "n": 34.619048
+       }
+      },
+      "ex_crash_2020": {
+       "slope": 3.273239,
+       "se": 3.759714,
+       "t": 0.870609,
+       "r2": 0.00726,
+       "n": 727,
+       "change_sd": 30.587595,
+       "nonoverlap": {
+        "mean": 3.460858,
+        "min": -3.63093,
+        "max": 11.629548,
+        "mean_t": 0.603687,
+        "share_negative": 0.380952,
+        "share_clearing": 0.0,
+        "offsets": 21,
+        "n": 34.619048
+       }
+      },
+      "ex_elb": {
+       "slope": 3.273239,
+       "se": 3.759714,
+       "t": 0.870609,
+       "r2": 0.00726,
+       "n": 727,
+       "change_sd": 30.587595,
+       "nonoverlap": {
+        "mean": 3.460858,
+        "min": -3.63093,
+        "max": 11.629548,
+        "mean_t": 0.603687,
+        "share_negative": 0.380952,
+        "share_clearing": 0.0,
+        "offsets": 21,
+        "n": 34.619048
+       }
+      }
+     },
+     "gap_bp": {
+      "all": {
+       "slope": 0.117467,
+       "se": 0.108106,
+       "t": 1.08659,
+       "r2": 0.009823,
+       "n": 727,
+       "change_sd": 30.587595,
+       "nonoverlap": {
+        "mean": 0.126513,
+        "min": -0.095866,
+        "max": 0.414582,
+        "mean_t": 0.762048,
+        "share_negative": 0.380952,
+        "share_clearing": 0.0,
+        "offsets": 21,
+        "n": 34.619048
+       }
+      },
+      "ex_crash_2020": {
+       "slope": 0.117467,
+       "se": 0.108106,
+       "t": 1.08659,
+       "r2": 0.009823,
+       "n": 727,
+       "change_sd": 30.587595,
+       "nonoverlap": {
+        "mean": 0.126513,
+        "min": -0.095866,
+        "max": 0.414582,
+        "mean_t": 0.762048,
+        "share_negative": 0.380952,
+        "share_clearing": 0.0,
+        "offsets": 21,
+        "n": 34.619048
+       }
+      },
+      "ex_elb": {
+       "slope": 0.117467,
+       "se": 0.108106,
+       "t": 1.08659,
+       "r2": 0.009823,
+       "n": 727,
+       "change_sd": 30.587595,
+       "nonoverlap": {
+        "mean": 0.126513,
+        "min": -0.095866,
+        "max": 0.414582,
+        "mean_t": 0.762048,
+        "share_negative": 0.380952,
+        "share_clearing": 0.0,
+        "offsets": 21,
+        "n": 34.619048
+       }
+      }
+     }
+    },
+    "63": {
+     "z": {
+      "all": {
+       "slope": 12.696642,
+       "se": 10.08072,
+       "t": 1.259498,
+       "r2": 0.042216,
+       "n": 685,
+       "change_sd": 46.478106,
+       "nonoverlap": {
+        "mean": 14.904506,
+        "min": -0.512034,
+        "max": 51.07871,
+        "mean_t": 0.773047,
+        "share_negative": 0.015873,
+        "share_clearing": 0.0,
+        "offsets": 63,
+        "n": 10.873016
+       }
+      },
+      "ex_crash_2020": {
+       "slope": 12.696642,
+       "se": 10.08072,
+       "t": 1.259498,
+       "r2": 0.042216,
+       "n": 685,
+       "change_sd": 46.478106,
+       "nonoverlap": {
+        "mean": 14.904506,
+        "min": -0.512034,
+        "max": 51.07871,
+        "mean_t": 0.773047,
+        "share_negative": 0.015873,
+        "share_clearing": 0.0,
+        "offsets": 63,
+        "n": 10.873016
+       }
+      },
+      "ex_elb": {
+       "slope": 12.696642,
+       "se": 10.08072,
+       "t": 1.259498,
+       "r2": 0.042216,
+       "n": 685,
+       "change_sd": 46.478106,
+       "nonoverlap": {
+        "mean": 14.904506,
+        "min": -0.512034,
+        "max": 51.07871,
+        "mean_t": 0.773047,
+        "share_negative": 0.015873,
+        "share_clearing": 0.0,
+        "offsets": 63,
+        "n": 10.873016
+       }
+      }
+     },
+     "gap_bp": {
+      "all": {
+       "slope": 0.372768,
+       "se": 0.239568,
+       "t": 1.556002,
+       "r2": 0.041829,
+       "n": 685,
+       "change_sd": 46.478106,
+       "nonoverlap": {
+        "mean": 0.42494,
+        "min": -0.071947,
+        "max": 1.404122,
+        "mean_t": 0.891948,
+        "share_negative": 0.063492,
+        "share_clearing": 0.0,
+        "offsets": 63,
+        "n": 10.873016
+       }
+      },
+      "ex_crash_2020": {
+       "slope": 0.372768,
+       "se": 0.239568,
+       "t": 1.556002,
+       "r2": 0.041829,
+       "n": 685,
+       "change_sd": 46.478106,
+       "nonoverlap": {
+        "mean": 0.42494,
+        "min": -0.071947,
+        "max": 1.404122,
+        "mean_t": 0.891948,
+        "share_negative": 0.063492,
+        "share_clearing": 0.0,
+        "offsets": 63,
+        "n": 10.873016
+       }
+      },
+      "ex_elb": {
+       "slope": 0.372768,
+       "se": 0.239568,
+       "t": 1.556002,
+       "r2": 0.041829,
+       "n": 685,
+       "change_sd": 46.478106,
+       "nonoverlap": {
+        "mean": 0.42494,
+        "min": -0.071947,
+        "max": 1.404122,
+        "mean_t": 0.891948,
+        "share_negative": 0.063492,
+        "share_clearing": 0.0,
+        "offsets": 63,
+        "n": 10.873016
+       }
+      }
+     }
+    }
+   }
+  },
+  "headline_unstaled": null,
+  "headline_without_each_year": {
+   "2012": {
+    "slope": -2.549962,
+    "se": 1.050096,
+    "t": -2.428312,
+    "r2": 0.040322,
+    "n": 3394,
+    "change_sd": 17.304351,
+    "nonoverlap": {
+     "mean": -2.630416,
+     "min": -4.663414,
+     "max": -0.82408,
+     "mean_t": -1.873561,
+     "share_negative": 1.0,
+     "share_clearing": 0.444444,
+     "offsets": 63,
+     "n": 53.873016
+    },
+    "supported": true
+   },
+   "2013": {
+    "slope": -2.149251,
+    "se": 1.068101,
+    "t": -2.012216,
+    "r2": 0.025953,
+    "n": 3291,
+    "change_sd": 18.356433,
+    "nonoverlap": {
+     "mean": -2.193583,
+     "min": -3.760316,
+     "max": -0.169819,
+     "mean_t": -1.511154,
+     "share_negative": 1.0,
+     "share_clearing": 0.301587,
+     "offsets": 63,
+     "n": 52.238095
+    },
+    "supported": true
+   },
+   "2014": {
+    "slope": -1.536847,
+    "se": 1.314285,
+    "t": -1.169341,
+    "r2": 0.010203,
+    "n": 3291,
+    "change_sd": 18.074886,
+    "nonoverlap": {
+     "mean": -1.666085,
+     "min": -3.303667,
+     "max": 0.754963,
+     "mean_t": -0.884741,
+     "share_negative": 0.857143,
+     "share_clearing": 0.0,
+     "offsets": 63,
+     "n": 52.238095
+    },
+    "supported": false
+   },
+   "2015": {
+    "slope": -1.738919,
+    "se": 1.096334,
+    "t": -1.586121,
+    "r2": 0.017549,
+    "n": 3290,
+    "change_sd": 17.600404,
+    "nonoverlap": {
+     "mean": -1.772132,
+     "min": -2.896377,
+     "max": -0.188535,
+     "mean_t": -1.189015,
+     "share_negative": 1.0,
+     "share_clearing": 0.015873,
+     "offsets": 63,
+     "n": 52.222222
+    },
+    "supported": false
+   },
+   "2016": {
+    "slope": -2.108751,
+    "se": 1.115823,
+    "t": -1.889861,
+    "r2": 0.025096,
+    "n": 3292,
+    "change_sd": 17.807202,
+    "nonoverlap": {
+     "mean": -2.165272,
+     "min": -3.494122,
+     "max": -0.418121,
+     "mean_t": -1.438219,
+     "share_negative": 1.0,
+     "share_clearing": 0.15873,
+     "offsets": 63,
+     "n": 52.253968
+    },
+    "supported": false
+   },
+   "2017": {
+    "slope": -2.381689,
+    "se": 1.141807,
+    "t": -2.085894,
+    "r2": 0.027956,
+    "n": 3293,
+    "change_sd": 18.530121,
+    "nonoverlap": {
+     "mean": -2.460495,
+     "min": -4.018024,
+     "max": -0.747275,
+     "mean_t": -1.551405,
+     "share_negative": 1.0,
+     "share_clearing": 0.238095,
+     "offsets": 63,
+     "n": 52.269841
+    },
+    "supported": true
+   },
+   "2018": {
+    "slope": -2.832608,
+    "se": 1.0519,
+    "t": -2.692849,
+    "r2": 0.043207,
+    "n": 3292,
+    "change_sd": 18.145593,
+    "nonoverlap": {
+     "mean": -2.897795,
+     "min": -4.483971,
+     "max": -1.260418,
+     "mean_t": -1.982398,
+     "share_negative": 1.0,
+     "share_clearing": 0.571429,
+     "offsets": 63,
+     "n": 52.253968
+    },
+    "supported": true
+   },
+   "2019": {
+    "slope": -3.157969,
+    "se": 1.166735,
+    "t": -2.706672,
+    "r2": 0.050511,
+    "n": 3292,
+    "change_sd": 17.53146,
+    "nonoverlap": {
+     "mean": -3.213602,
+     "min": -5.183501,
+     "max": -1.061758,
+     "mean_t": -1.952347,
+     "share_negative": 1.0,
+     "share_clearing": 0.507937,
+     "offsets": 63,
+     "n": 52.253968
+    },
+    "supported": true
+   },
+   "2020": {
+    "slope": -1.352078,
+    "se": 1.047724,
+    "t": -1.29049,
+    "r2": 0.015963,
+    "n": 3293,
+    "change_sd": 14.102997,
+    "nonoverlap": {
+     "mean": -1.426486,
+     "min": -3.187846,
+     "max": -0.097631,
+     "mean_t": -1.054798,
+     "share_negative": 1.0,
+     "share_clearing": 0.0,
+     "offsets": 63,
+     "n": 52.269841
+    },
+    "supported": false
+   },
+   "2021": {
+    "slope": -1.723647,
+    "se": 1.058471,
+    "t": -1.62843,
+    "r2": 0.015968,
+    "n": 3291,
+    "change_sd": 18.153058,
+    "nonoverlap": {
+     "mean": -1.765372,
+     "min": -3.480662,
+     "max": 0.25581,
+     "mean_t": -1.211023,
+     "share_negative": 0.920635,
+     "share_clearing": 0.095238,
+     "offsets": 63,
+     "n": 52.238095
+    },
+    "supported": false
+   },
+   "2022": {
+    "slope": -1.859473,
+    "se": 1.078434,
+    "t": -1.724234,
+    "r2": 0.019293,
+    "n": 3293,
+    "change_sd": 17.91844,
+    "nonoverlap": {
+     "mean": -1.903395,
+     "min": -3.330733,
+     "max": -0.210173,
+     "mean_t": -1.302065,
+     "share_negative": 1.0,
+     "share_clearing": 0.031746,
+     "offsets": 63,
+     "n": 52.269841
+    },
+    "supported": false
+   },
+   "2023": {
+    "slope": -2.026187,
+    "se": 1.06954,
+    "t": -1.894447,
+    "r2": 0.023081,
+    "n": 3293,
+    "change_sd": 18.299734,
+    "nonoverlap": {
+     "mean": -2.07151,
+     "min": -3.501316,
+     "max": -0.415607,
+     "mean_t": -1.439949,
+     "share_negative": 1.0,
+     "share_clearing": 0.190476,
+     "offsets": 63,
+     "n": 52.269841
+    },
+    "supported": false
+   },
+   "2024": {
+    "slope": -2.29192,
+    "se": 1.073608,
+    "t": -2.134784,
+    "r2": 0.029273,
+    "n": 3292,
+    "change_sd": 18.334277,
+    "nonoverlap": {
+     "mean": -2.327763,
+     "min": -3.65476,
+     "max": -0.603013,
+     "mean_t": -1.605336,
+     "share_negative": 1.0,
+     "share_clearing": 0.301587,
+     "offsets": 63,
+     "n": 52.253968
+    },
+    "supported": true
+   },
+   "2025": {
+    "slope": -2.35662,
+    "se": 1.06828,
+    "t": -2.205995,
+    "r2": 0.030852,
+    "n": 3293,
+    "change_sd": 18.496064,
+    "nonoverlap": {
+     "mean": -2.41372,
+     "min": -4.065771,
+     "max": -0.600614,
+     "mean_t": -1.662633,
+     "share_negative": 1.0,
+     "share_clearing": 0.365079,
+     "offsets": 63,
+     "n": 52.269841
+    },
+    "supported": true
+   },
+   "2026": {
+    "slope": -2.179871,
+    "se": 1.063477,
+    "t": -2.049758,
+    "r2": 0.02643,
+    "n": 3426,
+    "change_sd": 18.160935,
+    "nonoverlap": {
+     "mean": -2.228992,
+     "min": -3.870225,
+     "max": -0.390429,
+     "mean_t": -1.553271,
+     "share_negative": 1.0,
+     "share_clearing": 0.31746,
+     "offsets": 63,
+     "n": 54.380952
+    },
+    "supported": true
+   }
+  },
+  "headline_checks": {
+   "bartlett_2h": {
+    "slope": -2.204869,
+    "se": 1.215757,
+    "t": -1.813577,
+    "n": 3607
+   },
+   "uniform": {
+    "slope": -2.204869,
+    "se": 1.281873,
+    "t": -1.720037,
+    "n": 3607
+   },
+   "z_clipped": {
+    "slope": -2.499728,
+    "se": 1.179327,
+    "t": -2.119622,
+    "n": 3607
+   },
+   "above_floor": {
+    "slope": -2.592474,
+    "se": 1.128766,
+    "t": -2.296734,
+    "n": 3046
+   }
+  },
+  "headline_placebo": {
+   "t": -2.092686,
+   "shifts": 634,
+   "reject": 0.249211,
+   "reject_negative": 0.105678,
+   "critical": -2.365175,
+   "p": 0.074132
+  },
+  "conditional": {
+   "quality": {
+    "level": {
+     "pooled": {
+      "early_hiking": {
+       "slope": -0.009824,
+       "se": 0.031237,
+       "t": -0.314509,
+       "weeks": 105
+      },
+      "late_hiking": {
+       "slope": 0.018121,
+       "se": 0.033483,
+       "t": 0.541195,
+       "weeks": 176
+      },
+      "hold_after_hikes": {
+       "slope": -0.016139,
+       "se": 0.016393,
+       "t": -0.984522,
+       "weeks": 40
+      },
+      "cutting": {
+       "slope": -0.057491,
+       "se": 0.056003,
+       "t": -1.026556,
+       "weeks": 117
+      },
+      "hold_after_cuts": {
+       "slope": -0.022358,
+       "se": 0.019633,
+       "t": -1.138819,
+       "weeks": 171
+      }
+     },
+     "late_minus_early": {
+      "diff": 0.027945,
+      "se": 0.051206,
+      "t": 0.545741,
+      "mde": 0.143458
+     },
+     "episodes": [
+      {
+       "state": "hold_after_cuts",
+       "first": "2014-01-22",
+       "last": "2015-12-16",
+       "weeks": 100,
+       "slope": -0.021789,
+       "se": 0.046893,
+       "t": -0.464654,
+       "mde": 0.131375
+      },
+      {
+       "state": "early_hiking",
+       "first": "2015-12-23",
+       "last": "2016-12-21",
+       "weeks": 53,
+       "slope": -0.061138,
+       "se": 0.089168,
+       "t": -0.685648,
+       "mde": 0.249812
+      },
+      {
+       "state": "late_hiking",
+       "first": "2016-12-28",
+       "last": "2019-06-26",
+       "weeks": 131,
+       "slope": -0.035766,
+       "se": 0.034118,
+       "t": -1.048308,
+       "mde": 0.095584
+      },
+      {
+       "state": "cutting",
+       "first": "2019-08-14",
+       "last": "2020-05-13",
+       "weeks": 40,
+       "slope": -0.074141,
+       "se": 0.072392,
+       "t": -1.024159,
+       "mde": 0.202812
+      },
+      {
+       "state": "hold_after_cuts",
+       "first": "2021-05-19",
+       "last": "2022-03-23",
+       "weeks": 45,
+       "slope": -0.02785,
+       "se": 0.025723,
+       "t": -1.08266,
+       "mde": 0.072066
+      },
+      {
+       "state": "early_hiking",
+       "first": "2022-03-30",
+       "last": "2023-03-22",
+       "weeks": 52,
+       "slope": -0.006776,
+       "se": 0.031546,
+       "t": -0.214805,
+       "mde": 0.088378
+      },
+      {
+       "state": "late_hiking",
+       "first": "2023-03-29",
+       "last": "2024-01-31",
+       "weeks": 45,
+       "slope": 0.094541,
+       "se": 0.048285,
+       "t": 1.957997,
+       "mde": 0.135274
+      },
+      {
+       "state": "hold_after_hikes",
+       "first": "2024-02-07",
+       "last": "2024-09-25",
+       "weeks": 34,
+       "slope": -0.020061,
+       "se": 0.020041,
+       "t": -1.001004,
+       "mde": 0.056146
+      },
+      {
+       "state": "cutting",
+       "first": "2024-10-02",
+       "last": "2025-06-25",
+       "weeks": 39,
+       "slope": -0.034543,
+       "se": 0.026612,
+       "t": -1.298048,
+       "mde": 0.074555
+      },
+      {
+       "state": "hold_after_cuts",
+       "first": "2025-07-02",
+       "last": "2025-09-24",
+       "weeks": 13,
+       "slope": -0.009808,
+       "se": 0.024748,
+       "t": -0.396312,
+       "mde": 0.069335
+      },
+      {
+       "state": "cutting",
+       "first": "2025-10-01",
+       "last": "2026-06-17",
+       "weeks": 38,
+       "slope": -0.027306,
+       "se": 0.021381,
+       "t": -1.277119,
+       "mde": 0.059901
+      },
+      {
+       "state": "hold_after_cuts",
+       "first": "2026-06-24",
+       "last": "2026-09-16",
+       "weeks": 13,
+       "slope": 0.032349,
+       "se": 0.025907,
+       "t": 1.248661,
+       "mde": 0.07258
+      }
+     ],
+     "cycles": [
+      {
+       "early_first": "2015-12-23",
+       "early_last": "2016-12-21",
+       "early_weeks": 53,
+       "early_slope": -0.061138,
+       "early_se": 0.089168,
+       "early_t": -0.685648,
+       "early_mde": 0.249812,
+       "late_first": "2016-12-28",
+       "late_last": "2019-06-26",
+       "late_weeks": 131,
+       "late_slope": -0.035766,
+       "late_se": 0.034118,
+       "late_t": -1.048308,
+       "late_mde": 0.095584,
+       "differs": false,
+       "as_expected": false
+      },
+      {
+       "early_first": "2022-03-30",
+       "early_last": "2023-03-22",
+       "early_weeks": 52,
+       "early_slope": -0.006776,
+       "early_se": 0.031546,
+       "early_t": -0.214805,
+       "early_mde": 0.088378,
+       "late_first": "2023-03-29",
+       "late_last": "2024-01-31",
+       "late_weeks": 45,
+       "late_slope": 0.094541,
+       "late_se": 0.048285,
+       "late_t": 1.957997,
+       "late_mde": 0.135274,
+       "differs": true,
+       "as_expected": true
+      }
+     ],
+     "sentence": "The sign differs in one of the two cycles and not in the other: early negative and late positive, as the hypothesis has it."
+    },
+    "market": {
+     "pooled": {
+      "early_hiking": {
+       "slope": -0.006653,
+       "se": 0.034115,
+       "t": -0.195007,
+       "weeks": 105
+      },
+      "late_hiking": {
+       "slope": 0.039174,
+       "se": 0.04875,
+       "t": 0.803562,
+       "weeks": 176
+      },
+      "hold_after_hikes": {
+       "slope": 0.001665,
+       "se": 0.022475,
+       "t": 0.074097,
+       "weeks": 40
+      },
+      "cutting": {
+       "slope": -0.121401,
+       "se": 0.055889,
+       "t": -2.172195,
+       "weeks": 117
+      },
+      "hold_after_cuts": {
+       "slope": -0.031927,
+       "se": 0.034477,
+       "t": -0.926033,
+       "weeks": 171
+      }
+     },
+     "late_minus_early": {
+      "diff": 0.045826,
+      "se": 0.067541,
+      "t": 0.678494,
+      "mde": 0.189222
+     },
+     "episodes": [
+      {
+       "state": "hold_after_cuts",
+       "first": "2014-01-22",
+       "last": "2015-12-16",
+       "weeks": 100,
+       "slope": -0.174288,
+       "se": 0.100825,
+       "t": -1.728608,
+       "mde": 0.282471
+      },
+      {
+       "state": "early_hiking",
+       "first": "2015-12-23",
+       "last": "2016-12-21",
+       "weeks": 53,
+       "slope": 0.121643,
+       "se": 0.183991,
+       "t": 0.661132,
+       "mde": 0.515467
+      },
+      {
+       "state": "late_hiking",
+       "first": "2016-12-28",
+       "last": "2019-06-26",
+       "weeks": 131,
+       "slope": -0.071453,
+       "se": 0.038337,
+       "t": -1.863821,
+       "mde": 0.107404
+      },
+      {
+       "state": "cutting",
+       "first": "2019-08-14",
+       "last": "2020-05-13",
+       "weeks": 40,
+       "slope": -0.186021,
+       "se": 0.038327,
+       "t": -4.853582,
+       "mde": 0.107375
+      },
+      {
+       "state": "hold_after_cuts",
+       "first": "2021-05-19",
+       "last": "2022-03-23",
+       "weeks": 45,
+       "slope": 0.039822,
+       "se": 0.066785,
+       "t": 0.596271,
+       "mde": 0.187103
+      },
+      {
+       "state": "early_hiking",
+       "first": "2022-03-30",
+       "last": "2023-03-22",
+       "weeks": 52,
+       "slope": -0.016194,
+       "se": 0.027046,
+       "t": -0.598744,
+       "mde": 0.075771
+      },
+      {
+       "state": "late_hiking",
+       "first": "2023-03-29",
+       "last": "2024-01-31",
+       "weeks": 45,
+       "slope": 0.117874,
+       "se": 0.051667,
+       "t": 2.281401,
+       "mde": 0.144751
+      },
+      {
+       "state": "hold_after_hikes",
+       "first": "2024-02-07",
+       "last": "2024-09-25",
+       "weeks": 34,
+       "slope": -0.020386,
+       "se": 0.019362,
+       "t": -1.052899,
+       "mde": 0.054244
+      },
+      {
+       "state": "cutting",
+       "first": "2024-10-02",
+       "last": "2025-06-25",
+       "weeks": 39,
+       "slope": -0.017594,
+       "se": 0.031219,
+       "t": -0.563572,
+       "mde": 0.087462
+      },
+      {
+       "state": "hold_after_cuts",
+       "first": "2025-07-02",
+       "last": "2025-09-24",
+       "weeks": 13,
+       "slope": -0.053702,
+       "se": 0.044614,
+       "t": -1.20369,
+       "mde": 0.124991
+      },
+      {
+       "state": "cutting",
+       "first": "2025-10-01",
+       "last": "2026-06-17",
+       "weeks": 38,
+       "slope": 0.01659,
+       "se": 0.050402,
+       "t": 0.329143,
+       "mde": 0.141206
+      },
+      {
+       "state": "hold_after_cuts",
+       "first": "2026-06-24",
+       "last": "2026-09-16",
+       "weeks": 13,
+       "slope": 0.013465,
+       "se": 0.023148,
+       "t": 0.581685,
+       "mde": 0.064852
+      }
+     ],
+     "cycles": [
+      {
+       "early_first": "2015-12-23",
+       "early_last": "2016-12-21",
+       "early_weeks": 53,
+       "early_slope": 0.121643,
+       "early_se": 0.183991,
+       "early_t": 0.661132,
+       "early_mde": 0.515467,
+       "late_first": "2016-12-28",
+       "late_last": "2019-06-26",
+       "late_weeks": 131,
+       "late_slope": -0.071453,
+       "late_se": 0.038337,
+       "late_t": -1.863821,
+       "late_mde": 0.107404,
+       "differs": true,
+       "as_expected": false
+      },
+      {
+       "early_first": "2022-03-30",
+       "early_last": "2023-03-22",
+       "early_weeks": 52,
+       "early_slope": -0.016194,
+       "early_se": 0.027046,
+       "early_t": -0.598744,
+       "early_mde": 0.075771,
+       "late_first": "2023-03-29",
+       "late_last": "2024-01-31",
+       "late_weeks": 45,
+       "late_slope": 0.117874,
+       "late_se": 0.051667,
+       "late_t": 2.281401,
+       "late_mde": 0.144751,
+       "differs": true,
+       "as_expected": true
+      }
+     ],
+     "sentence": "The sign differs in each of the two cycles: the hypothesis's way in one of them."
+    }
+   },
+   "baa_30y": {
+    "level": {
+     "pooled": {
+      "early_hiking": {
+       "slope": -0.048874,
+       "se": 0.042556,
+       "t": -1.148474,
+       "weeks": 105
+      },
+      "late_hiking": {
+       "slope": -0.072464,
+       "se": 0.034774,
+       "t": -2.083832,
+       "weeks": 176
+      },
+      "hold_after_hikes": {
+       "slope": -0.102724,
+       "se": 0.053754,
+       "t": -1.910992,
+       "weeks": 40
+      },
+      "cutting": {
+       "slope": 0.046217,
+       "se": 0.118632,
+       "t": 0.389579,
+       "weeks": 117
+      },
+      "hold_after_cuts": {
+       "slope": -0.030013,
+       "se": 0.041917,
+       "t": -0.716023,
+       "weeks": 171
+      }
+     },
+     "late_minus_early": {
+      "diff": -0.02359,
+      "se": 0.056258,
+      "t": -0.419322,
+      "mde": 0.157611
+     },
+     "episodes": [
+      {
+       "state": "hold_after_cuts",
+       "first": "2014-01-22",
+       "last": "2015-12-16",
+       "weeks": 100,
+       "slope": -0.046964,
+       "se": 0.041209,
+       "t": -1.139652,
+       "mde": 0.115452
+      },
+      {
+       "state": "early_hiking",
+       "first": "2015-12-23",
+       "last": "2016-12-21",
+       "weeks": 53,
+       "slope": -0.105671,
+       "se": 0.08027,
+       "t": -1.316447,
+       "mde": 0.224884
+      },
+      {
+       "state": "late_hiking",
+       "first": "2016-12-28",
+       "last": "2019-06-26",
+       "weeks": 131,
+       "slope": -0.133045,
+       "se": 0.050971,
+       "t": -2.610186,
+       "mde": 0.142801
+      },
+      {
+       "state": "cutting",
+       "first": "2019-08-14",
+       "last": "2020-05-13",
+       "weeks": 40,
+       "slope": 0.057988,
+       "se": 0.149457,
+       "t": 0.387991,
+       "mde": 0.418715
+      },
+      {
+       "state": "hold_after_cuts",
+       "first": "2021-05-19",
+       "last": "2022-03-23",
+       "weeks": 45,
+       "slope": -0.043971,
+       "se": 0.067962,
+       "t": -0.64699,
+       "mde": 0.190401
+      },
+      {
+       "state": "early_hiking",
+       "first": "2022-03-30",
+       "last": "2023-03-22",
+       "weeks": 52,
+       "slope": -0.045132,
+       "se": 0.044798,
+       "t": -1.00747,
+       "mde": 0.125505
+      },
+      {
+       "state": "late_hiking",
+       "first": "2023-03-29",
+       "last": "2024-01-31",
+       "weeks": 45,
+       "slope": 0.009676,
+       "se": 0.036706,
+       "t": 0.263614,
+       "mde": 0.102836
+      },
+      {
+       "state": "hold_after_hikes",
+       "first": "2024-02-07",
+       "last": "2024-09-25",
+       "weeks": 34,
+       "slope": -0.103053,
+       "se": 0.054526,
+       "t": -1.889967,
+       "mde": 0.15276
+      },
+      {
+       "state": "cutting",
+       "first": "2024-10-02",
+       "last": "2025-06-25",
+       "weeks": 39,
+       "slope": -0.071923,
+       "se": 0.057032,
+       "t": -1.261089,
+       "mde": 0.159781
+      },
+      {
+       "state": "hold_after_cuts",
+       "first": "2025-07-02",
+       "last": "2025-09-24",
+       "weeks": 13,
+       "slope": 0.06264,
+       "se": 0.058027,
+       "t": 1.079493,
+       "mde": 0.162567
+      },
+      {
+       "state": "cutting",
+       "first": "2025-10-01",
+       "last": "2026-06-17",
+       "weeks": 38,
+       "slope": 0.10929,
+       "se": 0.056754,
+       "t": 1.925669,
+       "mde": 0.159002
+      },
+      {
+       "state": "hold_after_cuts",
+       "first": "2026-06-24",
+       "last": "2026-09-16",
+       "weeks": 13,
+       "slope": 0.063693,
+       "se": 0.043681,
+       "t": 1.458149,
+       "mde": 0.122375
+      }
+     ],
+     "cycles": [
+      {
+       "early_first": "2015-12-23",
+       "early_last": "2016-12-21",
+       "early_weeks": 53,
+       "early_slope": -0.105671,
+       "early_se": 0.08027,
+       "early_t": -1.316447,
+       "early_mde": 0.224884,
+       "late_first": "2016-12-28",
+       "late_last": "2019-06-26",
+       "late_weeks": 131,
+       "late_slope": -0.133045,
+       "late_se": 0.050971,
+       "late_t": -2.610186,
+       "late_mde": 0.142801,
+       "differs": false,
+       "as_expected": false
+      },
+      {
+       "early_first": "2022-03-30",
+       "early_last": "2023-03-22",
+       "early_weeks": 52,
+       "early_slope": -0.045132,
+       "early_se": 0.044798,
+       "early_t": -1.00747,
+       "early_mde": 0.125505,
+       "late_first": "2023-03-29",
+       "late_last": "2024-01-31",
+       "late_weeks": 45,
+       "late_slope": 0.009676,
+       "late_se": 0.036706,
+       "late_t": 0.263614,
+       "late_mde": 0.102836,
+       "differs": true,
+       "as_expected": true
+      }
+     ],
+     "sentence": "The sign differs in one of the two cycles and not in the other: early negative and late positive, as the hypothesis has it."
+    },
+    "market": {
+     "pooled": {
+      "early_hiking": {
+       "slope": -0.041078,
+       "se": 0.044877,
+       "t": -0.915331,
+       "weeks": 105
+      },
+      "late_hiking": {
+       "slope": -0.060757,
+       "se": 0.04239,
+       "t": -1.43327,
+       "weeks": 176
+      },
+      "hold_after_hikes": {
+       "slope": -0.135218,
+       "se": 0.059639,
+       "t": -2.267293,
+       "weeks": 40
+      },
+      "cutting": {
+       "slope": -0.310357,
+       "se": 0.131916,
+       "t": -2.352689,
+       "weeks": 117
+      },
+      "hold_after_cuts": {
+       "slope": -0.005902,
+       "se": 0.073827,
+       "t": -0.079943,
+       "weeks": 171
+      }
+     },
+     "late_minus_early": {
+      "diff": -0.019679,
+      "se": 0.064667,
+      "t": -0.304313,
+      "mde": 0.181171
+     },
+     "episodes": [
+      {
+       "state": "hold_after_cuts",
+       "first": "2014-01-22",
+       "last": "2015-12-16",
+       "weeks": 100,
+       "slope": -0.319887,
+       "se": 0.127857,
+       "t": -2.50192,
+       "mde": 0.358201
+      },
+      {
+       "state": "early_hiking",
+       "first": "2015-12-23",
+       "last": "2016-12-21",
+       "weeks": 53,
+       "slope": -0.379072,
+       "se": 0.160041,
+       "t": -2.368589,
+       "mde": 0.44837
+      },
+      {
+       "state": "late_hiking",
+       "first": "2016-12-28",
+       "last": "2019-06-26",
+       "weeks": 131,
+       "slope": -0.179885,
+       "se": 0.055996,
+       "t": -3.212459,
+       "mde": 0.156877
+      },
+      {
+       "state": "cutting",
+       "first": "2019-08-14",
+       "last": "2020-05-13",
+       "weeks": 40,
+       "slope": -0.501633,
+       "se": 0.157056,
+       "t": -3.193988,
+       "mde": 0.440005
+      },
+      {
+       "state": "hold_after_cuts",
+       "first": "2021-05-19",
+       "last": "2022-03-23",
+       "weeks": 45,
+       "slope": 0.021915,
+       "se": 0.183889,
+       "t": 0.119172,
+       "mde": 0.515181
+      },
+      {
+       "state": "early_hiking",
+       "first": "2022-03-30",
+       "last": "2023-03-22",
+       "weeks": 52,
+       "slope": -0.038424,
+       "se": 0.044755,
+       "t": -0.858548,
+       "mde": 0.125384
+      },
+      {
+       "state": "late_hiking",
+       "first": "2023-03-29",
+       "last": "2024-01-31",
+       "weeks": 45,
+       "slope": 0.024433,
+       "se": 0.040114,
+       "t": 0.609078,
+       "mde": 0.112384
+      },
+      {
+       "state": "hold_after_hikes",
+       "first": "2024-02-07",
+       "last": "2024-09-25",
+       "weeks": 34,
+       "slope": -0.085622,
+       "se": 0.06846,
+       "t": -1.250697,
+       "mde": 0.191796
+      },
+      {
+       "state": "cutting",
+       "first": "2024-10-02",
+       "last": "2025-06-25",
+       "weeks": 39,
+       "slope": -0.076896,
+       "se": 0.052083,
+       "t": -1.4764,
+       "mde": 0.145915
+      },
+      {
+       "state": "hold_after_cuts",
+       "first": "2025-07-02",
+       "last": "2025-09-24",
+       "weeks": 13,
+       "slope": 0.091368,
+       "se": 0.039121,
+       "t": 2.3355,
+       "mde": 0.109602
+      },
+      {
+       "state": "cutting",
+       "first": "2025-10-01",
+       "last": "2026-06-17",
+       "weeks": 38,
+       "slope": 0.060309,
+       "se": 0.100335,
+       "t": 0.601075,
+       "mde": 0.281097
+      },
+      {
+       "state": "hold_after_cuts",
+       "first": "2026-06-24",
+       "last": "2026-09-16",
+       "weeks": 13,
+       "slope": 0.03864,
+       "se": 0.050276,
+       "t": 0.768555,
+       "mde": 0.140852
+      }
+     ],
+     "cycles": [
+      {
+       "early_first": "2015-12-23",
+       "early_last": "2016-12-21",
+       "early_weeks": 53,
+       "early_slope": -0.379072,
+       "early_se": 0.160041,
+       "early_t": -2.368589,
+       "early_mde": 0.44837,
+       "late_first": "2016-12-28",
+       "late_last": "2019-06-26",
+       "late_weeks": 131,
+       "late_slope": -0.179885,
+       "late_se": 0.055996,
+       "late_t": -3.212459,
+       "late_mde": 0.156877,
+       "differs": false,
+       "as_expected": false
+      },
+      {
+       "early_first": "2022-03-30",
+       "early_last": "2023-03-22",
+       "early_weeks": 52,
+       "early_slope": -0.038424,
+       "early_se": 0.044755,
+       "early_t": -0.858548,
+       "early_mde": 0.125384,
+       "late_first": "2023-03-29",
+       "late_last": "2024-01-31",
+       "late_weeks": 45,
+       "late_slope": 0.024433,
+       "late_se": 0.040114,
+       "late_t": 0.609078,
+       "late_mde": 0.112384,
+       "differs": true,
+       "as_expected": true
+      }
+     ],
+     "sentence": "The sign differs in one of the two cycles and not in the other: early negative and late positive, as the hypothesis has it."
+    }
+   },
+   "baa_10y": {
+    "level": {
+     "pooled": {
+      "early_hiking": {
+       "slope": -0.226997,
+       "se": 0.054114,
+       "t": -4.194787,
+       "weeks": 105
+      },
+      "late_hiking": {
+       "slope": -0.248955,
+       "se": 0.041836,
+       "t": -5.950748,
+       "weeks": 176
+      },
+      "hold_after_hikes": {
+       "slope": -0.191308,
+       "se": 0.064254,
+       "t": -2.977352,
+       "weeks": 40
+      },
+      "cutting": {
+       "slope": 0.055786,
+       "se": 0.147383,
+       "t": 0.378513,
+       "weeks": 117
+      },
+      "hold_after_cuts": {
+       "slope": -0.086672,
+       "se": 0.063635,
+       "t": -1.362022,
+       "weeks": 171
+      }
+     },
+     "late_minus_early": {
+      "diff": -0.021958,
+      "se": 0.069718,
+      "t": -0.314952,
+      "mde": 0.195321
+     },
+     "episodes": [
+      {
+       "state": "hold_after_cuts",
+       "first": "2014-01-22",
+       "last": "2015-12-16",
+       "weeks": 100,
+       "slope": -0.090956,
+       "se": 0.059717,
+       "t": -1.52311,
+       "mde": 0.167304
+      },
+      {
+       "state": "early_hiking",
+       "first": "2015-12-23",
+       "last": "2016-12-21",
+       "weeks": 53,
+       "slope": -0.14226,
+       "se": 0.104824,
+       "t": -1.357135,
+       "mde": 0.293673
+      },
+      {
+       "state": "late_hiking",
+       "first": "2016-12-28",
+       "last": "2019-06-26",
+       "weeks": 131,
+       "slope": -0.287433,
+       "se": 0.067599,
+       "t": -4.252005,
+       "mde": 0.189385
+      },
+      {
+       "state": "cutting",
+       "first": "2019-08-14",
+       "last": "2020-05-13",
+       "weeks": 40,
+       "slope": 0.103617,
+       "se": 0.171188,
+       "t": 0.605281,
+       "mde": 0.479597
+      },
+      {
+       "state": "hold_after_cuts",
+       "first": "2021-05-19",
+       "last": "2022-03-23",
+       "weeks": 45,
+       "slope": -0.070457,
+       "se": 0.104508,
+       "t": -0.674183,
+       "mde": 0.292787
+      },
+      {
+       "state": "early_hiking",
+       "first": "2022-03-30",
+       "last": "2023-03-22",
+       "weeks": 52,
+       "slope": -0.2389,
+       "se": 0.05032,
+       "t": -4.747605,
+       "mde": 0.140976
+      },
+      {
+       "state": "late_hiking",
+       "first": "2023-03-29",
+       "last": "2024-01-31",
+       "weeks": 45,
+       "slope": -0.205966,
+       "se": 0.062121,
+       "t": -3.315538,
+       "mde": 0.174039
+      },
+      {
+       "state": "hold_after_hikes",
+       "first": "2024-02-07",
+       "last": "2024-09-25",
+       "weeks": 34,
+       "slope": -0.191269,
+       "se": 0.066069,
+       "t": -2.894984,
+       "mde": 0.185098
+      },
+      {
+       "state": "cutting",
+       "first": "2024-10-02",
+       "last": "2025-06-25",
+       "weeks": 39,
+       "slope": -0.205235,
+       "se": 0.073219,
+       "t": -2.80303,
+       "mde": 0.205129
+      },
+      {
+       "state": "hold_after_cuts",
+       "first": "2025-07-02",
+       "last": "2025-09-24",
+       "weeks": 13,
+       "slope": -0.032082,
+       "se": 0.086228,
+       "t": -0.372058,
+       "mde": 0.241575
+      },
+      {
+       "state": "cutting",
+       "first": "2025-10-01",
+       "last": "2026-06-17",
+       "weeks": 38,
+       "slope": 0.082659,
+       "se": 0.050402,
+       "t": 1.640007,
+       "mde": 0.141204
+      },
+      {
+       "state": "hold_after_cuts",
+       "first": "2026-06-24",
+       "last": "2026-09-16",
+       "weeks": 13,
+       "slope": -0.252343,
+       "se": 0.10221,
+       "t": -2.468862,
+       "mde": 0.286351
+      }
+     ],
+     "cycles": [
+      {
+       "early_first": "2015-12-23",
+       "early_last": "2016-12-21",
+       "early_weeks": 53,
+       "early_slope": -0.14226,
+       "early_se": 0.104824,
+       "early_t": -1.357135,
+       "early_mde": 0.293673,
+       "late_first": "2016-12-28",
+       "late_last": "2019-06-26",
+       "late_weeks": 131,
+       "late_slope": -0.287433,
+       "late_se": 0.067599,
+       "late_t": -4.252005,
+       "late_mde": 0.189385,
+       "differs": false,
+       "as_expected": false
+      },
+      {
+       "early_first": "2022-03-30",
+       "early_last": "2023-03-22",
+       "early_weeks": 52,
+       "early_slope": -0.2389,
+       "early_se": 0.05032,
+       "early_t": -4.747605,
+       "early_mde": 0.140976,
+       "late_first": "2023-03-29",
+       "late_last": "2024-01-31",
+       "late_weeks": 45,
+       "late_slope": -0.205966,
+       "late_se": 0.062121,
+       "late_t": -3.315538,
+       "late_mde": 0.174039,
+       "differs": false,
+       "as_expected": false
+      }
+     ],
+     "sentence": "The sign does not differ in either of the two cycles."
+    },
+    "market": {
+     "pooled": {
+      "early_hiking": {
+       "slope": -0.242125,
+       "se": 0.04353,
+       "t": -5.562308,
+       "weeks": 105
+      },
+      "late_hiking": {
+       "slope": -0.351295,
+       "se": 0.058369,
+       "t": -6.018512,
+       "weeks": 176
+      },
+      "hold_after_hikes": {
+       "slope": -0.251014,
+       "se": 0.048035,
+       "t": -5.225599,
+       "weeks": 40
+      },
+      "cutting": {
+       "slope": -0.46033,
+       "se": 0.101878,
+       "t": -4.518459,
+       "weeks": 117
+      },
+      "hold_after_cuts": {
+       "slope": -0.316179,
+       "se": 0.108653,
+       "t": -2.909976,
+       "weeks": 171
+      }
+     },
+     "late_minus_early": {
+      "diff": -0.109171,
+      "se": 0.075807,
+      "t": -1.440112,
+      "mde": 0.21238
+     },
+     "episodes": [
+      {
+       "state": "hold_after_cuts",
+       "first": "2014-01-22",
+       "last": "2015-12-16",
+       "weeks": 100,
+       "slope": -0.785826,
+       "se": 0.178643,
+       "t": -4.398857,
+       "mde": 0.500484
+      },
+      {
+       "state": "early_hiking",
+       "first": "2015-12-23",
+       "last": "2016-12-21",
+       "weeks": 53,
+       "slope": -0.72832,
+       "se": 0.147991,
+       "t": -4.921391,
+       "mde": 0.414609
+      },
+      {
+       "state": "late_hiking",
+       "first": "2016-12-28",
+       "last": "2019-06-26",
+       "weeks": 131,
+       "slope": -0.527894,
+       "se": 0.081327,
+       "t": -6.49099,
+       "mde": 0.227845
+      },
+      {
+       "state": "cutting",
+       "first": "2019-08-14",
+       "last": "2020-05-13",
+       "weeks": 40,
+       "slope": -0.624438,
+       "se": 0.107971,
+       "t": -5.783392,
+       "mde": 0.30249
+      },
+      {
+       "state": "hold_after_cuts",
+       "first": "2021-05-19",
+       "last": "2022-03-23",
+       "weeks": 45,
+       "slope": -0.282105,
+       "se": 0.272748,
+       "t": -1.034308,
+       "mde": 0.764125
+      },
+      {
+       "state": "early_hiking",
+       "first": "2022-03-30",
+       "last": "2023-03-22",
+       "weeks": 52,
+       "slope": -0.239294,
+       "se": 0.04094,
+       "t": -5.845016,
+       "mde": 0.114697
+      },
+      {
+       "state": "late_hiking",
+       "first": "2023-03-29",
+       "last": "2024-01-31",
+       "weeks": 45,
+       "slope": -0.246709,
+       "se": 0.058557,
+       "t": -4.213138,
+       "mde": 0.164053
+      },
+      {
+       "state": "hold_after_hikes",
+       "first": "2024-02-07",
+       "last": "2024-09-25",
+       "weeks": 34,
+       "slope": -0.235425,
+       "se": 0.063846,
+       "t": -3.68741,
+       "mde": 0.178869
+      },
+      {
+       "state": "cutting",
+       "first": "2024-10-02",
+       "last": "2025-06-25",
+       "weeks": 39,
+       "slope": -0.261064,
+       "se": 0.06553,
+       "t": -3.983859,
+       "mde": 0.183589
+      },
+      {
+       "state": "hold_after_cuts",
+       "first": "2025-07-02",
+       "last": "2025-09-24",
+       "weeks": 13,
+       "slope": -0.060335,
+       "se": 0.116387,
+       "t": -0.518397,
+       "mde": 0.326068
+      },
+      {
+       "state": "cutting",
+       "first": "2025-10-01",
+       "last": "2026-06-17",
+       "weeks": 38,
+       "slope": -0.166415,
+       "se": 0.073749,
+       "t": -2.256511,
+       "mde": 0.206613
+      },
+      {
+       "state": "hold_after_cuts",
+       "first": "2026-06-24",
+       "last": "2026-09-16",
+       "weeks": 13,
+       "slope": -0.333735,
+       "se": 0.080358,
+       "t": -4.153099,
+       "mde": 0.22513
+      }
+     ],
+     "cycles": [
+      {
+       "early_first": "2015-12-23",
+       "early_last": "2016-12-21",
+       "early_weeks": 53,
+       "early_slope": -0.72832,
+       "early_se": 0.147991,
+       "early_t": -4.921391,
+       "early_mde": 0.414609,
+       "late_first": "2016-12-28",
+       "late_last": "2019-06-26",
+       "late_weeks": 131,
+       "late_slope": -0.527894,
+       "late_se": 0.081327,
+       "late_t": -6.49099,
+       "late_mde": 0.227845,
+       "differs": false,
+       "as_expected": false
+      },
+      {
+       "early_first": "2022-03-30",
+       "early_last": "2023-03-22",
+       "early_weeks": 52,
+       "early_slope": -0.239294,
+       "early_se": 0.04094,
+       "early_t": -5.845016,
+       "early_mde": 0.114697,
+       "late_first": "2023-03-29",
+       "late_last": "2024-01-31",
+       "late_weeks": 45,
+       "late_slope": -0.246709,
+       "late_se": 0.058557,
+       "late_t": -4.213138,
+       "late_mde": 0.164053,
+       "differs": false,
+       "as_expected": false
+      }
+     ],
+     "sentence": "The sign does not differ in either of the two cycles."
+    }
+   },
+   "ig_oas": {
+    "level": {
+     "pooled": {
+      "late_hiking": {
+       "slope": 0.071877,
+       "se": 0.067433,
+       "t": 1.065904,
+       "weeks": 17
+      },
+      "hold_after_hikes": {
+       "slope": -0.152944,
+       "se": 0.045115,
+       "t": -3.39011,
+       "weeks": 34
+      },
+      "cutting": {
+       "slope": -0.056272,
+       "se": 0.048346,
+       "t": -1.163961,
+       "weeks": 77
+      },
+      "hold_after_cuts": {
+       "slope": -0.059386,
+       "se": 0.034568,
+       "t": -1.717931,
+       "weeks": 26
+      }
+     },
+     "late_minus_early": {
+      "diff": null,
+      "se": null,
+      "t": null,
+      "mde": null
+     },
+     "episodes": [
+      {
+       "state": "late_hiking",
+       "first": "2023-10-11",
+       "last": "2024-01-31",
+       "weeks": 17,
+       "slope": 0.071877,
+       "se": 0.067433,
+       "t": 1.065904,
+       "mde": 0.188919
+      },
+      {
+       "state": "hold_after_hikes",
+       "first": "2024-02-07",
+       "last": "2024-09-25",
+       "weeks": 34,
+       "slope": -0.152944,
+       "se": 0.045115,
+       "t": -3.39011,
+       "mde": 0.126393
+      },
+      {
+       "state": "cutting",
+       "first": "2024-10-02",
+       "last": "2025-06-25",
+       "weeks": 39,
+       "slope": -0.121434,
+       "se": 0.054101,
+       "t": -2.244575,
+       "mde": 0.151569
+      },
+      {
+       "state": "hold_after_cuts",
+       "first": "2025-07-02",
+       "last": "2025-09-24",
+       "weeks": 13,
+       "slope": -0.027425,
+       "se": 0.050883,
+       "t": -0.538976,
+       "mde": 0.142552
+      },
+      {
+       "state": "cutting",
+       "first": "2025-10-01",
+       "last": "2026-06-17",
+       "weeks": 38,
+       "slope": 0.06485,
+       "se": 0.040988,
+       "t": 1.582159,
+       "mde": 0.114832
+      },
+      {
+       "state": "hold_after_cuts",
+       "first": "2026-06-24",
+       "last": "2026-09-16",
+       "weeks": 13,
+       "slope": -0.118753,
+       "se": 0.035714,
+       "t": -3.325148,
+       "mde": 0.100055
+      }
+     ],
+     "cycles": [],
+     "sentence": "The sample has no complete hiking cycle, so the sign cannot be compared."
+    },
+    "market": {
+     "pooled": {
+      "late_hiking": {
+       "slope": 0.079651,
+       "se": 0.097128,
+       "t": 0.820065,
+       "weeks": 17
+      },
+      "hold_after_hikes": {
+       "slope": -0.151595,
+       "se": 0.052358,
+       "t": -2.895373,
+       "weeks": 34
+      },
+      "cutting": {
+       "slope": -0.156979,
+       "se": 0.045419,
+       "t": -3.456232,
+       "weeks": 77
+      },
+      "hold_after_cuts": {
+       "slope": -0.086303,
+       "se": 0.027382,
+       "t": -3.151845,
+       "weeks": 26
+      }
+     },
+     "late_minus_early": {
+      "diff": null,
+      "se": null,
+      "t": null,
+      "mde": null
+     },
+     "episodes": [
+      {
+       "state": "late_hiking",
+       "first": "2023-10-11",
+       "last": "2024-01-31",
+       "weeks": 17,
+       "slope": 0.079651,
+       "se": 0.097128,
+       "t": 0.820065,
+       "mde": 0.272113
+      },
+      {
+       "state": "hold_after_hikes",
+       "first": "2024-02-07",
+       "last": "2024-09-25",
+       "weeks": 34,
+       "slope": -0.151595,
+       "se": 0.052358,
+       "t": -2.895373,
+       "mde": 0.146684
+      },
+      {
+       "state": "cutting",
+       "first": "2024-10-02",
+       "last": "2025-06-25",
+       "weeks": 39,
+       "slope": -0.169961,
+       "se": 0.055269,
+       "t": -3.075163,
+       "mde": 0.154841
+      },
+      {
+       "state": "hold_after_cuts",
+       "first": "2025-07-02",
+       "last": "2025-09-24",
+       "weeks": 13,
+       "slope": -0.069547,
+       "se": 0.051632,
+       "t": -1.346984,
+       "mde": 0.144651
+      },
+      {
+       "state": "cutting",
+       "first": "2025-10-01",
+       "last": "2026-06-17",
+       "weeks": 38,
+       "slope": -0.105468,
+       "se": 0.067988,
+       "t": -1.551283,
+       "mde": 0.190474
+      },
+      {
+       "state": "hold_after_cuts",
+       "first": "2026-06-24",
+       "last": "2026-09-16",
+       "weeks": 13,
+       "slope": -0.127344,
+       "se": 0.01759,
+       "t": -7.239589,
+       "mde": 0.04928
+      }
+     ],
+     "cycles": [],
+     "sentence": "The sample has no complete hiking cycle, so the sign cannot be compared."
+    }
+   },
+   "hy_oas": {
+    "level": {
+     "pooled": {
+      "late_hiking": {
+       "slope": 0.27472,
+       "se": 0.409946,
+       "t": 0.670138,
+       "weeks": 17
+      },
+      "hold_after_hikes": {
+       "slope": -0.447692,
+       "se": 0.174412,
+       "t": -2.566867,
+       "weeks": 34
+      },
+      "cutting": {
+       "slope": -0.242655,
+       "se": 0.265763,
+       "t": -0.91305,
+       "weeks": 77
+      },
+      "hold_after_cuts": {
+       "slope": -0.055755,
+       "se": 0.151274,
+       "t": -0.368572,
+       "weeks": 26
+      }
+     },
+     "late_minus_early": {
+      "diff": null,
+      "se": null,
+      "t": null,
+      "mde": null
+     },
+     "episodes": [
+      {
+       "state": "late_hiking",
+       "first": "2023-10-11",
+       "last": "2024-01-31",
+       "weeks": 17,
+       "slope": 0.27472,
+       "se": 0.409946,
+       "t": 0.670138,
+       "mde": 1.148498
+      },
+      {
+       "state": "hold_after_hikes",
+       "first": "2024-02-07",
+       "last": "2024-09-25",
+       "weeks": 34,
+       "slope": -0.447692,
+       "se": 0.174412,
+       "t": -2.566867,
+       "mde": 0.488629
+      },
+      {
+       "state": "cutting",
+       "first": "2024-10-02",
+       "last": "2025-06-25",
+       "weeks": 39,
+       "slope": -0.555507,
+       "se": 0.328751,
+       "t": -1.689753,
+       "mde": 0.921023
+      },
+      {
+       "state": "hold_after_cuts",
+       "first": "2025-07-02",
+       "last": "2025-09-24",
+       "weeks": 13,
+       "slope": -0.025128,
+       "se": 0.152833,
+       "t": -0.164415,
+       "mde": 0.428176
+      },
+      {
+       "state": "cutting",
+       "first": "2025-10-01",
+       "last": "2026-06-17",
+       "weeks": 38,
+       "slope": 0.337801,
+       "se": 0.184705,
+       "t": 1.828866,
+       "mde": 0.517467
+      },
+      {
+       "state": "hold_after_cuts",
+       "first": "2026-06-24",
+       "last": "2026-09-16",
+       "weeks": 13,
+       "slope": -0.13645,
+       "se": 0.262265,
+       "t": -0.520277,
+       "mde": 0.734758
+      }
+     ],
+     "cycles": [],
+     "sentence": "The sample has no complete hiking cycle, so the sign cannot be compared."
+    },
+    "market": {
+     "pooled": {
+      "late_hiking": {
+       "slope": 0.862941,
+       "se": 0.608116,
+       "t": 1.41904,
+       "weeks": 17
+      },
+      "hold_after_hikes": {
+       "slope": -0.508056,
+       "se": 0.154957,
+       "t": -3.278687,
+       "weeks": 34
+      },
+      "cutting": {
+       "slope": -0.605182,
+       "se": 0.299527,
+       "t": -2.020461,
+       "weeks": 77
+      },
+      "hold_after_cuts": {
+       "slope": -0.067832,
+       "se": 0.129761,
+       "t": -0.522748,
+       "weeks": 26
+      }
+     },
+     "late_minus_early": {
+      "diff": null,
+      "se": null,
+      "t": null,
+      "mde": null
+     },
+     "episodes": [
+      {
+       "state": "late_hiking",
+       "first": "2023-10-11",
+       "last": "2024-01-31",
+       "weeks": 17,
+       "slope": 0.862941,
+       "se": 0.608116,
+       "t": 1.41904,
+       "mde": 1.703689
+      },
+      {
+       "state": "hold_after_hikes",
+       "first": "2024-02-07",
+       "last": "2024-09-25",
+       "weeks": 34,
+       "slope": -0.508056,
+       "se": 0.154957,
+       "t": -3.278687,
+       "mde": 0.434125
+      },
+      {
+       "state": "cutting",
+       "first": "2024-10-02",
+       "last": "2025-06-25",
+       "weeks": 39,
+       "slope": -0.739321,
+       "se": 0.366229,
+       "t": -2.018742,
+       "mde": 1.026021
+      },
+      {
+       "state": "hold_after_cuts",
+       "first": "2025-07-02",
+       "last": "2025-09-24",
+       "weeks": 13,
+       "slope": 0.035891,
+       "se": 0.215843,
+       "t": 0.166284,
+       "mde": 0.604702
+      },
+      {
+       "state": "cutting",
+       "first": "2025-10-01",
+       "last": "2026-06-17",
+       "weeks": 38,
+       "slope": -0.070254,
+       "se": 0.408352,
+       "t": -0.172042,
+       "mde": 1.144033
+      },
+      {
+       "state": "hold_after_cuts",
+       "first": "2026-06-24",
+       "last": "2026-09-16",
+       "weeks": 13,
+       "slope": -0.219312,
+       "se": 0.127289,
+       "t": -1.722948,
+       "mde": 0.35661
+      }
+     ],
+     "cycles": [],
+     "sentence": "The sample has no complete hiking cycle, so the sign cannot be compared."
+    }
+   }
+  },
+  "stale_sessions": {
+   "quality": 39,
+   "baa_30y": 39,
+   "baa_10y": 39,
+   "ig_oas": 1,
+   "hy_oas": 0,
+   "yield": 34
+  },
+  "first_print": {
+   "quality": "2010-01-04",
+   "baa_30y": "2010-01-04",
+   "baa_10y": "2010-01-04",
+   "ig_oas": "2023-09-29",
+   "hy_oas": "2023-09-29"
+  },
+  "sample": {
+   "weeks": 810,
+   "first_week": "2011-03-16",
+   "last_week": "2026-09-16",
+   "sessions": 3671,
+   "first_session": "2012-02-29",
+   "last_session": "2026-09-21",
+   "elb_sessions": 727,
+   "elb_weeks": 201
+  },
+  "supported": true
+ }
+}

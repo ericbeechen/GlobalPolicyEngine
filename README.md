@@ -81,10 +81,10 @@ uv run python scripts/build_model.py
 uv run python scripts/run_model_path.py 2021-11-01
 ```
 
-GBP needs neither the archive nor a key. Pull the Bank of England's curve, SONIA and Bank Rate and the ONS vintages, then build the panel, the nowcast and the model, and check the path against the Bank's MPR conditioning paths:
+GBP needs no archive, but its update needs the FRED key too, for the dollar-sterling rate (DEXUSUK). Pull the Bank of England's curves, SONIA and Bank Rate and the ONS vintages, then build the panel, the nowcast and the model, and check the path against the Bank's MPR conditioning paths:
 
 ```bash
-uv run python scripts/update_data.py --ccy GBP
+uv run --env-file .env python scripts/update_data.py --ccy GBP
 uv run python scripts/build_panel.py --ccy GBP
 uv run python scripts/build_nowcast.py --ccy GBP
 uv run python scripts/build_model.py --ccy GBP
