@@ -54,7 +54,7 @@ def test_an_undated_revision_is_known_only_from_when_we_saw_it(tmp_path):
     cache.append(obs([("2024-03-01", 5.31, "2024-03-04")]), "fred", "SOFR", "USD", root=tmp_path)
 
     assert cache.read("fred", "SOFR", "USD", "2024-03-04", root=tmp_path)["value"].item() == 5.33
-    today = pd.Timestamp.now().normalize()
+    today = cache._now().normalize()   # the cache's clock (New York), not the machine's: they differ near midnight
     assert cache.read("fred", "SOFR", "USD", today, root=tmp_path)["value"].item() == 5.31
 
 

@@ -20,15 +20,18 @@ import pytest
 SRC = Path(__file__).resolve().parents[1] / "src" / "policypath"
 SCRIPTS = SRC.parents[1] / "scripts"
 
-# Currencies, their overnight and policy rates, futures roots, committees and calendars.
+# Currencies, their overnight and policy rates, futures roots, committees and calendars;
+# the series behind the curve, cross and credit legs, the FX rate, and the curves and estimates.
 FORBIDDEN = re.compile(
     r"\b(USD|GBP|EUR|AUD|CAD|JPY|CHF|EFFR|SOFR|SONIA|ESTR|AONIA|CORRA|ZQ|SR1|SR3|FOMC|MPC|"
-    r"US_BDAY|UK_BDAY|IUDSOIA|IUDBEDR|DFEDTAR[LU]|FEDTARMDLR|PCEPILFE|UNRATE|NROU|MGSX|D7G7)\b")
+    r"US_BDAY|UK_BDAY|IUDSOIA|IUDBEDR|DFEDTAR[LU]|FEDTARMDLR|PCEPILFE|UNRATE|NROU|MGSX|D7G7|"
+    r"DGS\d+|DEXUSUK|BAA10Y|AAA10Y|BAML\w+|GLC_SPOT|OIS_SPOT|HLW_RSTAR)\b")
 
 BACKENDS = {
     "calendars.py": "the holiday calendars `calendar:` and `market.exchange_calendar` name",
     "sources/fred.py": "the FRED/ALFRED client: FRED publishes on Fed business days",
     "sources/boe.py": "the Bank of England client: it publishes on London business days",
+    "sources/nyfed.py": "the New York Fed client: HLW's real-time r* workbook, by its series name",
     "sources/ons.py": "the ONS client",
     "sources/rates.py": "the Databento archive reader for CME futures",
     "sources/pull_fomc.py": "regenerates config/meetings/fomc.csv",
