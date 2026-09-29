@@ -1,7 +1,7 @@
 """The weekly brief, one command from cache to a dated one-page PDF in reports/.
 
 Reads data/panel/ (run build_panel.py, build_nowcast.py and build_model.py for
-each currency in config/brief.yml first). Writes reports/brief_<date>.pdf and
+each currency in config/brief.yml, then build_expression.py, first). Writes reports/brief_<date>.pdf and
 prints what it says. `--date` defaults to today; a past date gives the brief
 that could have been sent then.
 
@@ -34,4 +34,6 @@ print(f"differential {said['differential_session']:%Y-%m-%d}: " + ", ".join(
     f"k{h} {d.loc[h, 'diff_bp']:+.0f}bp (z {d.loc[h, 'z']:+.1f})" for h in horizons))
 print("\n".join(said["changed"]))
 print(said["wrong"])
+for row in said["trades"]:
+    print("  ".join(row))
 print(f"wrote {path}")

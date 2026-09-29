@@ -7,13 +7,18 @@ pulled whole each time and checked against what is cached. Deleting data/ and
 running this rebuilds everything.
 
 What is pulled is the config's ``sources`` block (daily series with their
-publication lags, curves, futures roots) and its ``macro`` block; which code
-pulls it is sources/registry.py. A new currency is never an edit here.
+publication lags, curves, futures roots, quarterly estimates) and its ``macro``
+block; which code pulls it is sources/registry.py. A new currency is never an
+edit here. ``--only`` pulls just the series it names and nothing else, not even
+the macro vintages: for adding a series without refreshing the rest.
+
+Every currency needs the FRED key in .env: GBP's too, for its FX rate (DEXUSUK).
 
     uv run --env-file .env python scripts/update_data.py
     uv run --env-file .env python scripts/update_data.py --macro-only
     uv run --env-file .env python scripts/update_data.py --refetch DFEDTARL DFEDTARU
-    uv run python scripts/update_data.py --ccy GBP
+    uv run --env-file .env python scripts/update_data.py --ccy GBP
+    uv run --env-file .env python scripts/update_data.py --ccy GBP --only DEXUSUK GLC_SPOT
 """
 
 import argparse
@@ -24,13 +29,24 @@ from policypath.sources import cache, registry
 
 parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
 parser.add_argument("--ccy", default=config.enabled()[0], help="default: the first enabled currency")
-parser.add_argument("--macro-only", action="store_true", help="pull the macro vintages only; no archive needed")
+which = parser.add_mutually_exclusive_group()
+which.add_argument("--macro-only", action="store_true", help="pull the macro vintages only; no archive needed")
+which.add_argument("--only", nargs="+", default=[], metavar="SERIES",
+                   help="pull only these series from the sources block; no macro vintages")
 parser.add_argument("--refetch", nargs="+", default=[], metavar="SERIES",
                     help="drop these series from the cache first and pull them whole again")
 args = parser.parse_args()
 cfg = config.currency(args.ccy)
 sources = cfg["sources"]
 today = pd.Timestamp.today().normalize()
+KINDS = ("daily", "estimates", "curves", "futures")
+listed = {s for kind in KINDS for group in sources.get(kind, {}).values() for s in group}
+if set(args.only) - listed:
+    parser.error(f"--only {sorted(set(args.only) - listed)}: not under sources in the {args.ccy} block")
+
+
+def wanted(series):
+    return not args.only or series in args.only
 
 
 def report(source, series):
@@ -46,23 +62,27 @@ def refetch(name, series):
 
 t0 = time.perf_counter()
 if not args.macro_only:
-    for name, lags in sources.get("daily", {}).items():
-        make = registry.lookup(registry.DAILY, name)
-        for series, lag in lags.items():
-            refetch(name, series)
-            added = make(lag).update(series, args.ccy, cfg["history_start"], today, cache)
-            print(f"{name}/{series:<9} +{added:>6} rows   covered {report(name, series)}")
+    # Series with a publication lag each: business days for a daily series, calendar days for an estimate.
+    for kind, table in (("daily", registry.DAILY), ("estimates", registry.ESTIMATES)):
+        for name, lags in sources.get(kind, {}).items():
+            make = registry.lookup(table, name)
+            for series, lag in lags.items():
+                if not wanted(series):
+                    continue
+                refetch(name, series)
+                added = make(lag).update(series, args.ccy, cfg["history_start"], today, cache)
+                print(f"{name}/{series:<9} +{added:>6} rows   covered {report(name, series)}")
 
     for name, curves in sources.get("curves", {}).items():
-        source = registry.lookup(registry.CURVES, name)()   # one download of the archives for every curve
-        for series in curves:
+        source = registry.lookup(registry.CURVES, name)()   # one download of each archive for every curve
+        for series in filter(wanted, curves):
             refetch(name, series)
             added = source.update(series, args.ccy, cfg["history_start"], today, cache)
             print(f"{name}/{series:<9} +{added:>6} rows   covered {report(name, series)}")
 
     for name, roots in sources.get("futures", {}).items():
         source = registry.lookup(registry.FUTURES, name)()
-        for root in roots:
+        for root in filter(wanted, roots):
             def progress(lo, hi, n, root=root):
                 print(f"  {root} {lo.date()} .. {hi.date()}: +{n}", flush=True)
             # Each root only over the days a job holding it covers, so a gap between jobs stays missing.
@@ -72,7 +92,7 @@ if not args.macro_only:
 
 macro = cfg["macro"]
 pull = registry.lookup(registry.MACRO, macro["source"])
-for series in [*macro["series"], *macro["validation"]]:
+for series in [] if args.only else [*macro["series"], *macro["validation"]]:
     vintages, meta = pull(series, macro["history_start"])
     added = cache.write_vintages(vintages, macro["source"], series, args.ccy, meta=meta)
     print(f"{macro['source']}/{series:<14} +{added:>6} rows")
