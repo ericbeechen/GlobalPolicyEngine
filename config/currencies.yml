@@ -20,6 +20,7 @@ USD:
   overnight:
     source: fred
     series: EFFR
+    day_count: 360              # Act/360: a day's fixing accrues 1/360, as a funded leg pays it
   # Where the market path comes from: market.EXTRACTORS. ZQ settles on the
   # calendar-month average of EFFR, so the path is a least-squares solve.
   market:
@@ -44,11 +45,25 @@ USD:
     # Daily series: Fed business days from a value's date to when it is public. The
     # NY Fed publishes EFFR and SOFR the next morning; the target range in force on
     # day d is announced before d starts; an SEP median is dated on its release day.
+    # H.15's Treasury par yields (DGS*), Moody's Baa and Aaa less the 10y (BAA10Y,
+    # AAA10Y) and ICE BofA's IG and HY OAS (BAML*) are out the next business day.
     # See notes/DECISIONS.md.
     daily:
-      fred: {EFFR: 1, SOFR: 1, DFEDTARL: 0, DFEDTARU: 0, FEDTARMDLR: 0}
+      fred: {EFFR: 1, SOFR: 1, DFEDTARL: 0, DFEDTARU: 0, FEDTARMDLR: 0,
+             DGS1: 1, DGS2: 1, DGS3: 1, DGS5: 1, DGS7: 1, DGS10: 1, DGS30: 1,
+             BAA10Y: 1, AAA10Y: 1, BAMLC0A0CM: 1, BAMLH0A0HYM2: 1}
     futures:
       databento: [ZQ, SR1, SR3]
+    # Quarterly estimates: calendar days from the end of a vintage's quarter to its
+    # release. HLW r*, one real-time vintage a quarter (sources/nyfed.py): the week 9
+    # robustness r*, never the model's own. 65 is the latest on-schedule HLW release
+    # (2019Q2 on 2019-09-03); HLW follows Canada's GDP, not LW's US one.
+    estimates:
+      nyfed: {HLW_RSTAR: 65}
+    tags:
+      HLW_RSTAR:
+        lag: "an HLW r* vintage is known 65 days after its quarter (HLW's schedules run 58-65), or from its release day where that came later (2022Q4, 2025Q3, 2025Q4)"
+        quality: "HLW's real-time vintages start with 2015Q4, known 2016-03-05, so the 1,267 USD model sessions before it have none; there are none 2020Q3-2022Q3, and the 2020Q2 estimate, 0.03% against 0.53% for 2020Q1, stands through the gap (683 sessions, to 2023-05-18)"
   # What each root settles to (curves/futures.py): the calendar-month average
   # of its overnight rate, or SOFR compounded over the IMM quarter.
   contract_shapes: {ZQ: month, SR1: month, SR3: imm_quarter}
@@ -135,7 +150,10 @@ USD:
     # EFFR minus the midpoint, to put the model path on the rate ZQ settles on:
     # the median over the last this-many known fixings, held flat like the macro.
     spread_fixings: 20
-    spread_breaks: []                    # EFFR's definition did not change inside the sample
+    # The NY Fed changed how EFFR is computed on 2016-03-01 (a brokered volume-weighted
+    # mean to the FR 2420 volume-weighted median). Not a break: the 20-fixing median of
+    # the spread moved from +0.5 to -0.5bp across it (notes/DECISIONS.md, R10).
+    spread_breaks: []
     rstar:
       source: fred
       series: FEDTARMDLR                 # FOMC SEP median longer-run funds rate, minus the target
@@ -156,14 +174,86 @@ USD:
     min_periods: 250                     # about a year of sessions before a z exists
     sd_floor_bp: 5                       # at the ELB the gap barely moves; see notes/DECISIONS.md
 
-  # Crude backtest: trade the implied rate after one meeting, no costs.
+  # Crude backtest: trade the implied rate after one meeting, no costs (the sleeves' costs are
+  # under costs:, charged in strategy/costs.py; the cost tags here say what they rest on).
   backtest:
     horizon: 4                           # the k-th meeting ahead, re-chosen every session
     execution_lag: 1                     # sessions between the signal and the position
     dv01: 1.0                            # P&L in bp per unit of z
     tags:
       costs:
-        quality: "the crude backtest has no transaction costs yet (week 8)"
+        quality: "USD costs are tick-based, not measured: ZQ at two back-month ticks a round trip plus an assumed $1 a side (1.05bp), the exchange's minimum increment, since the archive has settles and no quotes; the Treasury legs' 0.5bp is assumed"
+
+  # Week 7: what each expression trades in this currency (strategy/instruments.py names the types).
+  expression:
+    outright:
+      instrument: futures_month      # the ZQ month the k-th meeting's rate settles in
+      label: ZQ                      # what the reports call it: "ZQ Apr 2027"
+      contract: ZQ                   # the key under contracts (futures_month only)
+    curve:
+      instrument: par_yield          # Treasury constant-maturity par yields, linear in maturity between tenors
+      label: Treasury                # "2y Treasury"
+      source: fred
+      series: {1: DGS1, 2: DGS2, 3: DGS3, 5: DGS5, 7: DGS7, 10: DGS10}
+      legs: [2, 10]                  # receive the first, pay the second, DV01-neutral
+      coupons_per_year: 2
+    tags:
+      par_yield:
+        quality: "Treasury legs are H.15 constant-maturity par yields: a fitted curve, not traded bonds"
+      marks:
+        lag: "34 of 3,921 USD sessions have no Treasury yields (bond market shut, CME open): a leg carries its last print"
+      funding:
+        modelling: "a par leg is funded at the overnight rate, standing in for repo"
+      convexity:
+        modelling: "legs are DV01-linear, so the P&L leaves out convexity: under 3bp a year per unit DV01 on a 2s10s receive, 7bp at most (2022)"
+  contracts:                         # DV01 is derived from these, never typed.
+    ZQ:
+      notional: 5000000
+      accrual: {days: 30, year_days: 360}   # DV01 = 5,000,000 x 30/360 x 1bp = $41.6667 (CME rounds to $41.67)
+      tick: {front: 0.0025, other: 0.005}   # $10.4167 and $20.8333 derived (CME quotes $10.4175, $20.835)
+      fee_per_side: 1.0                     # USD a contract, exchange and clearing, assumed
+      exchange: CME
+      quoted: {dv01: 41.67, tick: {front: 10.4175, other: 20.835}}   # CME's published values, USD: the check on the derived ones
+  costs:                             # Week 8 (strategy/costs.py): round trip per leg and unit of DV01 traded
+    outright: {ticks_round_trip: 2, observed: true}      # two back-month ticks (1bp) + fee_per_side twice: 1.048bp, derived
+    curve: {round_trip_bp: 0.5, observed: false, roll_every_months: 3}   # assumed; a held leg is re-struck quarterly
+    tags:
+      outright:
+        modelling: "a ZQ position rolls to the next month each time the fourth meeting moves on, charged as two outright one-ways, not as a (tighter) calendar spread"
+      curve:
+        modelling: "a Treasury leg's P&L is a constant-maturity bond re-struck daily; the cost charged is a desk's roll every three months while held"
+  # Week 12: the credit bridge (credit.py). A spread is the sum of its legs: long and
+  # plus added, short and minus taken off (config.SPREAD_SIGNS).
+  credit:
+    primary: quality                 # the spread the bridge leads with
+    spreads:
+      quality: {long: {source: fred, series: BAA10Y}, short: {source: fred, series: AAA10Y}}   # Baa - Aaa: maturity-matched
+      baa_30y: {long: {source: fred, series: BAA10Y}, plus: {source: fred, series: DGS10},
+                minus: {source: fred, series: DGS30}}                                        # Baa - 30y Treasury
+      baa_10y: {long: {source: fred, series: BAA10Y}}                                        # Baa - 10y Treasury
+    control: {long: {source: fred, series: DGS30}, short: {source: fred, series: DGS10}}      # the Treasury 10s30s
+    crosscheck: {ig_oas: {source: fred, series: BAMLC0A0CM}, hy_oas: {source: fred, series: BAMLH0A0HYM2}}
+    # The yield a stale seasoned-bond quote would trail: the staleness check and its control (DECISIONS D2).
+    staleness: {source: fred, series: DGS10}
+    # Weekly = the last print on or before each of these (the Fed's week: H.4.1 and H.8 are Wednesday-dated).
+    week_ends: Wednesday
+    # Tests 1 and 2 are also run without each window (every change that touches it is left out).
+    exclude: {crash_2020: ["2020-02-15", "2020-04-30"]}
+    # What the report and chart call each spread, the control and the staleness yield.
+    labels: {quality: "Baa - Aaa", baa_30y: "Baa - 30y Treasury", baa_10y: "Baa - 10y Treasury",
+             ig_oas: "ICE BofA IG OAS", hy_oas: "ICE BofA HY OAS", control: "Treasury 10s30s",
+             staleness: "10y Treasury yield"}
+    tags:
+      BAA10Y:
+        quality: "Moody's Baa and Aaa are yields on seasoned long-dated bonds, whose quotes can trail the market: the credit bridge checks each spread's weekly changes for staleness before its predictive test, and where the pre-registered check fires those fits control for the 10y's move the week before"
+      excess_returns:
+        modelling: "the credit bridge reads spread changes as excess returns: duration, carry and the default loss are left out"
+      held_meeting:
+        modelling: "the credit bridge's level change is for the meeting at the signal's horizon at the start of the week, held, so a meeting passing is not read as a repricing; its slope and differential changes are the signal's own, not held"
+      regimes:
+        modelling: "cycle regimes are real-time labels from two round thresholds (a year of hikes is early, six months without a move is a pause); two hiking cycles are too few for a nominal-size test of a sign flip"
+      BAMLC0A0CM:
+        quality: "ICE BofA OAS on FRED start 2023-09-29 (FRED keeps three years): a short cross-check only. 37 prints of each fall on weekends and Fed holidays, most repeating the day before, so a change there is not a market move"
 
   # Words and moments the generated reports use for this currency.
   report:
@@ -209,6 +299,7 @@ GBP:
   overnight:
     source: boe
     series: IUDSOIA
+    day_count: 365              # Act/365: a day's fixing accrues 1/365, as a funded leg pays it
   # The Bank's fitted OIS spot curve, short end (monthly, 1-60 months). There is
   # no monthly-average futures contract to solve, so the path is the forward
   # between consecutive meetings (curves/forward.py).
@@ -239,11 +330,14 @@ GBP:
   # Everything update_data.py keeps cached, by source (sources/registry.py).
   sources:
     # London business days to publication: SONIA at 9:00 the next day; Bank Rate
-    # in force on d was announced by noon on d at the latest.
+    # in force on d was announced by noon on d at the latest. DEXUSUK (Fed business
+    # days) is the H.10 noon New York rate: a market price, known on its day, though
+    # FRED posts it a week at a time.
     daily:
       boe: {IUDSOIA: 1, IUDBEDR: 0}   # SONIA, Bank Rate
+      fred: {DEXUSUK: 0}              # USD per GBP
     curves:
-      boe: [OIS_SPOT]                 # published by noon the next business day
+      boe: [OIS_SPOT, GLC_SPOT]       # OIS short end, gilt long end: each by noon the next business day
 
   path:
     start: "2009-08-03"
@@ -275,8 +369,10 @@ GBP:
     gap:
       unemployment: MGSX            # three months ending the labelled month
       # No vintaged UK natural rate is machine-readable back to 2010 (OBR publishes one
-      # per forecast, in its tables; a week 9 job). A constant, like r*: the gap's z
-      # removes its trailing mean, so a constant moves the bp level, not the trade.
+      # per forecast, in its tables). Deferred in week 9 (notes/DECISIONS.md, V8): u*
+      # 0.5pp off moves the rule as r* 1pp off does, and the r* rows measure that.
+      # A constant, like r*: the gap's z removes its trailing mean, so a constant moves
+      # the bp level more than the trade.
       # 4.5: the Bank's own medium-term equilibrium, "around 4½%" (February 2025 MPR).
       natural_rate: {constant: 4.5}
     # Where each input's publication date or value is approximate, said once here;
@@ -344,7 +440,41 @@ GBP:
     dv01: 1.0
     tags:
       costs:
-        quality: "the crude backtest has no transaction costs yet (week 8)"
+        quality: "GBP costs are assumed, not observed: the OIS forward and the gilt legs are valued off the Bank's fitted curves, so no traded price gives a spread (1bp a round trip each)"
+
+  # Week 7: what each expression trades in this currency (strategy/instruments.py names the types).
+  expression:
+    outright:
+      instrument: curve_forward      # a meeting-dated OIS forward off market.curve
+      label: OIS forward             # "OIS forward 18 Mar-29 Apr 2027"
+    curve:
+      instrument: par_from_spot      # gilt par yields from the Bank's fitted nominal spot curve
+      label: gilt                    # "2y gilt"
+      source: boe
+      series: GLC_SPOT               # one curve, keyed by tenor
+      legs: [2, 10]                  # receive the first, pay the second, DV01-neutral
+      coupons_per_year: 2
+    fx: {source: fred, series: DEXUSUK, book_per_unit: true,   # USD per GBP: a GBP leg's P&L converts at it
+         plausible: [1.0, 2.5]}   # USD per GBP, 1.07-1.72 since 2009: an inverted quote (0.58-0.93) is refused
+    tags:
+      curve_forward:
+        modelling: "the outright is a meeting-dated OIS forward off the Bank's fitted curve, not a traded contract"
+      GLC_SPOT:
+        quality: "gilt legs are par yields from the Bank's fitted spot curve, not traded gilts; a missing 0.5y point is interpolated (at most 0.3bp on 2y par)"
+      DEXUSUK:
+        lag: "GBP legs convert at the H.10 noon New York rate, not the London close, carried over Fed holidays (132 of 4,063 GBP sessions)"
+      funding:
+        modelling: "a par leg is funded at the overnight rate, standing in for repo"
+      convexity:
+        modelling: "legs are DV01-linear, so the P&L leaves out convexity: under 3bp a year per unit DV01 on a 2s10s receive, 7bp at most (2022)"
+  costs:                             # Week 8 (strategy/costs.py): round trip per leg and unit of DV01 traded, bp
+    outright: {round_trip_bp: 1.0, observed: false}      # assumed: valued off a fitted curve, no traded price
+    curve: {round_trip_bp: 1.0, observed: false, roll_every_months: 3}   # assumed; a held leg is re-struck quarterly
+    tags:
+      outright:
+        modelling: "the OIS forward rolls to the next window each time the fourth meeting moves on, charged as two outright one-ways"
+      curve:
+        modelling: "a gilt leg's P&L is a constant-maturity bond re-struck daily; the cost charged is a desk's roll every three months while held"
 
   # Checks against the central bank's own published numbers (scripts/check_mpr.py).
   validation:

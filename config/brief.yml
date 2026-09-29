@@ -8,3 +8,7 @@ differential: [GBP, USD]
 horizons: [1, 4, 8]
 traded: 4               # the horizon the crude backtest trades; "what changed" is read here
 lookback_days: 7        # "since last week": the sessions on or before the brief date minus this
+# The limitations footer reads the tags of these blocks only: the ones the brief reads (the
+# market path, the rule and its macro inputs, the trades' instruments). The rest (the credit
+# bridge, HLW r*, the crude backtest, costs, robustness) go to the full generated limitations.
+footer_blocks: [market, macro, rule, expression]

@@ -1,0 +1,105 @@
+# The book: its currency, the sleeves it trades, and what every sleeve shares.
+# Per-currency instruments, costs and FX live in currencies.yml; this file names none.
+#
+# config.strategy() validates it on load (config.STRATEGY_SCHEMA), then against the
+# enabled currency blocks: every sleeve's currencies are enabled and have the
+# expression it trades, a cross pair shares one horizon, and a currency other than
+# book.currency has an expression.fx. Each value is a decision, with its row in
+# notes/DECISIONS.md in the week that first uses it.
+
+book:
+  currency: USD
+  capital: 100000000
+  vol_target: 0.05
+sleeves:
+  - {name: USD outright, kind: outright, ccy: USD}
+  - {name: GBP outright, kind: outright, ccy: GBP}
+  - {name: USD 2s10s, kind: curve, ccy: USD}
+  - {name: GBP 2s10s, kind: curve, ccy: GBP}
+  - {name: GBP - USD 2y, kind: cross, pair: [GBP, USD], tenor: 2}   # receive the first's 2y, pay the second's, DV01-matched
+signal:
+  slope: [1, 8]
+  slope_orthogonal: true
+carry:
+  horizon_days: 91
+  closure_min_pairs: 250
+positions:
+  rule: hysteresis
+  enter: 1.0
+  exit: 0.0
+  grid: {enter: [0.5, 0.75, 1.0, 1.25, 1.5, 2.0], exit: [-0.5, -0.25, 0.0, 0.25, 0.5, 0.75]}
+  carry_filter: false
+costs:
+  sensitivity_bp: [0, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0]
+risk:
+  ewma_lambda: 0.97
+  sigma_floor: 0.5            # x the trailing two-year median sigma
+  nonsynchronous_lag: 1       # lags in the Newey-West term, Bartlett-weighted (P3)
+  no_trade_band: 0.10
+  max_gross_dv01_per_capital: 0.004   # per bp: one 25bp step against every leg costs the drawdown trigger, 10% (P7)
+portfolio:
+  constructions: [erc, mean_variance, inverse_vol]
+  headline: inverse_vol       # proposed
+  z_cap: 3.0
+  min_history: 250
+  drawdown: {trigger: 0.10, release: 0.05, scale: 0.5}
+evaluation:
+  elb: {chosen: flat}          # proposed; flat | exclude | hold
+  ic_horizons: [5, 21, 63]
+  exclude: {ex_2022: ["2022-01-01", "2022-12-31"], ex_2022_23: ["2021-12-01", "2023-08-31"]}
+# Week 9's grid (strategy/robustness.py, scripts/build_robustness.py): the headline book with one choice at a time
+# moved off the chosen value above, every other choice left where it is, so interactions are not run. A row
+# overrides currency blocks (every: the same for each currency the book trades; currencies: {ccy: ...}), merged as
+# regress.merge does (an r* block replaces rule.rstar whole), and/or this file (book:). It moves the signal only:
+# rule, signal and market.curve.method in a currency block, signal and positions.carry_filter here
+# (config.ROBUSTNESS_*_PATHS). Marks, instruments, carry, roll and costs are the baseline's. Rows: V11-V14.
+robustness:
+  ic_horizon: 21              # sessions: IC(21) on the rate component, the grid's signal-level number (one of ic_horizons)
+  choices:
+    - name: r* (USD)
+      chosen: SEP longer-run dot
+      rows:
+        - key: usd_rstar_hlw
+          label: HLW, real time
+          currencies: {USD: {rule: {rstar: {source: nyfed, series: HLW_RSTAR, label: HLW, real: true, before_first: 2.0,
+                                             before_first_label: "Taylor's 2%"}}}}
+        - key: usd_rstar_constant
+          label: constant 1.1     # the SEP r*'s full-sample mean (V3): hindsight, as GBP's -1.6 is
+          currencies: {USD: {rule: {rstar: {constant: 1.1}}}}
+    - name: r* (GBP)            # no HLW row: the UK real-time vintages end in 2020Q2 (V2)
+      chosen: constant -1.6
+      rows:
+        - {key: gbp_rstar_low, label: constant -2.6, currencies: {GBP: {rule: {rstar: {constant: -2.6}}}}}
+        - {key: gbp_rstar_high, label: constant -0.6, currencies: {GBP: {rule: {rstar: {constant: -0.6}}}}}
+    - name: coefficients
+      chosen: imposed
+      rows:
+        - {key: estimated, label: estimated, every: {rule: {estimate: {prior_quarters: 8, drop_cuts_to_floor: true}}}}
+        - key: estimated_cuts_kept
+          label: estimated, 2020Q1 cuts kept   # spec 5.1's literal sample (V9)
+          every: {rule: {estimate: {prior_quarters: 8, drop_cuts_to_floor: false}}}
+    - name: z window
+      chosen: 730D
+      rows:                     # min_periods = round(250 x days / 730), about half the window (V5)
+        - {key: window_365, label: 365D, every: {signal: {window: 365D, min_periods: 125}}}
+        - {key: window_548, label: 548D, every: {signal: {window: 548D, min_periods: 188}}}
+        - {key: window_1095, label: 1095D, every: {signal: {window: 1095D, min_periods: 375}}}
+    - name: curve fitting (GBP)
+      chosen: log-linear
+      rows:
+        - {key: gbp_nss, label: NSS, currencies: {GBP: {market: {curve: {method: nss}}}}}
+    - name: conditioning
+      chosen: hold-flat
+      rows:
+        - {key: converge, label: converge to target, every: {rule: {conditioning: {converge: {half_life_quarters: 4}}}}}
+    - name: slope
+      chosen: orthogonal to the level
+      rows:
+        - {key: slope_raw, label: raw 8th minus 1st, book: {signal: {slope_orthogonal: false}}}
+    - name: carry filter
+      chosen: "off"
+      rows:
+        - {key: carry_filter, label: "on", book: {positions: {carry_filter: true}}}
+tags:
+  robustness:
+    modelling: "The robustness grid moves one choice at a time off the chosen specification; interactions between choices are not run"
