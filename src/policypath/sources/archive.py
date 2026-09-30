@@ -169,3 +169,26 @@ def verify(root=DATABENTO_DIR, hashes=False):
                          "first": j.first.date(), "last": j.last.date(),
                          "daily_files": len(j.files()), "missing": bad})
     return pd.DataFrame(rows)
+
+
+def record(root=DATABENTO_DIR):
+    """What every filed job asked Databento for, small enough to commit.
+
+    The archive itself is licensed and gitignored, so this is the only trace of
+    it in the repo: enough to place the same batch request again and to check
+    a new download against the old one (file count, bytes, manifest hash).
+    """
+    out = []
+    for schema in FOLDERS:
+        for j in jobs(schema, root):
+            meta = json.loads((j.folder / "metadata.json").read_text())
+            manifest = json.loads((j.folder / "manifest.json").read_text())
+            daily = [f for f in manifest["files"] if f["filename"].endswith(".dbn.zst")]
+            query = dict(meta["query"])
+            query["start"] = str(pd.Timestamp(query["start"], unit="ns").date())
+            query["end"] = str(pd.Timestamp(query["end"], unit="ns").date())  # exclusive
+            out.append({"job_id": j.job_id, "query": query,
+                        "customizations": meta.get("customizations", {}),
+                        "daily_files": len(daily), "bytes": sum(f["size"] for f in daily),
+                        "manifest_sha256": _sha256(j.folder / "manifest.json")})
+    return out

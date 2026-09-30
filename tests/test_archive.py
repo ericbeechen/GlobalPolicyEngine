@@ -80,3 +80,19 @@ def test_coverage_is_per_root_and_keeps_gaps_between_jobs(tmp_path):
     # SR1's files never stand in for ZQ days, and vice versa.
     assert [p.parent.name for p in archive.files("statistics", "ZQ", root=tmp_path)] == ["OLD", "NEW", "LATE"]
     assert [p.parent.name for p in archive.files("statistics", "SR1", root=tmp_path)] == ["SR1"]
+
+
+def test_record_states_each_jobs_request_without_the_archive(tmp_path):
+    folder = tmp_path / "statistics"
+    folder.mkdir()
+    write_job(folder, "JOB-ZQ", ["ZQ.FUT"], "2020-12-28", "2020-12-31", ["2020-12-28", "2020-12-29"], "zq")
+    archive.file_downloads(tmp_path)
+
+    (rec,) = archive.record(tmp_path)
+
+    assert rec["job_id"] == "JOB-ZQ"
+    assert rec["query"] == {"schema": "statistics", "symbols": ["ZQ.FUT"], "start": "2020-12-28", "end": "2020-12-31"}
+    assert rec["daily_files"] == 2 and rec["bytes"] == len(b"zq 2020-12-28") + len(b"zq 2020-12-29")
+    manifest = folder / "JOB-ZQ" / "manifest.json"
+    assert rec["manifest_sha256"] == hashlib.sha256(manifest.read_bytes()).hexdigest()
+    json.dumps(rec)  # committable as is

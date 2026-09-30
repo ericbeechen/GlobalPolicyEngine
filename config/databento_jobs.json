@@ -1,0 +1,184 @@
+[
+  {
+    "job_id": "GLBX-20260925-D3PMWRFS9U",
+    "query": {
+      "dataset": "GLBX.MDP3",
+      "schema": "definition",
+      "symbols": [
+        "ZQ.FUT"
+      ],
+      "stype_in": "parent",
+      "stype_out": "instrument_id",
+      "start": "2010-06-06",
+      "end": "2020-12-31",
+      "limit": null,
+      "encoding": "dbn",
+      "compression": "zstd"
+    },
+    "customizations": {
+      "pretty_px": false,
+      "pretty_ts": false,
+      "map_symbols": false,
+      "split_symbols": false,
+      "split_duration": "day",
+      "split_size": null,
+      "packaging": null,
+      "delivery": "download"
+    },
+    "daily_files": 3310,
+    "bytes": 145544353,
+    "manifest_sha256": "d95d07d7c8f99276f0fd9bfb8b64ba701dccc7f3fb0efcc5296f22ddd39b6fc2"
+  },
+  {
+    "job_id": "GLBX-20260925-Q7FSWD33KT",
+    "query": {
+      "dataset": "GLBX.MDP3",
+      "schema": "definition",
+      "symbols": [
+        "SR1.FUT"
+      ],
+      "stype_in": "parent",
+      "stype_out": "instrument_id",
+      "start": "2010-06-06",
+      "end": "2026-09-25",
+      "limit": null,
+      "encoding": "dbn",
+      "compression": "zstd"
+    },
+    "customizations": {
+      "pretty_px": false,
+      "pretty_ts": false,
+      "map_symbols": false,
+      "split_symbols": false,
+      "split_duration": "day",
+      "split_size": null,
+      "packaging": null,
+      "delivery": "download"
+    },
+    "daily_files": 2639,
+    "bytes": 24627066,
+    "manifest_sha256": "9e1fa2d9d8374076072ef38556b39dd619fecb04b8e7cc467891720b80f3cc1f"
+  },
+  {
+    "job_id": "GLBX-20260922-BUW4PTHNSS",
+    "query": {
+      "dataset": "GLBX.MDP3",
+      "schema": "definition",
+      "symbols": [
+        "ZQ.FUT",
+        "SR3.FUT"
+      ],
+      "stype_in": "parent",
+      "stype_out": "instrument_id",
+      "start": "2020-12-31",
+      "end": "2026-09-22",
+      "limit": null,
+      "encoding": "dbn",
+      "compression": "zstd"
+    },
+    "customizations": {
+      "pretty_px": false,
+      "pretty_ts": false,
+      "map_symbols": false,
+      "split_symbols": false,
+      "split_duration": "day",
+      "split_size": null,
+      "packaging": null,
+      "delivery": "download"
+    },
+    "daily_files": 1792,
+    "bytes": 255647226,
+    "manifest_sha256": "41306d14796dd796c160fc59ed0fda30cfe1b763905034898741b6986ee667de"
+  },
+  {
+    "job_id": "GLBX-20260925-849HE4KHET",
+    "query": {
+      "dataset": "GLBX.MDP3",
+      "schema": "statistics",
+      "symbols": [
+        "ZQ.FUT"
+      ],
+      "stype_in": "parent",
+      "stype_out": "instrument_id",
+      "start": "2010-06-06",
+      "end": "2020-12-31",
+      "limit": null,
+      "encoding": "dbn",
+      "compression": "zstd"
+    },
+    "customizations": {
+      "pretty_px": false,
+      "pretty_ts": false,
+      "map_symbols": false,
+      "split_symbols": false,
+      "split_duration": "day",
+      "split_size": null,
+      "packaging": null,
+      "delivery": "download"
+    },
+    "daily_files": 3296,
+    "bytes": 188927668,
+    "manifest_sha256": "f2526d58da72421456515b9b79fb662a426877343e2779589b73e3bbffb363f1"
+  },
+  {
+    "job_id": "GLBX-20260925-WSLG466CQ9",
+    "query": {
+      "dataset": "GLBX.MDP3",
+      "schema": "statistics",
+      "symbols": [
+        "SR1.FUT"
+      ],
+      "stype_in": "parent",
+      "stype_out": "instrument_id",
+      "start": "2010-06-06",
+      "end": "2026-09-25",
+      "limit": null,
+      "encoding": "dbn",
+      "compression": "zstd"
+    },
+    "customizations": {
+      "pretty_px": false,
+      "pretty_ts": false,
+      "map_symbols": false,
+      "split_symbols": false,
+      "split_duration": "day",
+      "split_size": null,
+      "packaging": null,
+      "delivery": "download"
+    },
+    "daily_files": 2630,
+    "bytes": 61522210,
+    "manifest_sha256": "2ae24952374fdff7c77eda492b8fad3f45963a11d1dc8cf4e8b5e8ae7e2103ec"
+  },
+  {
+    "job_id": "GLBX-20260922-MDUV4FXLMU",
+    "query": {
+      "dataset": "GLBX.MDP3",
+      "schema": "statistics",
+      "symbols": [
+        "ZQ.FUT",
+        "SR3.FUT"
+      ],
+      "stype_in": "parent",
+      "stype_out": "instrument_id",
+      "start": "2020-12-31",
+      "end": "2026-09-22",
+      "limit": null,
+      "encoding": "dbn",
+      "compression": "zstd"
+    },
+    "customizations": {
+      "pretty_px": false,
+      "pretty_ts": false,
+      "map_symbols": false,
+      "split_symbols": false,
+      "split_duration": "day",
+      "split_size": null,
+      "packaging": null,
+      "delivery": "download"
+    },
+    "daily_files": 1792,
+    "bytes": 470921088,
+    "manifest_sha256": "3c61918478153fc8d1c263aee2a52be61e77d90a8d2c061f40baa13ec3397ac8"
+  }
+]
