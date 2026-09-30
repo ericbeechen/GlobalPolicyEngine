@@ -1,6 +1,5 @@
 /databento
 /data
-/.venv
 __pycache__/
 notes/run.md
 /files/*
