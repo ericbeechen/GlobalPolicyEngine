@@ -243,7 +243,7 @@ class Store:
     def mark(self, ccy, key):
         """Record that a check under `key` passed."""
         self.root.mkdir(parents=True, exist_ok=True)
-        (self.root / f"{ccy}_{key}.ok").write_text("")
+        (self.root / f"{ccy}_{key}.ok").write_text("", encoding="utf-8")
 
     def marked(self, ccy, key):
         self.used.add((ccy, key))

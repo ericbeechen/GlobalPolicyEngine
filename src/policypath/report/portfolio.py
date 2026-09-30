@@ -1476,8 +1476,8 @@ def write(b, root):
     out = {"report": root / "reports" / "portfolio.md", "json": root / "reports" / "results" / "portfolio.json"}
     for p in out.values():
         p.parent.mkdir(parents=True, exist_ok=True)
-    out["report"].write_text(markdown(b))
-    out["json"].write_text(json.dumps(results(b), indent=1) + "\n")
+    out["report"].write_text(markdown(b), encoding="utf-8")
+    out["json"].write_text(json.dumps(results(b), indent=1) + "\n", encoding="utf-8")
     figures = root / "reports" / "figures"
     figures.mkdir(parents=True, exist_ok=True)
     for theme in THEMES:

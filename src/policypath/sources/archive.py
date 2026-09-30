@@ -67,7 +67,7 @@ def jobs(schema, root=DATABENTO_DIR):
     """Every job filed under the schema's folder, sorted by the first day it covers."""
     out = []
     for meta_path in (root / FOLDERS[schema]).glob("*/metadata.json"):
-        query = json.loads(meta_path.read_text())["query"]
+        query = json.loads(meta_path.read_text(encoding="utf-8"))["query"]
         if query["schema"] != schema:
             raise ValueError(f"{meta_path} is a {query['schema']} job filed under {FOLDERS[schema]}/")
         out.append(Job(
@@ -126,7 +126,7 @@ def file_downloads(root=DATABENTO_DIR):
         if not base.exists():
             continue
         loose = sorted(p for p in base.iterdir() if p.is_file())
-        manifests = {p: json.loads(p.read_text()) for p in loose
+        manifests = {p: json.loads(p.read_text(encoding="utf-8")) for p in loose
                      if p.name.startswith("manifest") and p.suffix == ".json"}
         by_hash = {f["hash"].removeprefix("sha256:"): (m["job_id"], f["filename"])
                    for m in manifests.values() for f in m["files"]}
@@ -157,7 +157,7 @@ def verify(root=DATABENTO_DIR, hashes=False):
     rows = []
     for schema in FOLDERS:
         for j in jobs(schema, root):
-            manifest = json.loads((j.folder / "manifest.json").read_text())
+            manifest = json.loads((j.folder / "manifest.json").read_text(encoding="utf-8"))
             bad = 0
             for f in manifest["files"]:
                 p = j.folder / f["filename"]
@@ -181,8 +181,8 @@ def record(root=DATABENTO_DIR):
     out = []
     for schema in FOLDERS:
         for j in jobs(schema, root):
-            meta = json.loads((j.folder / "metadata.json").read_text())
-            manifest = json.loads((j.folder / "manifest.json").read_text())
+            meta = json.loads((j.folder / "metadata.json").read_text(encoding="utf-8"))
+            manifest = json.loads((j.folder / "manifest.json").read_text(encoding="utf-8"))
             daily = [f for f in manifest["files"] if f["filename"].endswith(".dbn.zst")]
             query = dict(meta["query"])
             query["start"] = str(pd.Timestamp(query["start"], unit="ns").date())

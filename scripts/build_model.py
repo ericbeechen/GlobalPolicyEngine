@@ -48,7 +48,7 @@ signal.to_parquet(out / f"{args.ccy}_signal.parquet", index=False)
 result.reset_index(names="session").to_parquet(out / f"{args.ccy}_backtest.parquet", index=False)
 
 reports = ROOT / "reports"
-(reports / f"model_{args.ccy}.md").write_text(report.markdown(args.ccy, headline, tables, today, cfg))
+(reports / f"model_{args.ccy}.md").write_text(report.markdown(args.ccy, headline, tables, today, cfg), encoding="utf-8")
 effr = inputs["fixings"]
 k = cfg["backtest"]["horizon"]
 moments, labels = [tuple(m) for m in cfg["report"]["chart_moments"]], cfg["report"]["labels"]

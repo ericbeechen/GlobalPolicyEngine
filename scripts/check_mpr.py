@@ -36,7 +36,7 @@ for ccy in currencies:
     summary, detail = conditioning.checks(conditioning.truth(ROOT / check["truth"]), sessions, meetings, fixings,
                                           BDAYS[cfg["calendar"]])
     out = ROOT / "reports" / f"mpr_check_{ccy}.md"
-    out.write_text(conditioning.markdown(ccy, summary, detail, check["examples"]))
+    out.write_text(conditioning.markdown(ccy, summary, detail, check["examples"]), encoding="utf-8")
     print(summary.round(2).to_string(index=False))
     diff = detail["diff_bp"]
     print(f"\n{ccy} all quarters: mean {diff.mean():+.2f}bp, mean abs {diff.abs().mean():.2f}bp")

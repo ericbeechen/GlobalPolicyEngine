@@ -868,7 +868,7 @@ def validate_strategy(book, blocks):
 
 @cache
 def _currencies():
-    with open(CONFIG_DIR / "currencies.yml") as f:
+    with open(CONFIG_DIR / "currencies.yml", encoding="utf-8") as f:
         blocks = yaml.safe_load(f)
     problems = [f"{ccy}: {p}" for ccy, block in blocks.items() if block.get("enabled", False)
                 for p in validate(ccy, block)]
@@ -896,7 +896,7 @@ def enabled():
 def strategy():
     """The book config, ``strategy.yml``, checked against `STRATEGY_SCHEMA` and the enabled currency blocks."""
     path = CONFIG_DIR / "strategy.yml"
-    with open(path) as f:
+    with open(path, encoding="utf-8") as f:
         book = yaml.safe_load(f)
     problems = validate_strategy(book, {ccy: currency(ccy) for ccy in enabled()})
     if problems:

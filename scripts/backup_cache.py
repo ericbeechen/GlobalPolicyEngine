@@ -22,6 +22,9 @@ args = parser.parse_args()
 
 if not (CACHE_DIR / "manifest.json").exists():
     raise SystemExit(f"no cache at {CACHE_DIR}")
+# The folder may be new, the disk may not: a missing drive or unmounted volume is an error, not a folder to create.
+if not Path(args.to.anchor or ".").exists():
+    raise SystemExit(f"{args.to.anchor} does not exist on this machine: is the backup disk connected?")
 args.to.mkdir(parents=True, exist_ok=True)
 base = args.to / f"cache_{datetime.date.today():%Y-%m-%d}"
 path = shutil.make_archive(str(base), "zip", root_dir=CACHE_DIR)

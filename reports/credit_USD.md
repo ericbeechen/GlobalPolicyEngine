@@ -90,14 +90,14 @@ s(t+1+h) - s(t+1) on the gap at meeting 4 on session t, in z and in bp; NW lag h
 | Baa - 10y Treasury | 63 | gap, bp | every session with a z | 3607 | -0.109 | -1.43 | -0.118 [-0.227, +0.006] | -1.07 | 98 |
 | Baa - 10y Treasury | 63 | gap, bp | without 2020-02-15 to 2020-04-30 | 3493 | -0.075 | -1.20 | -0.079 [-0.178, -0.010] | -0.95 | 100 |
 | Baa - 10y Treasury | 63 | gap, bp | without ELB sessions | 2880 | -0.023 | -0.26 | -0.032 [-0.220, +0.122] | -0.31 | 59 |
-| ICE BofA IG OAS | 21 | z | every session with a z | 727 | +1.54 | +1.57 | +1.58 [+0.58, +3.07] | +1.21 | 0 |
-| ICE BofA IG OAS | 21 | gap, bp | every session with a z | 727 | +0.051 | +1.75 | +0.053 [+0.014, +0.107] | +1.30 | 0 |
-| ICE BofA IG OAS | 63 | z | every session with a z | 685 | +3.63 | +1.26 | +3.96 [+0.91, +12.78] | +0.81 | 0 |
-| ICE BofA IG OAS | 63 | gap, bp | every session with a z | 685 | +0.111 | +1.54 | +0.119 [-0.018, +0.359] | +0.94 | 5 |
-| ICE BofA HY OAS | 21 | z | every session with a z | 727 | +3.27 | +0.87 | +3.46 [-3.63, +11.63] | +0.60 | 38 |
-| ICE BofA HY OAS | 21 | gap, bp | every session with a z | 727 | +0.117 | +1.09 | +0.127 [-0.096, +0.415] | +0.76 | 38 |
-| ICE BofA HY OAS | 63 | z | every session with a z | 685 | +12.70 | +1.26 | +14.90 [-0.51, +51.08] | +0.77 | 2 |
-| ICE BofA HY OAS | 63 | gap, bp | every session with a z | 685 | +0.373 | +1.56 | +0.425 [-0.072, +1.404] | +0.89 | 6 |
+| ICE BofA IG OAS | 21 | z | every session with a z | 726 | +1.53 | +1.55 | +1.56 [+0.32, +3.07] | +1.20 | 0 |
+| ICE BofA IG OAS | 21 | gap, bp | every session with a z | 726 | +0.051 | +1.74 | +0.052 [+0.006, +0.107] | +1.29 | 0 |
+| ICE BofA IG OAS | 63 | z | every session with a z | 684 | +3.66 | +1.28 | +3.99 [+0.91, +12.78] | +0.82 | 0 |
+| ICE BofA IG OAS | 63 | gap, bp | every session with a z | 684 | +0.111 | +1.56 | +0.120 [-0.018, +0.359] | +0.96 | 5 |
+| ICE BofA HY OAS | 21 | z | every session with a z | 726 | +3.21 | +0.85 | +3.39 [-3.63, +11.63] | +0.59 | 38 |
+| ICE BofA HY OAS | 21 | gap, bp | every session with a z | 726 | +0.116 | +1.07 | +0.124 [-0.115, +0.415] | +0.75 | 38 |
+| ICE BofA HY OAS | 63 | z | every session with a z | 684 | +12.80 | +1.27 | +15.01 [+2.20, +51.08] | +0.78 | 0 |
+| ICE BofA HY OAS | 63 | gap, bp | every session with a z | 684 | +0.375 | +1.57 | +0.428 [-0.072, +1.404] | +0.90 | 5 |
 
 **The headline without each calendar year** (every change that touches the year left out, as for each excluded window; a check added after the run, D17, not a registered cell). The slope is negative without 15 of the 15 years (-3.16 to -1.35), and the headline fails D1's rule without 7 of them. It leans most on 2014 (without it -1.54, t -1.17) and 2020 (-1.35, t -1.29). Without 8 of the 15 years it still passes.
 

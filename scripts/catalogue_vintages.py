@@ -21,6 +21,6 @@ as_of = pd.Timestamp(args.as_of) if args.as_of else pd.Timestamp.today().normali
 
 tables = vintages.catalogue(args.ccy, as_of)
 out = ROOT / "reports" / f"vintages_{args.ccy}.md"
-out.write_text(vintages.markdown(args.ccy, tables, as_of))
+out.write_text(vintages.markdown(args.ccy, tables, as_of), encoding="utf-8")
 print(tables["Series"].drop(columns=["title", "units"]).to_string(index=False))
 print(f"\n{len(tables['Revision calendar'])} large revisions since {vintages.SINCE[:4]}; wrote {out}")

@@ -73,12 +73,13 @@ def test_real_true_skips_the_target_subtraction():
 def test_an_nss_override_changes_the_gbp_paths_not_the_marks_and_naming_the_default_changes_nothing():
     frozen = regress.reference(regress.FIXTURE_REF / "GBP")[0]
     default = regress.fixture_outputs("GBP", overrides={"market": {"curve": {"method": "log_linear"}}})
-    assert regress.compare(default, frozen) == {}
+    assert regress.compare(default, frozen, regress.PLATFORM_ULPS) == {}
     fitted = regress.fixture_outputs("GBP", overrides={"market": {"curve": {"method": "nss"}}})
-    diffs = regress.compare(fitted, frozen)
+    diffs = regress.compare(fitted, frozen, regress.PLATFORM_ULPS)
     assert {"sessions", "meetings", "paths", "signal", "backtest"} <= set(diffs) and "macro" not in diffs
     marks = ["k", "session", "change"]
-    assert regress.compare({"b": fitted["backtest"][marks]}, {"b": frozen["backtest"][marks]}) == {}, \
+    assert regress.compare({"b": fitted["backtest"][marks]}, {"b": frozen["backtest"][marks]},
+                           regress.PLATFORM_ULPS) == {}, \
         "the P&L is marked on the Bank's curve: only the positions move"
     moved = (fitted["meetings"]["rate"] - frozen["meetings"]["rate"]).abs() * 100
     assert 0 < moved.max() < 10, "a smooth fit to the same nodes moves a meeting's rate by basis points, not more"
@@ -93,11 +94,12 @@ def test_an_estimate_override_with_no_usable_quarter_is_the_imposed_rule():
     out = regress.fixture_outputs("USD", overrides={"rule": {"estimate": ESTIMATE}})
     assert (out["model"]["coef_quarters"] == 0).all()
     assert (out["model"]["coef_inflation_gap"] == USD_RULE["coefficients"]["inflation_gap"]).all()
-    assert set(regress.compare(out, frozen)) == {"model"}, "the path is the imposed rule's, bit for bit"
+    assert set(regress.compare(out, frozen, regress.PLATFORM_ULPS)) == {"model"}, "the path is the imposed rule's"
     new = [c for c in out["model"].columns if c not in frozen["model"].columns]
     assert new == ["coef_inflation_gap", "coef_unemployment_gap", "ols_inflation_gap", "ols_unemployment_gap",
                    "coef_quarters"]
-    assert regress.compare({"model": out["model"].drop(columns=new)}, {"model": frozen["model"]}) == {}
+    assert regress.compare({"model": out["model"].drop(columns=new)}, {"model": frozen["model"]},
+                           regress.PLATFORM_ULPS) == {}
 
 
 # ---- NSS ----------------------------------------------------------------------------

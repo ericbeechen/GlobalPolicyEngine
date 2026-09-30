@@ -21,7 +21,7 @@ STRIP_RECEIVED = pd.Timedelta(hours=16)  # a strip's settles, as received on its
 
 @memo
 def _specs():
-    with open(FIXTURE_DIR / "fixtures.yml") as f:
+    with open(FIXTURE_DIR / "fixtures.yml", encoding="utf-8") as f:
         return yaml.safe_load(f)
 
 

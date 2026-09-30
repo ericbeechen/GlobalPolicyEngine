@@ -8,6 +8,17 @@ returns them as named frames. `freeze` writes them to a reference directory;
 one number by one ulp shows up. Both sides go through parquet, so a dtype the
 format cannot keep is not reported as a change.
 
+Exactly holds on one machine, not across two. The Mac (ARM, clang, Accelerate)
+and Windows (x64, MSVC, OpenBLAS) round the same code differently in the last
+bits: clang fuses a multiply and an add that MSVC rounds twice, even inside
+numpy's own loops (`np.interp`), and the two LAPACKs solve `lstsq` in different
+orders. On the fixtures that is at most 1.2e-13 of a column's largest value
+(week 5's `residual_bp`, itself rounding noise), and 1.2e-14 elsewhere. A
+reference committed on one and checked on the other is therefore compared to
+`PLATFORM_ULPS` ulps of each float column's largest magnitude (at most 9e-13 of
+it): 4 times the noise, and a fifth of the smallest move a 1e-12 change in the
+rule's inertia makes (2.4e-12 of the column). One reference serves both machines.
+
 Two tiers, one function:
 
 - fixtures: the committed ``tests/data``, laid out as a cache
@@ -41,6 +52,8 @@ from policypath.sources import cache
 ROOT = Path(__file__).resolve().parents[2]
 FULL_DIR = ROOT / "data" / "reference"
 FIXTURE_REF = fixtures.FIXTURE_DIR / "reference"
+# The tolerance a reference committed on one platform is checked to on another (module docstring).
+PLATFORM_ULPS = 4096
 STAGES = ["sessions", "meetings", "macro", "model", "paths", "signal", "backtest"]
 # Blocks an override replaces whole instead of merging into. An r* block is one of two
 # shapes: HLW merged into GBP's ``{constant: -1.6}`` would leave the constant in force.
@@ -136,7 +149,7 @@ def freeze(frames, out_dir, **meta):
     info = {"end": f"{last:%Y-%m-%d}", "commit": _commit(),
             "frozen": pd.Timestamp.now().isoformat(timespec="seconds"),
             "rows": {name: len(f) for name, f in frames.items()}, **meta}
-    (out_dir / "meta.json").write_text(json.dumps(info, indent=2) + "\n")
+    (out_dir / "meta.json").write_text(json.dumps(info, indent=2) + "\n", encoding="utf-8")
     return info
 
 
@@ -145,12 +158,24 @@ def reference(out_dir):
     out_dir = Path(out_dir)
     if not (out_dir / "meta.json").exists():
         raise FileNotFoundError(f"no reference under {out_dir}; freeze one first (scripts/regress.py freeze)")
-    meta = json.loads((out_dir / "meta.json").read_text())
+    meta = json.loads((out_dir / "meta.json").read_text(encoding="utf-8"))
     return {name: pd.read_parquet(out_dir / f"{name}.parquet") for name in meta["rows"]}, meta
 
 
-def _describe(want, got):
-    """What differs between two frames, in a line; None if they are identical, bit for bit."""
+def _close(a, b, ulps):
+    """Float columns within `ulps` ulps of the column's largest magnitude, NaN where the other is NaN."""
+    x, y = a.to_numpy(float), b.to_numpy(float)
+    if not np.array_equal(np.isnan(x), np.isnan(y)):
+        return False
+    scale = np.nanmax(np.abs(x), initial=0.0)
+    return bool((np.abs(x - y)[~np.isnan(x)] <= ulps * np.spacing(scale)).all())
+
+
+def _describe(want, got, ulps=0):
+    """What differs between two frames, in a line; None if they are identical, bit for bit.
+
+    With `ulps`, a float column within that many ulps of its largest magnitude is the same (`PLATFORM_ULPS`).
+    """
     if list(want.columns) != list(got.columns):
         lost, new = sorted(set(want.columns) - set(got.columns)), sorted(set(got.columns) - set(want.columns))
         return f"columns differ: lost {lost}, new {new}" if lost or new else "columns reordered"
@@ -161,6 +186,8 @@ def _describe(want, got):
         if a.dtype != b.dtype:
             return f"{col}: dtype {a.dtype} -> {b.dtype}"
         if a.equals(b):
+            continue
+        if ulps and pd.api.types.is_float_dtype(a) and _close(a, b, ulps):
             continue
         same = (a == b) | (a.isna() & b.isna())
         bad = np.flatnonzero(~same.to_numpy())
@@ -173,14 +200,18 @@ def _describe(want, got):
     return None
 
 
-def compare(frames, want):
-    """{stage: what differs} for every stage that is not bit-identical to the reference `want`."""
+def compare(frames, want, ulps=0):
+    """{stage: what differs} for every stage that is not bit-identical to the reference `want`.
+
+    `ulps`: the float tolerance, in ulps of each column's largest magnitude (`PLATFORM_ULPS` for
+    a reference that may have been frozen on the other machine); 0 is bit for bit.
+    """
     out = {}
     for name in want:
         if name not in frames:
             out[name] = "stage missing"
             continue
-        diff = _describe(want[name], _roundtrip(frames[name]))
+        diff = _describe(want[name], _roundtrip(frames[name]), ulps)
         if diff is not None:
             out[name] = diff
     return out

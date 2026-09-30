@@ -37,7 +37,7 @@ run_checks, render = coverage.REPORTS[cfg["market"]["extractor"]]
 headline, tables = run_checks(sessions, meetings, start, end, spec["n_meetings"], bday, cfg)
 reports = ROOT / "reports"
 reports.mkdir(exist_ok=True)
-(reports / f"coverage_{args.ccy}.md").write_text(render(args.ccy, headline, tables, start, end, cfg))
+(reports / f"coverage_{args.ccy}.md").write_text(render(args.ccy, headline, tables, start, end, cfg), encoding="utf-8")
 
 as_of = sessions["session"].max()
 effr = cache.read(cfg["overnight"]["source"], cfg["overnight"]["series"], args.ccy, as_of)
@@ -54,7 +54,7 @@ if "sofr" in cfg:
     implied.to_parquet(out / f"{args.ccy}_sofr_basis.parquet", index=False)
     by_year, jumps, nq = crosscheck.summary(implied, sofr, effr)
     (reports / f"sofr_check_{args.ccy}.md").write_text(
-        crosscheck.markdown(args.ccy, check, shape, by_year, jumps, nq))
+        crosscheck.markdown(args.ccy, check, shape, by_year, jumps, nq), encoding="utf-8")
 drawn = figures.write_all(sessions, meetings, effr[effr["date"] >= start], reports / "figures", args.ccy,
                           {**cfg["market"], "policy": cfg["report"]["labels"]["policy"],
                            "annotate_from": cfg["report"]["annotate_from"]})

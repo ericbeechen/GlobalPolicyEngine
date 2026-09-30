@@ -31,7 +31,7 @@ for path in left:
 
 report = archive.verify(hashes=args.hashes)
 print(report.to_string(index=False))
-RECORD.write_text(json.dumps(archive.record(), indent=2) + "\n")
+RECORD.write_text(json.dumps(archive.record(), indent=2) + "\n", encoding="utf-8")
 print(f"wrote {RECORD}")
 if report["missing"].any():
     raise SystemExit("some jobs are missing files their manifest lists; download them again")

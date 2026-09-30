@@ -205,7 +205,7 @@ def write_figures(gap, out_dir, ccy):
 def write(ccy, frame, panel, spec, as_of, reports):
     """The report and its figures under `reports`. Returns lines to print."""
     headline, tables, gap = checks(frame, panel, spec, as_of)
-    (reports / f"nowcast_{ccy}.md").write_text(markdown(ccy, headline, tables))
+    (reports / f"nowcast_{ccy}.md").write_text(markdown(ccy, headline, tables), encoding="utf-8")
     drawn = write_figures(gap, reports / "figures", ccy)
     lines = [f"{headline['fed_business_days']} days, {headline['first']:%Y-%m-%d} .. {headline['last']:%Y-%m-%d}",
              f"n_bridged: {headline['n_bridged']}   activity_n: {headline['activity_n']}"]

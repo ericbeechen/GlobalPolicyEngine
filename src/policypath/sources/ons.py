@@ -29,6 +29,7 @@ September 2023 vintage stays current until February 2024.
 
 import io
 import re
+import time
 import numpy as np
 import openpyxl
 import pandas as pd
@@ -40,6 +41,8 @@ ONS = "https://www.ons.gov.uk"
 RELEASES = "https://api.beta.ons.gov.uk/v1/search/releases"
 HEADERS = {"User-Agent": "Mozilla/5.0 (policypath research)"}
 LATEST_RELEASE_DAY = 26
+# The website rate-limits bursts (429, with Retry-After): a pull waits and retries rather than stopping.
+RETRY_STATUS, RETRIES, MAX_WAIT = {429, 503}, 6, 120.0
 
 # Which release each series comes out in, matched on the calendar's titles.
 RELEASE_TITLES = {
@@ -63,8 +66,21 @@ SERIES = {
 }
 
 
+def _wait(r, attempt):
+    """Seconds to wait before retrying `r`: its ``Retry-After`` if it gives seconds, else 5, 10, 20, ... capped at 120."""
+    try:
+        return min(float(r.headers["Retry-After"]), MAX_WAIT)
+    except (KeyError, ValueError):
+        return min(5.0 * 2 ** attempt, MAX_WAIT)
+
+
 def _get(url, **params):
-    r = requests.get(url, params=params, headers=HEADERS, timeout=120)
+    """One GET, retried after a wait while the ONS answers 429 (its rate limit) or 503."""
+    for attempt in range(RETRIES + 1):
+        r = requests.get(url, params=params, headers=HEADERS, timeout=120)
+        if r.status_code not in RETRY_STATUS or attempt == RETRIES:
+            break
+        time.sleep(_wait(r, attempt))
     r.raise_for_status()
     return r
 

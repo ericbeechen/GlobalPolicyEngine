@@ -34,13 +34,13 @@ if unknown:
 ccys = args.ccy or bridged
 book = config.strategy()
 
-results = json.loads(RESULTS.read_text()) if RESULTS.exists() else {}
+results = json.loads(RESULTS.read_text(encoding="utf-8")) if RESULTS.exists() else {}
 results = {c: block for c, block in results.items() if c in bridged}
 for ccy in ccys:
     cfg = config.currency(ccy)
     inputs = credit.Inputs(ccy, config.currency, book, panel.load, Marks(ccy, cfg).daily)
     found, frames = credit.run(inputs)
-    (REPORTS / f"credit_{ccy}.md").write_text(report.markdown(ccy, found, cfg))
+    (REPORTS / f"credit_{ccy}.md").write_text(report.markdown(ccy, found, cfg), encoding="utf-8")
     drawn = report.write_figures(frames, found, cfg, REPORTS / "figures", ccy)
     results[ccy] = report.jsonable({"headline": report.headline(found, cfg), **found})
     h = results[ccy]["headline"]
@@ -54,11 +54,11 @@ for ccy in ccys:
     print(f"  wrote reports/credit_{ccy}.md and {len(drawn)} figures")
 
 RESULTS.parent.mkdir(parents=True, exist_ok=True)
-RESULTS.write_text(json.dumps(dict(sorted(results.items())), indent=1, ensure_ascii=False) + "\n")
+RESULTS.write_text(json.dumps(dict(sorted(results.items())), indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
 print(f"wrote {RESULTS.relative_to(ROOT)}")
 
 if NOTE.exists():
-    keys = re.findall(r"\{credit\.(\w+)\.headline\.(\w+)\}", NOTE.read_text())
+    keys = re.findall(r"\{credit\.(\w+)\.headline\.(\w+)\}", NOTE.read_text(encoding="utf-8"))
     missing = sorted({f"{c}.{k}" for c, k in keys if results.get(c, {}).get("headline", {}).get(k) is None})
     if missing:
         raise SystemExit(f"{NOTE.relative_to(ROOT)}: {len(missing)} placeholders name no key in credit.json: {missing}")

@@ -4,7 +4,9 @@ Snapshot before a refactor, check after every change. The full tier reads the
 real cache (every session: run update_data.py first) and keeps its reference
 in data/reference/<ccy>/, gitignored. With --fixtures it runs on the committed
 tests/data instead and writes tests/data/reference/<ccy>/, which
-tests/test_regression.py checks on every pytest run. Exits non-zero on any difference.
+tests/test_regression.py checks on every pytest run. Exits non-zero on any difference:
+bit for bit on the full tier (frozen on this machine), to `regress.PLATFORM_ULPS` on
+the fixtures (frozen on either).
 
     uv run python scripts/regress.py freeze            # every enabled currency, full sample
     uv run python scripts/regress.py check --ccy GBP
@@ -39,7 +41,8 @@ for ccy in args.ccy or config.enabled():
         continue
     if args.fixtures:
         want, meta = regress.reference(ref)
-    diffs = regress.compare(regress.truncate(frames, meta["end"]), want)
+    diffs = regress.compare(regress.truncate(frames, meta["end"]), want,
+                            regress.PLATFORM_ULPS if args.fixtures else 0)
     failed |= bool(diffs)
     status = "IDENTICAL" if not diffs else f"{len(diffs)} stage(s) differ"
     print(f"{ccy}: {status} to the reference frozen at {meta['commit']} through {meta['end']} ({seconds:.1f}s)")

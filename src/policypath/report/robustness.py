@@ -329,7 +329,7 @@ def summary(g, published=None):
 
 def published_headline(root, book):
     """The headline book's numbers in reports/results/portfolio.json under repo `root` (`summary`'s check)."""
-    books_json = json.loads((Path(root) / "reports" / "results" / "portfolio.json").read_text())["books"]
+    books_json = json.loads((Path(root) / "reports" / "results" / "portfolio.json").read_text(encoding="utf-8"))["books"]
     return books_json[books._key(books.headline(book))]
 
 
@@ -1153,8 +1153,8 @@ def write(g, root, s=None):
     out = {"report": root / "reports" / "robustness.md", "json": root / "reports" / "results" / "robustness.json"}
     for p in out.values():
         p.parent.mkdir(parents=True, exist_ok=True)
-    out["report"].write_text(markdown(g, s))
-    out["json"].write_text(json.dumps(results(g, s), indent=1) + "\n")
+    out["report"].write_text(markdown(g, s), encoding="utf-8")
+    out["json"].write_text(json.dumps(results(g, s), indent=1) + "\n", encoding="utf-8")
     figures = root / "reports" / "figures"
     figures.mkdir(parents=True, exist_ok=True)
     for theme in THEMES:

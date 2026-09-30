@@ -38,7 +38,7 @@ BRIEF = config.CONFIG_DIR / "brief.yml"
 
 
 def settings(path=BRIEF):
-    with open(path) as f:
+    with open(path, encoding="utf-8") as f:
         return yaml.safe_load(f)
 
 

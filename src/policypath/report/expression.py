@@ -998,8 +998,8 @@ def write(b, root, panel_root=panels.PANEL_DIR):
     for p in out.values():
         p.parent.mkdir(parents=True, exist_ok=True)
     b.panel.to_parquet(out["panel"], index=False)
-    out["report"].write_text(markdown(b, stats, filt, corr, without))
-    out["json"].write_text(json.dumps(results(b, stats, filt, corr, without), indent=1) + "\n")
+    out["report"].write_text(markdown(b, stats, filt, corr, without), encoding="utf-8")
+    out["json"].write_text(json.dumps(results(b, stats, filt, corr, without), indent=1) + "\n", encoding="utf-8")
     signals(b.episodes).to_csv(out["signals"], index=False, date_format="%Y-%m-%d")
     figures = root / "reports" / "figures"
     figures.mkdir(parents=True, exist_ok=True)

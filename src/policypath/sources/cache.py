@@ -50,13 +50,13 @@ def _now():
 
 def _manifest(root):
     path = root / MANIFEST
-    return json.loads(path.read_text()) if path.exists() else {}
+    return json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
 
 
 def _save_manifest(manifest, root):
     root.mkdir(parents=True, exist_ok=True)
     tmp = root / (MANIFEST + ".tmp")
-    tmp.write_text(json.dumps(manifest, indent=2, sort_keys=True))
+    tmp.write_text(json.dumps(manifest, indent=2, sort_keys=True), encoding="utf-8")
     # On Windows the swap fails while anything (an indexer, antivirus, an editor)
     # has the manifest open for a moment; wait that out rather than abort a long update.
     for attempt in range(10):
