@@ -1,7 +1,7 @@
 [project]
 name = "policypath"
 version = "0.1.0"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 dependencies = [
     "databento>=0.86.0",
     "matplotlib>=3.10",

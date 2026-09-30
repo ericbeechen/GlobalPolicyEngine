@@ -95,12 +95,8 @@ def test_every_listed_backend_exists():
     assert not missing
 
 
-def test_the_check_sees_code_and_not_prose():
-    probe = SRC.parents[1] / "tests" / "data" / "fixtures.yml"   # any file: only its path is borrowed
+def test_the_check_sees_code_and_not_prose(tmp_path):
     sample = '"""The ZQ path."""\n# EFFR in a comment\nx = "USD"\ny = f"{z} SONIA"\n'
-    tmp = probe.with_name("_probe.py")
+    tmp = tmp_path / "_probe.py"
     tmp.write_text(sample)
-    try:
-        assert [t for _, t in code_hits(tmp)] == ["USD", "SONIA"]
-    finally:
-        tmp.unlink()
+    assert [t for _, t in code_hits(tmp)] == ["USD", "SONIA"]
