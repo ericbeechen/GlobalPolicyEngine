@@ -2602,6 +2602,368 @@
   "net_sr_at_mix": -0.617625,
   "net_se": 0.317908
  },
+ "costs": [
+  {
+   "name": "USD outright",
+   "legs": 1,
+   "mean_dv01": 110265.0,
+   "turns": {
+    "signal": 2.94469,
+    "resize": 2.51739,
+    "rescale": 1.26884,
+    "roll": 10.0962,
+    "restrike": 0.0
+   },
+   "turns_year": 16.8272,
+   "one_way_bp": 0.524,
+   "cost": {
+    "signal": 0.17014,
+    "resize": 0.145452,
+    "rescale": 0.0733117,
+    "roll": 0.583348,
+    "restrike": 0.0
+   },
+   "cost_year": 0.972251,
+   "maintenance": 0.599997
+  },
+  {
+   "name": "GBP outright",
+   "legs": 1,
+   "mean_dv01": 62007.5,
+   "turns": {
+    "signal": 4.36969,
+    "resize": 1.52363,
+    "rescale": 1.34357,
+    "roll": 7.53657,
+    "restrike": 0.0
+   },
+   "turns_year": 14.7735,
+   "one_way_bp": 0.5,
+   "cost": {
+    "signal": 0.135477,
+    "resize": 0.0472383,
+    "rescale": 0.0416556,
+    "roll": 0.233662,
+    "restrike": 0.0
+   },
+   "cost_year": 0.458033,
+   "maintenance": 0.510143
+  },
+  {
+   "name": "USD 2s10s",
+   "legs": 2,
+   "mean_dv01": 108790.0,
+   "turns": {
+    "signal": 5.94012,
+    "resize": 1.49709,
+    "rescale": 1.14302,
+    "roll": 0.0,
+    "restrike": 2.77082
+   },
+   "turns_year": 11.3511,
+   "one_way_bp": 0.25,
+   "cost": {
+    "signal": 0.161557,
+    "resize": 0.0407173,
+    "rescale": 0.0310874,
+    "roll": 0.0,
+    "restrike": 0.0753597
+   },
+   "cost_year": 0.308722,
+   "maintenance": 0.244102
+  },
+  {
+   "name": "GBP 2s10s",
+   "legs": 2,
+   "mean_dv01": 126298.0,
+   "turns": {
+    "signal": 3.59396,
+    "resize": 1.19767,
+    "rescale": 0.876792,
+    "roll": 0.0,
+    "restrike": 2.17612
+   },
+   "turns_year": 7.84454,
+   "one_way_bp": 0.5,
+   "cost": {
+    "signal": 0.226954,
+    "resize": 0.0756312,
+    "rescale": 0.0553684,
+    "roll": 0.0,
+    "restrike": 0.13742
+   },
+   "cost_year": 0.495374,
+   "maintenance": 0.277406
+  },
+  {
+   "name": "GBP - USD 2y",
+   "legs": 2,
+   "mean_dv01": 67824.8,
+   "turns": {
+    "signal": 2.66916,
+    "resize": 1.65022,
+    "rescale": 1.13828,
+    "roll": 0.0,
+    "restrike": 3.92485
+   },
+   "turns_year": 9.3825,
+   "one_way_bp": 0.375,
+   "cost": {
+    "signal": 0.0678883,
+    "resize": 0.0419721,
+    "rescale": 0.0289513,
+    "roll": 0.0,
+    "restrike": 0.0998257
+   },
+   "cost_year": 0.238637,
+   "maintenance": 0.418315
+  },
+  {
+   "name": "book",
+   "legs": 8,
+   "mean_dv01": 283981.0,
+   "turns": {
+    "signal": 6.60897,
+    "resize": 2.81045,
+    "rescale": 1.88572,
+    "roll": 5.56581,
+    "restrike": 2.96668
+   },
+   "turns_year": 19.8376,
+   "one_way_bp": 0.438984,
+   "cost": {
+    "signal": 0.762017,
+    "resize": 0.351011,
+    "rescale": 0.230374,
+    "roll": 0.81701,
+    "restrike": 0.312605
+   },
+   "cost_year": 2.47302,
+   "maintenance": 0.456776
+  }
+ ],
+ "carry_sleeves": {
+  "sleeves": [
+   {
+    "sleeve": "USD outright",
+    "carry_roll": -0.397835,
+    "rate": -0.860812,
+    "cost": 0.972251,
+    "need": 1.37009,
+    "bleeding": 0.420551,
+    "against": 0.326393,
+    "rho": -0.0174273,
+    "rho_star": -0.000854911,
+    "sessions": 2970
+   },
+   {
+    "sleeve": "GBP outright",
+    "carry_roll": -1.02943,
+    "rate": 2.46234,
+    "cost": 0.458033,
+    "need": 1.48746,
+    "bleeding": 0.712267,
+    "against": -0.437915,
+    "rho": 0.036319,
+    "rho_star": 0.0223788,
+    "sessions": 2980
+   },
+   {
+    "sleeve": "USD 2s10s",
+    "carry_roll": -0.618928,
+    "rate": 0.633808,
+    "cost": 0.308722,
+    "need": 0.92765,
+    "bleeding": 0.653327,
+    "against": -0.278214,
+    "rho": 0.00864516,
+    "rho_star": 0.0154541,
+    "sessions": 2970
+   },
+   {
+    "sleeve": "GBP 2s10s",
+    "carry_roll": -0.32281,
+    "rate": -0.33237,
+    "cost": 0.495374,
+    "need": 0.818183,
+    "bleeding": 0.67148,
+    "against": -0.320901,
+    "rho": -0.00410807,
+    "rho_star": 0.0293296,
+    "sessions": 2980
+   },
+   {
+    "sleeve": "GBP - USD 2y",
+    "carry_roll": 0.263105,
+    "rate": -0.589088,
+    "cost": 0.238637,
+    "need": -0.0244681,
+    "bleeding": 0.390177,
+    "against": 0.278587,
+    "rho": -0.0166761,
+    "rho_star": -0.00115803,
+    "sessions": 2913
+   }
+  ],
+  "book": {
+   "carry_roll": -2.1059,
+   "rate": 1.31388,
+   "cost": 2.47302,
+   "need": 4.57891,
+   "multiple": 3.48504
+  }
+ },
+ "filter": {
+  "USD outright": {
+   "entries": 19,
+   "skipped": 4
+  },
+  "GBP outright": {
+   "entries": 16,
+   "skipped": 2
+  },
+  "USD 2s10s": {
+   "entries": 33,
+   "skipped": 7
+  },
+  "GBP 2s10s": {
+   "entries": 23,
+   "skipped": 0
+  },
+  "GBP - USD 2y": {
+   "entries": 12,
+   "skipped": 3
+  }
+ },
+ "level_gap": {
+  "USD": {
+   "k": [
+    1,
+    4,
+    8
+   ],
+   "regimes": [
+    {
+     "regime": "hiking",
+     "sessions": 1355,
+     "mean": {
+      "1": -6.12201,
+      "4": -37.59,
+      "8": -92.9339
+     }
+    },
+    {
+     "regime": "on hold",
+     "sessions": 1024,
+     "mean": {
+      "1": -14.7208,
+      "4": -53.3989,
+      "8": -85.161
+     }
+    },
+    {
+     "regime": "cutting",
+     "sessions": 565,
+     "mean": {
+      "1": -17.1051,
+      "4": -62.4234,
+      "8": -104.344
+     }
+    },
+    {
+     "regime": "ELB",
+     "sessions": 977,
+     "mean": {
+      "1": 0.0630879,
+      "4": 1.18362,
+      "8": 5.02336
+     }
+    }
+   ],
+   "years": {
+    "2014": -31.5004,
+    "2015": -46.648,
+    "2016": -41.654,
+    "2017": -27.8409,
+    "2018": -24.5775,
+    "2019": -79.7778,
+    "2020": -86.2209,
+    "2021": -85.4643,
+    "2022": -44.5743,
+    "2023": -58.2398,
+    "2024": -49.3591,
+    "2025": -50.696,
+    "2026": -28.0176
+   },
+   "rstar": "the SEP median"
+  },
+  "GBP": {
+   "k": [
+    1,
+    4,
+    8
+   ],
+   "regimes": [
+    {
+     "regime": "hiking",
+     "sessions": 851,
+     "mean": {
+      "1": -15.8198,
+      "4": -80.543,
+      "8": -177.42
+     }
+    },
+    {
+     "regime": "on hold",
+     "sessions": 773,
+     "mean": {
+      "1": 0.31588,
+      "4": 1.08045,
+      "8": 1.13458
+     }
+    },
+    {
+     "regime": "cutting",
+     "sessions": 667,
+     "mean": {
+      "1": 7.21162,
+      "4": 27.6408,
+      "8": 54.1173
+     }
+    },
+    {
+     "regime": "ELB",
+     "sessions": 1771,
+     "mean": {
+      "1": -0.997325,
+      "4": -0.736404,
+      "8": 3.19587
+     }
+    }
+   ],
+   "years": {
+    "2016": -0.467453,
+    "2017": -15.6235,
+    "2018": -20.7105,
+    "2019": -26.1688,
+    "2020": -24.5776,
+    "2021": -23.0126,
+    "2022": -121.6,
+    "2023": -120.031,
+    "2024": 35.6177,
+    "2025": 19.2286,
+    "2026": 101.627
+   },
+   "rstar": "a constant -1.6%"
+  }
+ },
+ "drawdown": {
+  "depth": 57.4589,
+  "peak": "2014-04-02",
+  "trough": "2021-09-16",
+  "years": 7.45791,
+  "worst_month": 10.764
+ },
  "spec": {
   "rule": "hysteresis",
   "enter": 1.0,

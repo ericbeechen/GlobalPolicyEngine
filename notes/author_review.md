@@ -86,6 +86,12 @@ flips it. Each agent adds to its own section.
 - The regime table reads as description, not a test (two hiking cycles): A6; no key.
 - The post-lift-off window limitation, as a tag, not a fix: A8; `config/strategy.yml` `tags.elb_window`.
 - The tear sheet's wording, every sentence a template: `report/tearsheet.py` `framework` (the three sentences), `carries` (the four), the page's footnotes; A10; rerun `scripts/build_tearsheet.py` after an edit. The page has about 0.05in to spare at the bottom margin: a longer sentence raises.
+- After the outside review (2026-09-29): the cost reconciliation (verified by hand; not a bug), A12; no key. Rolls charged as two outright one-ways are about 0.8% a year, and a calendar-spread charge would save about half of that: the author's call on K-row costs, in `config/currencies.yml` `costs`.
+- **Proposed: the reading of carry against rate by sleeve.** Right and bleeding is GBP outright and USD 2s10s, not the book. USD outright loses on its rate calls, and its side runs with carry: A13; `attribution.READINGS`. The note should not say "the signal cannot be right without the trade being expensive" of the whole book.
+- The break-even information (the book's rate change would have needed 3.5 times what it earned; rho against rho* per sleeve): A14; no key.
+- The carry filter at entry skips 16 of 103 entries, and the book stays losing with it on: A15; `positions.carry_filter`.
+- **Proposed: the level the z removes, as a measurement.** USD is below the rule in all 13 off-floor years, -25 to -86bp; GBP changes sign. Call it persistent, not stable: A16; no key.
+- The tear sheet's five sentences, the drawdown's shape and the brief's z-only differential: A17; `report/tearsheet.py` `carries`, `report/brief.py`. The tear sheet still fits one page, with little room left.
 - The Windows machine: the regression references were frozen on the Mac and differ here in the last bits (6 tests fail on Windows, none on the Mac as of week 9). Keep one reference, or one per platform: A11; `scripts/regress.py freeze` (not run).
 
 ## Week 12: credit bridge (2026-09-28)

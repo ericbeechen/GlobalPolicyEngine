@@ -5,8 +5,11 @@ book, an outright is all level, the component groups' variance shares add to
 one); the regime table partitions the counted sessions; the ELB split puts no
 P&L on positions decided in the state where a treatment has none; the carry
 benchmark trades only the sign of carry and roll; ex-2022 is `metrics.evaluate`
-without the window; the report says nothing is nan; the tear sheet fits one
-page.
+without the window; the costs by cause are the cost charged, and turns x mean
+gross DV01 x the one-way cost is the cost a year; the information identity
+solves for the rate needed; carry against rate by sleeve adds up to the book;
+the level gap is the panel's means; the report says nothing is nan; the tear
+sheet fits one page.
 """
 
 import json
@@ -14,6 +17,7 @@ import re
 import numpy as np
 import pandas as pd
 import pytest
+from policypath import regimes
 from policypath.backtest import metrics
 from policypath.report import attribution, tearsheet
 from test_portfolio import book_world
@@ -79,10 +83,66 @@ def test_ex_2022_is_evaluate_without_the_window(built):
     assert p["ex_2022_23"]["sessions"] <= p["ex_2022"]["sessions"] <= p["sessions"]
 
 
+def test_the_costs_by_cause_are_the_cost_charged_and_the_turnover_identity_holds(built):
+    st, n = built.portfolio.setup, built.numbers
+    attribution.check_costs(st, built.headline)
+    capital = st.book["book"]["capital"]
+    rows = {r["name"]: r for r in n["costs"]}
+    for r in rows.values():
+        assert sum(r["cost"].values()) == pytest.approx(r["cost_year"])
+        assert sum(r["turns"].values()) == pytest.approx(r["turns_year"])
+        assert r["turns_year"] * r["mean_dv01"] * r["one_way_bp"] / capital * 100 == pytest.approx(r["cost_year"])
+    book = n["performance"][0]
+    assert rows["book"]["turns_year"] == pytest.approx(book["turns_year"])
+    comp = next(r for r in n["components"] if r["group"] == "book")
+    assert rows["book"]["cost_year"] == pytest.approx(comp["cost"])
+
+
+def test_the_information_identity_solves_for_the_rate_needed():
+    rng = np.random.default_rng(0)
+    q, x = rng.normal(1.0, 2.0, 500), rng.normal(-0.1, 1.0, 500)
+    rho, _ = attribution.information(q, x, 0.0)
+    assert rho == pytest.approx(np.corrcoef(q, x)[0, 1])
+    for need in (-40.0, 0.0, 75.0):
+        _, rho_star = attribution.information(q, x, need)
+        assert len(q) * (rho_star * q.std() * x.std() + q.mean() * x.mean()) == pytest.approx(need)
+    _, at_realised = attribution.information(q, x, float(q @ x))
+    assert at_realised == pytest.approx(rho)
+    assert np.isnan(attribution.information(np.ones(5), x[:5], 1.0)[1])
+
+
+def test_carry_by_sleeve_adds_up_to_the_book_and_reads_the_signs(built):
+    cs, comp = built.numbers["carry_sleeves"], {r["group"]: r for r in built.numbers["components"]}
+    for key in ("carry_roll", "rate", "cost"):
+        assert cs["book"][key] == pytest.approx(comp["book"][key])
+    for r in cs["sleeves"]:
+        assert r["need"] == pytest.approx(r["cost"] - r["carry_roll"])
+        assert attribution.reading(r).startswith("right" if r["rate"] > 0 else "wrong")
+        assert attribution.reading(r).endswith("collecting carry" if r["carry_roll"] > 0 else "bleeding")
+        assert pd.isna(r["bleeding"]) or 0.0 <= r["bleeding"] <= 1.0
+    for s, (entries, skipped) in built.numbers["filter"].items():
+        assert 0 <= skipped <= entries
+
+
+def test_the_level_gap_rows_are_the_panel_means(built):
+    w, n = built.world, built.numbers
+    for c, v in n["level_gap"].items():
+        gap = w.panel(c, "signal").pivot(index="session", columns="k", values="gap_bp")
+        state = regimes.states(w.panel(c, "model")).reindex(gap.index).map(attribution.COLLAPSED)
+        assert sum(r["sessions"] for r in v["regimes"]) == int(state.notna().sum())
+        for r in v["regimes"]:
+            for k in v["k"]:
+                assert r["mean"][k] == pytest.approx(gap.loc[state == r["regime"], k].mean(), nan_ok=True)
+        off = gap.loc[state != "ELB", v["k"][1]]
+        for y, m in v["years"].items():
+            assert m == pytest.approx(off[off.index.year == y].mean())
+
+
 def test_the_report_and_json_say_no_nan_and_the_tear_sheet_fits_one_page(built, tmp_path):
     md = attribution.markdown(built)
-    for head in ["## The answer", "## Performance", "## By component", "### The level factor", "## Carry against rate",
-                 "## By regime", "## The ELB", "## The IC", "## The current signal"]:
+    for head in ["## The answer", "## Performance", "## Where the costs go", "## By component", "### The level factor",
+                 "## Carry against rate", "### By sleeve", "## By regime", "## The ELB", "## The IC",
+                 "## The level the z removes", "## The current signal"]:
         assert head in md
     assert "Do not edit by hand" in md and not re.search(r"\bnan\b", md)
     numbers = json.loads(json.dumps(attribution.results(built)))

@@ -31,6 +31,27 @@ sleeve's carry and roll ahead (`expression.ahead`, CR_h for a receive). Its
 daily net P&L's correlation with the headline's says whether the book is a
 carry trade in costume: `CARRY_WORDS` words it.
 
+**By sleeve** (`carry_by_sleeve`). The book-level split can hide which
+sleeves carry it, so each sleeve's carry and roll, rate change and cost are
+reported with a reading of their signs (right or wrong on the rate, bleeding
+or collecting carry), the share of held sessions whose carry and roll ahead
+runs against the side, and the side's correlation with the sign of carry and
+roll: the test of "the signal cannot be right without the trade being
+expensive", sleeve by sleeve. What the rate calls would have had to earn is
+the rate change needed for a net of zero, and as a correlation of position
+and move (`information`, an exact identity, no model). The carry filter's
+bite at entry (`filter_entries`) is counted beside it.
+
+**Where the costs go** (`cost_sources`). The cost a year is turns x mean
+gross DV01 x the one-way cost; the table gives each factor, per sleeve and
+cause, so the cost can be checked by hand (`check_costs` holds the causes to
+the charge). A reader's first check is today's DV01s against the cost, and
+today's are well below the sample's mean: the words say so when they are.
+
+**The level the z removes** (`level_gap`). The z trades the gap's deviation
+from its trailing mean; the level it removes is reported by regime and year,
+with the r* it rests on, as a measurement, not a signal.
+
 **Regimes** (`regime_table`): `regimes.states` for each currency, real time. A
 sleeve is keyed by its own currency's state, the cross sleeve and the book by
 the book currency's, and the book also by whether the two currencies are in
@@ -69,7 +90,8 @@ from policypath.report import portfolio as books
 from policypath.report.coverage import table
 from policypath.report.expression import _and, _plain
 from policypath.report.figures import THEMES, _style
-from policypath.strategy import expression, portfolio, positions
+from policypath.report.onepager import ORDINAL
+from policypath.strategy import costs, expression, portfolio, positions
 
 GROUPS = {"outright": "level", "curve": "slope", "cross": "cross-country"}
 COLLAPSED = {regimes.ELB: "ELB", "early_hiking": "hiking", "late_hiking": "hiking", "hold_after_hikes": "on hold",
@@ -84,6 +106,8 @@ LEVEL_DOMINATES = 0.5    # the level part's share of the book's gross P&L varian
 # |corr| of the book's daily net P&L with the carry benchmark's, and the words for it.
 CARRY_WORDS = [(0.6, "a carry trade in costume"), (0.3, "partly a carry trade"), (0.0, "not a carry trade")]
 TOL = 1e-8
+LEVEL_MIN_SESSIONS = 60    # a year's mean gap outside the ELB state is reported from this many sessions
+MONTH = 21                 # sessions in the worst month's loss (`drawdown_shape`)
 
 
 # ---- the headline, split -----------------------------------------------------------
@@ -232,6 +256,174 @@ def check(b, parts, tol=TOL):
     total = sum(f["gross"] for f in parts.values())
     if (total - b.run.daily["gross"]).abs().max() > tol:
         raise RuntimeError("the parts' gross P&L is not the book's")
+
+
+# ---- where the costs go, and carry against rate by sleeve --------------------------
+
+def one_way(i):
+    """A sleeve's one-way cost, bp per unit of book DV01 traded: its legs' mean (they trade the same DV01 together)."""
+    return float(np.mean(list(costs.configured(i.costs).values())))
+
+
+def cost_sources(st, b, parts, capital):
+    """Where the costs go: per sleeve and the book, the mean gross DV01 held on the sessions with a position (book
+    currency per bp, every leg), the turns a year by cause (DV01 traded a year over it, as `metrics.turnover`), the
+    mean one-way cost (bp) and the cost a year by cause, % of capital.
+
+    A sleeve's legs hold the same book DV01 and trade at the same closes, so each cause's DV01 splits evenly over
+    them and its cost is the DV01 at the legs' mean one-way rate (`check_costs` holds the causes to the charge).
+    """
+    k = b.run.daily["kept"]
+    years = k.sum() / b.run.periods
+    rows, book = [], {"traded": dict.fromkeys(books.CAUSES, 0.0), "cost": dict.fromkeys(books.CAUSES, 0.0)}
+    for n, flows in b.parts.items():
+        f, rate = flows[k], one_way(st.inputs[n])
+        traded = {c: float(f[c].sum()) for c in books.CAUSES}
+        cost = {c: v * rate for c, v in traded.items()}
+        for c in books.CAUSES:
+            book["traded"][c] += traded[c]
+            book["cost"][c] += cost[c]
+        rows.append(_cost_row(n, len(st.inputs[n].sleeve.legs), traded, cost, parts[n].loc[k, "gross_dv01"], years,
+                              capital))
+    legs = sum(len(i.sleeve.legs) for i in st.inputs.values())
+    rows.append(_cost_row("book", legs, book["traded"], book["cost"], b.run.daily.loc[k, "gross_dv01"], years,
+                          capital))
+    return rows
+
+
+def _cost_row(name, legs, traded, cost, dv01, years, capital):
+    held = dv01[dv01 > 0].mean()
+    total, spent = sum(traded.values()), sum(cost.values())
+    return {"name": name, "legs": legs, "mean_dv01": float(held),
+            "turns": {c: v / years / held for c, v in traded.items()}, "turns_year": total / years / held,
+            "one_way_bp": spent / total if total else np.nan,
+            "cost": {c: v / years / capital * 100 for c, v in cost.items()}, "cost_year": spent / years / capital * 100,
+            "maintenance": sum(cost[c] for c in costs.MAINTENANCE) / spent if spent else np.nan}
+
+
+def check_costs(st, b, tol=1e-6):
+    """Raise unless each sleeve's DV01 traded by cause, at its mean one-way rate, is the cost the book charged it."""
+    for n, f in b.parts.items():
+        by_cause = f[list(books.CAUSES)].sum(axis=1) * one_way(st.inputs[n])
+        off = (by_cause - f["cost"]).abs().max()
+        if off > tol * max(1.0, f["cost"].abs().max()):
+            raise RuntimeError(f"{n}: the cost by cause is {off:g} off the cost charged")
+
+
+def carry_by_sleeve(st, b, parts, capital):
+    """Carry against rate by sleeve, and what the rate change would have had to earn to break even.
+
+    Per sleeve, % of capital a year inside the book: carry and roll, the rate
+    change, the cost, and the rate change needed for a net of zero (the cost
+    less carry and roll). On the counted sessions with a position: the share on
+    which the carry and roll ahead of the side held is negative (``bleeding``,
+    CR_h over ``carry.horizon_days`` as `expression.ahead` has it), and the
+    correlation of the side with the sign of a receive's CR_h (below zero: the
+    side is against the carry).
+
+    The information needed (``rho``, ``rho_star``): on the sleeve's sessions
+    credited to counted book sessions, the rate change is the position held q
+    (book currency per bp) times the unit rate move x (bp), and exactly
+    sum(q x) = N (rho sd(q) sd(x) + mean(q) mean(x)), rho their correlation
+    (population moments). rho* solves it for the rate change needed, holding
+    the positions' sizes and the rate's moves as they were: the correlation of
+    position and move at which the sleeve breaks even.
+    """
+    c = st.book["carry"]
+    k = b.run.daily["kept"]
+    years = k.sum() / b.run.periods
+    days = st.days
+    rows = []
+    for n, i in st.inputs.items():
+        s, f = i.sleeve, parts[n][k]
+        cr, rate, cost = float((f["carry"] + f["roll"]).sum()), float(f["rate"].sum()), float(f["cost"].sum())
+        receive = expression.ahead(s, c["horizon_days"], c["closure_min_pairs"],
+                                   side=pd.Series(1.0, index=s.component.index))["cr_h_bp"]
+        side = np.sign(b.decided[n].fillna(0.0))
+        cr_on = portfolio.asof(receive, days)
+        on = k & (side != 0) & cr_on.notna()
+        held = portfolio.asof(b.decided[n], s.sessions).fillna(0.0)
+        _, sessions = expression.run(s, held, i.u)
+        _, pnl, _, _ = positions.samples(i.state, st.spec.treatment, s.lag)
+        at = portfolio.credited_to(s.sessions, days)
+        counted = np.where(at >= 0, k.to_numpy()[np.maximum(at, 0)], False) & pnl.to_numpy()
+        x = unit_total(i, "rate")
+        m = counted & x.notna().to_numpy()
+        rho, rho_star = information(sessions["position"].fillna(0.0).to_numpy()[m], x.to_numpy()[m], cost - cr)
+        rows.append({"sleeve": n, "carry_roll": cr / years / capital * 100, "rate": rate / years / capital * 100,
+                     "cost": cost / years / capital * 100, "need": (cost - cr) / years / capital * 100,
+                     "bleeding": float((side[on] * cr_on[on] < 0).mean()) if on.any() else np.nan,
+                     "against": _corr(side[on], np.sign(cr_on[on])),
+                     "rho": rho, "rho_star": rho_star,
+                     "sessions": int(m.sum())})
+    book = {key: sum(r[key] for r in rows) for key in ("carry_roll", "rate", "cost", "need")}
+    book["multiple"] = book["need"] / book["rate"] if book["rate"] > 0 else np.nan
+    return {"sleeves": rows, "book": book}
+
+
+def information(q, x, need):
+    """(rho, rho*): the correlation of positions `q` with moves `x`, and the one at which sum(q x) would be `need`.
+
+    Exactly sum(q x) = N (rho sd(q) sd(x) + mean(q) mean(x)) with population
+    moments, so rho* = (need / N - mean(q) mean(x)) / (sd(q) sd(x)); NaN
+    unless both vary.
+    """
+    q, x = np.asarray(q, dtype=float), np.asarray(x, dtype=float)
+    spread = q.std() * x.std() if len(q) else 0.0
+    if not spread > 0:
+        return np.nan, np.nan
+    return _corr(q, x), float((need / len(q) - q.mean() * x.mean()) / spread)
+
+
+def _corr(a, b):
+    """Pearson correlation of `a` and `b`; NaN unless both vary."""
+    a, b = np.asarray(a, dtype=float), np.asarray(b, dtype=float)
+    return float(np.corrcoef(a, b)[0, 1]) if len(a) > 1 and a.std() > 0 and b.std() > 0 else np.nan
+
+
+def filter_entries(st):
+    """The carry filter at entry: {sleeve: (entries the book's rule makes from its first counted session, those the
+    filter would skip)}. An entry is a close whose side is new and not flat; the gate is `positions.pays`."""
+    out = {}
+    for n, i in st.inputs.items():
+        side = st.side[n]
+        side = side[side.index >= i.start]
+        entry = (side != 0) & (side != side.shift(fill_value=0.0))
+        out[n] = (int(entry.sum()), int((entry & ~i.allow.reindex(side.index, fill_value=True)).sum()))
+    return out
+
+
+def level_gap(world, st):
+    """The level the z removes: per currency with an outright, the mean gap (market minus rule, bp) at the first,
+    the traded and the last meeting by collapsed regime, and the traded meeting's by year outside the ELB state
+    (years with at least `LEVEL_MIN_SESSIONS` of them)."""
+    out = {}
+    for ccy, n in outrights(st).items():
+        gap = world.panel(ccy, "signal").pivot(index="session", columns="k", values="gap_bp")
+        ks = [int(gap.columns.min()), int(world.cfg(ccy)["backtest"]["horizon"]), int(gap.columns.max())]
+        state = regimes.states(world.panel(ccy, "model")).reindex(gap.index).map(COLLAPSED)
+        regime = [{"regime": g, "sessions": int((state == g).sum()),
+                   "mean": {kk: float(gap.loc[state == g, kk].mean()) for kk in ks}}
+                  for g in COLLAPSED_ORDER if (state == g).any()]
+        off = gap.loc[state != "ELB", ks[1]]
+        by = off.groupby(off.index.year).agg(["mean", "size"])
+        by = by[by["size"] >= LEVEL_MIN_SESSIONS]["mean"]
+        r = world.cfg(ccy)["rule"]["rstar"]
+        out[ccy] = {"k": ks, "regimes": regime, "years": {int(y): float(v) for y, v in by.items()},
+                    "rstar": f"a constant {r['constant']:+.1f}%" if "constant" in r else f"the {r['label']} median"}
+    return out
+
+
+def drawdown_shape(b, capital):
+    """The worst drawdown's shape on the counted sessions: its depth (% of capital), the peak and trough sessions, the
+    years between them, and the worst loss over `MONTH` sessions anywhere (% of capital)."""
+    d = b.run.daily[b.run.daily["kept"]]
+    e = (d["gross"] - d["cost"]).cumsum() / capital * 100
+    peak = np.maximum.accumulate(np.maximum(e, 0.0))
+    trough = (peak - e).idxmax()
+    top = e.loc[:trough].idxmax() if e.loc[:trough].max() > 0 else e.index[0]
+    return {"depth": float((peak - e).max()), "peak": top, "trough": trough,
+            "years": (trough - top).days / 365.25, "worst_month": float(-(e - e.shift(MONTH)).min())}
 
 
 # ---- the other books: carry benchmark and ELB treatments ---------------------------
@@ -461,6 +653,7 @@ def build(world=None, log=None):
     fits = betas(st)
     parts = split(st, hb, fits)
     check(hb, parts)
+    check_costs(st, hb)
     cb = carry_book(pb)
     say("carry benchmark built")
     elb = elb_books(pb)
@@ -544,7 +737,10 @@ def numbers(b):
             "level_sleeves": rows, "level": level, "z_agreement": z_agreement(st), "carry": carry,
             "regimes": regime_tables(b.world, st, b.headline, b.parts, capital), "elb": elb,
             "elb_episodes": elb_episodes(b.world, book), "ic": ics(st), "current": current(st, b.headline),
-            "cost_curve": cost_curve(b), "spec": st.spec, "treatment": st.spec.treatment}
+            "cost_curve": cost_curve(b), "costs": cost_sources(st, b.headline, b.parts, capital),
+            "carry_sleeves": carry_by_sleeve(st, b.headline, b.parts, capital), "filter": filter_entries(st),
+            "level_gap": level_gap(b.world, st), "drawdown": drawdown_shape(b.headline, capital),
+            "spec": st.spec, "treatment": st.spec.treatment}
 
 
 # ---- the words ---------------------------------------------------------------------
@@ -627,6 +823,149 @@ def ic_words(n):
         parts.append(f"{s} " + ", ".join(f"{r['ic']:+.2f} (t {r['t']:+.1f})" for r in v["rate"]["ex_elb"]))
     return (f"**The IC** of z against the next {', '.join(map(str, hs))} sessions' rate change, outside the ELB state: "
             + "; ".join(parts) + ".")
+
+
+def _k(x):
+    return f"{x / 1e3:,.0f}k"
+
+
+def cost_words(n):
+    """What the costs are made of: the turnover identity, the maintenance share, and today's DV01 against the mean."""
+    r = n["costs"][-1]
+    legs = {x["name"]: x["legs"] for x in n["costs"][:-1]}
+    now = sum(abs(c["dv01"]) * legs[c["sleeve"]] for c in n["current"])
+    maint = {x["name"]: x["cost"]["roll"] + x["cost"]["restrike"] for x in n["costs"][:-1]}
+    top = max(maint, key=maint.get)
+    return (f"**The costs are what the turnover says.** On the sessions with a position the book holds a mean gross "
+            f"DV01 of {_k(r['mean_dv01'])} a bp over its {r['legs']} legs and trades it {r['turns_year']:.1f} times a "
+            f"year at a mean {r['one_way_bp']:.2f}bp one way: {r['turns_year']:.1f} x {_k(r['mean_dv01'])} x "
+            f"{r['one_way_bp']:.2f}bp is {r['cost_year']:.2f}% of capital a year, the cost charged. "
+            f"{pct(r['maintenance'])} of it is maintenance (the outrights moved to the new instrument as each meeting "
+            f"passes, charged as two outright one-ways, and the par legs re-struck every quarter), the most "
+            f"{top}'s, {maint[top]:.2f}% a year."
+            + (f" The current signal's positions ({_k(now)} gross) are {now / r['mean_dv01']:.0%} of that mean."
+               if now < r["mean_dv01"] / 2 else ""))
+
+
+READINGS = {(True, False): "right and bleeding", (False, False): "wrong and bleeding",
+            (False, True): "wrong and collecting carry", (True, True): "right and collecting carry"}
+
+
+def reading(r):
+    """A sleeve's carry against rate in words: the rate change's sign, then carry and roll's."""
+    return READINGS[(r["rate"] > 0, r["carry_roll"] > 0)]
+
+
+def carry_sleeve_words(n):
+    """Carry against rate by sleeve: which sleeves are right and bleeding, and whether the side runs against carry."""
+    cs = n["carry_sleeves"]
+    rows, book = cs["sleeves"], cs["book"]
+    top = max(rows, key=lambda r: r["rate"])
+    by = {}
+    for r in rows:
+        by.setdefault(reading(r), []).append(r)
+    against = [r for r in rows if r["against"] < 0]
+    with_ = [r for r in rows if r["against"] >= 0]
+    rb = by.get("right and bleeding", [])
+    return (("**By sleeve, only " + _and(r["sleeve"] for r in rb) + f" {'is' if len(rb) == 1 else 'are'} right and "
+             "bleeding.** " if rb else "**By sleeve, no sleeve is right and bleeding.** ")
+            + f"The book's rate change earns {pc(book['rate'])} a year, {top['sleeve']} {pc(top['rate'])} and the "
+              f"other sleeves together {pc(book['rate'] - top['rate'])}. "
+            + "; ".join(f"{_and(r['sleeve'] + ' (rate ' + pc(r['rate']) + ', carry and roll ' + pc(r['carry_roll']) + ')' for r in v)}"
+                        f" {'is' if len(v) == 1 else 'are'} {w}" for w, v in by.items())
+            + ". The side held runs against its carry and roll ahead in "
+            + _and(f"{r['sleeve']} ({r['against']:+.2f})" for r in against)
+            + (" and with it in " + _and(f"{r['sleeve']} ({r['against']:+.2f})" for r in with_) if with_ else "")
+            + " (the correlation of the side with the sign of a receive's carry and roll ahead).")
+
+
+def breakeven_words(n):
+    """What the rate calls would have had to earn, for the book and as each sleeve's correlation of position and move."""
+    cs = n["carry_sleeves"]
+    b = cs["book"]
+    clears = [r["sleeve"] for r in cs["sleeves"] if r["rate"] >= r["need"]]
+    return (f"**What the rate calls would have had to earn.** Net zero needs the rate change to pay the costs less "
+            f"carry and roll: the book's earns {pc(b['rate'])} a year against {pc(b['need'])} needed"
+            + (f", {b['multiple']:.1f} times as much" if pd.notna(b["multiple"]) else "")
+            + ". As the correlation of the position held with each session's rate move, sizes and moves as they "
+              "were: " + _and(f"{r['sleeve']} {r['rho']:+.3f} against {r['rho_star']:+.3f}" for r in cs["sleeves"])
+            + ". " + (f"{_and(clears)} {'clears' if len(clears) == 1 else 'clear'} it."
+                      if clears else "No sleeve clears it."))
+
+
+def filter_words(n):
+    """The carry filter at entry: how many of the rule's entries it would skip."""
+    f = n["filter"]
+    entries, skipped = sum(v[0] for v in f.values()), sum(v[1] for v in f.values())
+    return (f"**The carry filter would skip {skipped} of the rule's {entries} entries** "
+            f"({pct(skipped / entries) if entries else 'n/a'}; an entry whose expected quarter, the edge's past "
+            "closure and carry and roll on the rest, is below zero): "
+            + _and(f"{s} {v[1]} of {v[0]}" for s, v in f.items())
+            + ". The book with it on is the carry filter row of `reports/robustness.md`.")
+
+
+def level_gap_words(n):
+    """The level the z removes, per currency: how often the market sat below the rule, the range, and r*."""
+    parts = []
+    for c, v in n["level_gap"].items():
+        ys = v["years"]
+        if not ys:
+            continue
+        below = sum(x < 0 for x in ys.values())
+        k = ORDINAL.get(v["k"][1], v["k"][1])
+        count = ("every one" if below == len(ys) else "none" if below == 0 else f"{below}") + f" of {len(ys)}"
+        parts.append(f"{c}'s market sat below the rule at the {k} meeting in {count} years outside the ELB state "
+                     f"(annual means {min(ys.values()):+.0f} to {max(ys.values()):+.0f}bp, r* {v['rstar']})")
+    return ("**The level the z removes.** " + "; ".join(parts) + ". The z trades the deviation from a trailing mean "
+            "of this level; the level itself turns on r*, and what it is (a term premium, a discount on the "
+            "committee following the rule, or the rule's own error) this report cannot tell.")
+
+
+def drawdown_words(n):
+    """The worst drawdown's shape: depth against vol, how long it took, and the worst month."""
+    p, d = n["performance"][0], n["drawdown"]
+    return (f"**The worst drawdown is a grind, not a break.** {d['depth']:.1f}% of capital at {p['vol']:.1f}% vol, "
+            f"from {d['peak']:%b %Y} to {d['trough']:%b %Y} ({d['years']:.1f} years), while the worst "
+            f"{MONTH}-session loss anywhere is {d['worst_month']:.1f}%. Hit rates, net: "
+            + _and(f"{r['name']} {pct(r['hit_daily'])} of days and {pct(r['hit_trade'])} of trades"
+                   for r in n["performance"][1:]) + ".")
+
+
+def _cost_table(n):
+    rows = [[r["name"], r["legs"], _k(r["mean_dv01"]), f"{r['one_way_bp']:.2f}",
+             *[f"{r['turns'][c]:.1f}" for c in books.CAUSES], f"{r['turns_year']:.1f}",
+             f"{r['cost_year']:.2f}%", pct(r["maintenance"])] for r in n["costs"]]
+    return table(pd.DataFrame(rows, columns=["", "legs", "mean gross DV01 per bp", "one way bp",
+                                             *[books.CAUSE_WORDS[c] for c in books.CAUSES], "turns a year",
+                                             "cost a year", "maintenance share"]))
+
+
+def _carry_sleeve_table(n):
+    cs = n["carry_sleeves"]
+    rows = [[r["sleeve"], pc(r["carry_roll"]), pc(r["rate"]), pc(-r["cost"]), pc(r["rate"] + r["carry_roll"] - r["cost"]),
+             pc(r["need"]), reading(r), pct(r["bleeding"]), _num(r["against"], "+.2f"), _num(r["rho"], "+.3f"),
+             _num(r["rho_star"], "+.3f")] for r in cs["sleeves"]]
+    b = cs["book"]
+    rows.append(["book", pc(b["carry_roll"]), pc(b["rate"]), pc(-b["cost"]), pc(b["rate"] + b["carry_roll"] - b["cost"]),
+                 pc(b["need"]), "", "", "", "", ""])
+    return table(pd.DataFrame(rows, columns=["sleeve", "carry and roll", "rate change", "costs", "net", "rate needed",
+                                             "reading", "held and bleeding", "side vs carry", "rho", "rho*"]))
+
+
+def _level_gap_table(n):
+    rows = []
+    for c, v in n["level_gap"].items():
+        for r in v["regimes"]:
+            rows.append([c, r["regime"], f"{r['sessions']:,}", *[f"{r['mean'][k]:+.0f}" for k in v["k"]]])
+    ks = next(iter(n["level_gap"].values()))["k"]
+    return table(pd.DataFrame(rows, columns=["", "regime", "sessions", *[f"gap at meeting {k}" for k in ks]]))
+
+
+def _level_year_table(n):
+    lg = n["level_gap"]
+    years = sorted({y for v in lg.values() for y in v["years"]})
+    rows = [[y, *[_num(v["years"].get(y), "+.0f") for v in lg.values()]] for y in years]
+    return table(pd.DataFrame(rows, columns=["year", *[f"{c}, meeting {v['k'][1]}" for c, v in lg.items()]]))
 
 
 def _num(x, spec):
@@ -759,6 +1098,11 @@ def markdown(b):
         "",
         f"- {level_words(n)}",
         f"- {carry_words(n)}",
+        f"- {carry_sleeve_words(n)}",
+        f"- {breakeven_words(n)}",
+        f"- {cost_words(n)}",
+        f"- {drawdown_words(n)}",
+        f"- {level_gap_words(n)}",
         f"- {regime_words(n)}",
         f"- {elb_words(n)}",
         f"- {ex_words(n)}",
@@ -778,6 +1122,22 @@ def markdown(b):
         "",
         f"The breakeven cost: {sleeves.cstar(c['cstar_bp'])}; at the configured mix ({c['mix_bp']:.2f}bp a round trip) "
         f"the book nets {sr(c['net_sr_at_mix'])}.",
+        "",
+        drawdown_words(n),
+        "",
+        "## Where the costs go",
+        "",
+        "Each sleeve's costs inside the book, and the book's. Mean gross DV01: every leg, on the sessions with a "
+        "position, book currency per bp. Turns: DV01 traded a year over it, by cause (a whole round trip is 2): "
+        "entries and exits (the sleeve's own side moved), resizing (another sleeve's did), rescaling (neither: the "
+        "covariance, the vol target, the cap), rolls (the instrument changed under a held position) and re-strikes "
+        "(the par legs, every quarter); rolls and re-strikes are the maintenance. The cost a year is turns x mean "
+        "gross DV01 x the one-way cost, a year of counted sessions (`check_costs` holds the causes to the cost "
+        "charged).",
+        "",
+        _cost_table(n),
+        "",
+        cost_words(n),
         "",
         "## By component",
         "",
@@ -806,6 +1166,25 @@ def markdown(b):
         f"{carry_words(n)} Without 2022 the benchmark nets {sr(n['carry']['ex_2022']['net_sr'])}. The book against it: "
         f"{books.gap(n['carry']['difference'])}. By sleeve, the share of the sessions both hold a side on which they "
         "agree: " + _and(f"{s} {pct(v)}" for s, v in n["carry"]["same_side_by_sleeve"].items()) + ".",
+        "",
+        "### By sleeve",
+        "",
+        f"Each sleeve inside the book, % of capital a year. Rate needed: the rate change at which the sleeve nets "
+        f"zero, its costs less its carry and roll. Held and bleeding: the share of the counted sessions with a "
+        f"position on which the carry and roll ahead of the side held ({book['carry']['horizon_days']} days, the "
+        "curve frozen) is below zero. Side vs carry: the correlation of the side with the sign of a receive's carry "
+        "and roll ahead, on the same sessions. rho: the correlation of the position held with each session's rate "
+        "move (unit P&L's rate component), and rho* the one at which the rate change pays for the costs less carry "
+        "and roll, the positions' sizes and the moves as they were (`carry_by_sleeve`). They are daily, so small: "
+        "the rate change is N x (rho x sd(position) x sd(move) + mean(position) x mean(move)), and rho* is near or "
+        "below zero where the second term, the average tilt times the average move, already pays most of what is "
+        "needed.",
+        "",
+        _carry_sleeve_table(n),
+        "",
+        f"- {carry_sleeve_words(n)}",
+        f"- {breakeven_words(n)}",
+        f"- {filter_words(n)}",
         "",
         "## By regime",
         "",
@@ -847,6 +1226,19 @@ def markdown(b):
         "",
         _ic_table(n),
         "",
+        "## The level the z removes",
+        "",
+        "The gap is market minus rule, bp; the z is its deviation from its own trailing two-year mean, so the level "
+        "below is what the traded signal leaves out. By each currency's own collapsed regime (the ELB state its own "
+        "row), at the first, the traded and the last meeting; then the traded meeting's mean by year outside the "
+        f"ELB state (years with {LEVEL_MIN_SESSIONS} such sessions or more).",
+        "",
+        _level_gap_table(n),
+        "",
+        _level_year_table(n),
+        "",
+        level_gap_words(n),
+        "",
         "## The current signal",
         "",
         table(pd.DataFrame(_current_table(n), columns=["sleeve", "as of", "z", "side", "book DV01 per bp",
@@ -871,6 +1263,7 @@ def results(b):
         reg["pair"] = reg["pair"] | {"rows": [r | {"regime": r["regime"][0]} for r in reg["pair"]["rows"]]}
     n["regimes"] = reg
     n["elb_episodes"] = {c: [list(e) for e in v] for c, v in n["elb_episodes"].items()}
+    n["filter"] = {s: {"entries": v[0], "skipped": v[1]} for s, v in n["filter"].items()}
     return _plain(n)
 
 

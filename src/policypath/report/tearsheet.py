@@ -12,7 +12,7 @@ What is on it, in order: the framework in three sentences; the headline chart
 (the book's net equity by component, its gross beside it, 2022 shaded); the
 cost sensitivity curve and the net Sharpe by regime; the current signal; the
 performance summary (the book and each sleeve's contribution, with and
-without 2022 and 2022-23); and what carries it, in four generated sentences.
+without 2022 and 2022-23); and what carries it, in five generated sentences.
 """
 
 from pathlib import Path
@@ -62,26 +62,36 @@ def framework(b):
 
 
 def carries(b):
-    """What carries it, in four sentences: level or relative value, carry or rate, the ELB, 2022."""
+    """What carries it, in five sentences: level or relative value, carry or rate by sleeve, the IC, the costs, and
+    the ELB with 2022."""
     n = b.numbers
     lv, comp = n["level"], {r["group"]: r for r in n["components"]}
-    c, e = n["carry"], n["elb"]
+    c, e, cs = n["carry"], n["elb"], n["carry_sleeves"]
     p = n["performance"][0]
     chosen = n["treatment"]
     others = [t for t in e if t != chosen]
-    level = (f"{'The level dominates' if lv['dominates'] else 'Relative value dominates'}: the front-end exposure is "
-             f"{pct(lv['variance_share'])} of the book's gross P&L variance"
-             + (", so this is closer to a duration timer than to relative value" if lv["dominates"] else "")
-             + f"; in P&L it made {pc(lv['level'])} a year gross and the rest {pc(lv['rest'])}.")
+    level = (f"{'The level dominates' if lv['dominates'] else 'Relative value dominates'} "
+             f"({pct(lv['variance_share'])} of the gross P&L variance"
+             + ("; closer to a duration timer than to relative value" if lv["dominates"] else "")
+             + f"): it made {pc(lv['level'])} a year gross, the rest {pc(lv['rest'])}.")
+    top = max(cs["sleeves"], key=lambda r: r["rate"])
     carry = (f"Carry and roll cost {pc(comp['book']['carry_roll'])} a year and the rate change earned "
-             f"{pc(comp['book']['rate'])}; the book is {c['words']} (daily correlation {c['corr']:+.2f} with a "
-             "benchmark trading the sign of carry and roll).")
-    elb = (f"At the lower bound the book is flat (proposed): {sr(e[chosen]['net_sr'], e[chosen]['net_se'])}; "
-           + "; ".join(f"{attribution.sleeves.TREATMENT_WORDS[t]}, {sr(e[t]['net_sr'], e[t]['net_se'])}" for t in others)
-           + ".")
-    ex = (f"Without 2022 it nets {sr(p['ex_2022']['net_sr'], p['ex_2022']['net_se'])}, and without Dec 2021 to Aug "
-          f"2023 {sr(p['ex_2022_23']['net_sr'], p['ex_2022_23']['net_se'])}: the one cycle that pays carries it.")
-    return [level, carry, elb, ex]
+             f"{pc(comp['book']['rate'])} ({top['sleeve']} {pc(top['rate'])}, the rest "
+             f"{pc(cs['book']['rate'] - top['rate'])}); {c['words']} (corr {c['corr']:+.2f} with the carry-sign "
+             "book).")
+    h = b.portfolio.setup.book["robustness"]["ic_horizon"]
+    ic = (f"IC({h}) of z on the rate change, outside the ELB: "
+          + ", ".join(f"{s} {next(r for r in v['rate']['ex_elb'] if r['h'] == h)['ic']:+.2f}"
+                      for s, v in n["ic"].items()) + ".")
+    k = n["costs"][-1]
+    cost = (f"Costs {k['cost_year']:.2f}% a year: {k['turns_year']:.1f} turns of a {k['mean_dv01'] / 1e3:,.0f}k mean "
+            f"gross DV01 at {k['one_way_bp']:.2f}bp one way, {pct(k['maintenance'])} of it rolls and re-strikes.")
+    best = max(n["performance"][1:], key=lambda r: r["net_sr"])
+    ex = (f"ELB flat (proposed; " + ", ".join(f"{t} {sr(e[t]['net_sr'])}" for t in others)
+          + f"). Ex-2022 {sr(p['ex_2022']['net_sr'])}, ex-Dec 2021 to Aug 2023 {sr(p['ex_2022_23']['net_sr'])}; "
+            f"{best['name']}, the best sleeve, {sr(best['net_sr'])}, {sr(best['ex_2022']['net_sr'])} and "
+            f"{sr(best['ex_2022_23']['net_sr'])}: one cycle.")
+    return [level, carry, ic, cost, ex]
 
 
 def signal_rows(b):

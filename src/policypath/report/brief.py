@@ -252,13 +252,14 @@ def write(date, out_dir, root=panel.PANEL_DIR, brief=None, preview=None, generat
         m = snap["meetings"].set_index("k")
         rows.append([ccy, f"{snap['session']:%d %b}", *[bp(m.loc[h, "gap_bp"]) for h in horizons],
                      *[f"{m.loc[h, 'z']:+.1f}" for h in horizons]])
-    rows.append([f"{first} − {second}", f"{diff_day:%d %b}", *[bp(diff_now.loc[h, "diff_bp"]) for h in horizons],
+    rows.append([f"{first} − {second}", f"{diff_day:%d %b}", *["" for _ in horizons],
                  *[f"{diff_now.loc[h, 'z']:+.1f}" for h in horizons]])
     col.text("The gaps, by meetings ahead (the charts label gap 4 and gap 8)", size=10, weight="bold", gap=0.04)
     _table(fig, col, header, rows, [1.1, 0.7, *[0.75] * len(horizons), *[0.6] * len(horizons)])
     d4 = diff_now.loc[k]
-    col.text(f"{first} − {second} is gap minus gap on the sessions both have: {bp(d4['diff_bp'])} at the "
-             f"{ORDINAL[k]} meeting (z {d4['z']:+.1f}), its level mostly the two r* choices.", size=8.5, gap=0.08)
+    col.text(f"{first} − {second} is gap minus gap on the sessions both have, z {d4['z']:+.1f} at the {ORDINAL[k]} "
+             "meeting. Its basis points are not shown: the two gaps take r* by different methods, so their difference "
+             "is mostly that choice, and only its z is comparable.", size=8.5, gap=0.08)
 
     book = config.strategy()
     h, enter = book["carry"]["horizon_days"], book["positions"]["enter"]
