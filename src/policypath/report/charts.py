@@ -1,8 +1,17 @@
-"""The week 4 figures: the market path against the model path, the gap underneath, the crude equity curve.
+"""The charts the one-pages and reports embed: the week 4 path and gap, and week 10's attribution charts.
 
 Generated, never hand-edited. Written in light and dark like the README figures,
 with the same themes (`figures.THEMES`): slot 1 is the market, slot 2 the model.
-The drawing functions take their axes, so the one-pager embeds the same chart.
+The drawing functions take their axes, so the one-pager and the tear sheet
+embed the same charts as the reports.
+
+Week 10 (`report/attribution.py`, `report/tearsheet.py`): the book's net
+equity by component group (`equity_by_component`), its net Sharpe against the
+round trip assumed (`cost_curve`), the IC by sleeve and horizon (`ic_bars`)
+and the net Sharpe by regime (`regime_bars`). Categorical colours follow the
+entity in a fixed order (the caller's palette, `report.portfolio.CATEGORICAL`);
+the IC's horizons are a magnitude, so they take the blue ramp, short to long
+light to dark.
 """
 
 from pathlib import Path
@@ -11,12 +20,10 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 from matplotlib.lines import Line2D
-from policypath.report.figures import THEMES, _style, _title
-
-
-
+from policypath.report.figures import BLUE, THEMES, _style, _title
 
 
 def _dates(ax):
@@ -161,3 +168,140 @@ def write_all(today, effr, signal, result, summary, k, out_dir, ccy, labels, mom
         equity(result, summary, k, q, theme)
         written += [p, q]
     return written
+
+
+# ---- week 10: attribution -----------------------------------------------------------
+
+def _end_label(ax, x, text, t, dy=0):
+    ax.annotate(text, xy=(x.index[-1], x.iloc[-1]), xytext=(6, dy), textcoords="offset points", va="center",
+                fontsize=8, color=t["secondary"])
+
+
+def equity_by_component(ax, curves, t, colors, windows=(), title=True, ncols=3):
+    """Cumulative net P&L, % of capital: the book (bold, ink), its gross (dashed) and each component group.
+
+    `curves` is {"book": series, "book gross": series, group: series, ...};
+    `windows` are (first, last, label) shaded behind the lines.
+    """
+    for lo, hi, label in windows:
+        ax.axvspan(lo, hi, color=t["grid"], lw=0, zorder=0)
+        ax.text(lo + (hi - lo) / 2, 1.0, label, transform=ax.get_xaxis_transform(), ha="center", va="top",
+                fontsize=7.5, color=t["secondary"])
+    ax.axhline(0, color=t["axis"], lw=1)
+    groups = [g for g in curves if not g.startswith("book")]
+    handles = []
+    for g, color in zip(groups, colors):
+        x = curves[g]
+        ax.plot(x.index, x.to_numpy(), color=color, lw=1.6)
+        handles.append(Line2D([], [], color=color, lw=1.6, label=f"{g} {x.iloc[-1]:+.1f}%"))
+    g = curves["book gross"]
+    ax.plot(g.index, g.to_numpy(), color=t["ink"], lw=1.2, ls=(0, (4, 2)))
+    b = curves["book"]
+    ax.plot(b.index, b.to_numpy(), color=t["ink"], lw=2.4)
+    handles = [Line2D([], [], color=t["ink"], lw=2.4, label=f"book, net {b.iloc[-1]:+.1f}%"),
+               Line2D([], [], color=t["ink"], lw=1.2, ls=(0, (4, 2)), label=f"book, gross {g.iloc[-1]:+.1f}%"),
+               *handles]
+    lo = min(float(x.min()) for x in curves.values())
+    hi = max(float(x.max()) for x in curves.values())
+    ax.set_ylim(lo - 0.38 * (hi - lo), hi + 0.08 * (hi - lo))      # room under the data for the legend
+    ax.legend(handles=handles, fontsize=7.5, labelcolor=t["secondary"], loc="lower left", ncols=ncols,
+              handlelength=1.6, columnspacing=1.0)
+    ax.set_ylabel("cumulative P&L, % of capital", fontsize=8)
+    _dates(ax)
+    ax.tick_params(labelsize=8)
+    if title:
+        ax.set_title("Net equity by component", loc="left", fontsize=10, fontweight="bold", color=t["ink"])
+
+
+def cost_curve(ax, c, t, colors, title=True):
+    """The book's net Sharpe against a uniform round trip on every leg (solid) and on the assumed legs only (dashed),
+    the configured mix and the breakeven marked. `c` is `report.attribution.cost_curve`'s dict."""
+    xs = np.asarray(c["round_trip_bp"], dtype=float)
+    ax.axhline(0, color=t["axis"], lw=1)
+    ax.plot(xs, c["net_sr"], color=colors[0], lw=2, label="every leg at the round trip")
+    ax.plot(xs, c["assumed_net_sr"], color=colors[1], lw=1.6, ls=(0, (4, 2)),
+            label="the assumed legs only (tick-costed legs fixed)")
+    ax.plot([c["mix_bp"]], [c["net_sr_at_mix"]], "o", ms=7, color=colors[0], mec=t["surface"], mew=2, zorder=3)
+    ax.annotate(f"configured mix {c['mix_bp']:.2f}bp: {c['net_sr_at_mix']:+.2f}", xy=(c["mix_bp"], c["net_sr_at_mix"]),
+                xytext=(8, -4), textcoords="offset points", va="top", fontsize=8, color=t["secondary"])
+    star = c["cstar_bp"]
+    note = ("no breakeven: gross P&L is below zero" if star is None or not np.isfinite(star)
+            else f"breakeven {star:.2f}bp")
+    if star is not None and np.isfinite(star):
+        ax.axvline(star, color=t["muted"], lw=1, ls=":")
+    ax.text(0.98, 0.95, note, transform=ax.transAxes, ha="right", va="top", fontsize=8, color=t["secondary"])
+    ax.set_xlabel("round trip, bp", fontsize=8)
+    ax.set_ylabel("net Sharpe", fontsize=8)
+    ax.legend(fontsize=7.5, labelcolor=t["secondary"], loc="lower left")
+    ax.tick_params(labelsize=8, length=0)
+    if title:
+        ax.set_title("Net Sharpe against the cost assumed", loc="left", fontsize=10, fontweight="bold",
+                     color=t["ink"])
+
+
+def ic_bars(ax, ics, t, theme, title=True):
+    """IC by sleeve and horizon (`metrics.ic_table` rows per sleeve), grouped bars, the blue ramp by horizon."""
+    names = list(ics)
+    hs = [r["h"] for r in ics[names[0]]]
+    ramp = (BLUE[1:4] if theme == "dark" else BLUE[3:0:-1])[:len(hs)]    # on a dark surface, more is lighter
+    width = 0.8 / len(hs)
+    ax.axhline(0, color=t["axis"], lw=1)
+    for j, (h, color) in enumerate(zip(hs, ramp)):
+        v = [ics[n][j]["ic"] for n in names]
+        ax.bar(np.arange(len(names)) + (j - (len(hs) - 1) / 2) * width, v, width * 0.9, color=color,
+               label=f"{h} sessions", edgecolor=t["surface"], lw=1)
+    ax.set_xticks(np.arange(len(names)), names, fontsize=7.5)
+    lo, hi = ax.get_ylim()
+    ax.set_ylim(lo, hi + 0.2 * (hi - lo))                            # headroom for the legend
+    ax.set_ylabel("rank IC", fontsize=8)
+    ax.tick_params(labelsize=8, length=0)
+    ax.legend(fontsize=7.5, labelcolor=t["secondary"], loc="upper left", ncols=len(hs))
+    if title:
+        ax.set_title("IC of z against the next sessions' rate change, outside the ELB", loc="left", fontsize=10,
+                     fontweight="bold", color=t["ink"])
+
+
+def regime_bars(ax, book, sleeves, t, marks, title=True, min_sessions=250):
+    """The book's net Sharpe by collapsed regime with a one-SE whisker (bars), each sleeve's as a mark on it.
+
+    `book` is {regime: row} in order (`report.attribution.regime_rows`'s rows:
+    net_sr, net_se, sessions); `sleeves` {name: rows in the same order};
+    `marks` {name: (colour, marker)}, so a sleeve keeps its component's colour.
+    The scale is set by the regimes with `min_sessions` or more; a regime with
+    fewer is drawn, and a mark past the scale is pinned to its edge and hollow,
+    with the regime's label saying so.
+    """
+    order = list(book)
+    x = np.arange(len(order))
+    vals = np.array([book[g]["net_sr"] for g in order], dtype=float)
+    ses = np.array([book[g]["net_se"] for g in order], dtype=float)
+    dots = {n: np.array([r["net_sr"] for r in rs], dtype=float) for n, rs in sleeves.items()}
+    big = np.array([book[g]["sessions"] >= min_sessions for g in order])
+    seen = np.concatenate([vals[big] - ses[big], vals[big] + ses[big], *[v[big] for v in dots.values()]])
+    lo, hi = np.nanmin(seen) - 0.3, np.nanmax(seen) + 0.3
+    ax.axhline(0, color=t["axis"], lw=1)
+    ax.bar(x, np.clip(vals, lo, hi), 0.6, color=t["muted"], edgecolor=t["surface"], lw=1, zorder=2)
+    ax.errorbar(x, np.clip(vals, lo, hi), yerr=np.where(big, ses, np.nan), fmt="none", ecolor=t["secondary"],
+                elinewidth=1, capsize=3, zorder=3)
+    off = ~big | (vals < lo) | (vals > hi)
+    for n, v in dots.items():
+        color, marker = marks[n]
+        out = (v < lo) | (v > hi)
+        off |= out
+        ax.plot(x[~out], v[~out], marker, ms=6, color=color, mec=t["surface"], mew=1.5, ls="none", zorder=4,
+                label=n)
+        ax.plot(x[out], np.clip(v[out], lo, hi), marker, ms=6, mfc="none", mec=color, mew=1.5, ls="none", zorder=4)
+    ax.set_ylim(lo, hi)
+    labels = [f"{g}{'*' if off[i] else ''}\n{book[g]['sessions']:,}" for i, g in enumerate(order)]
+    ax.set_xticks(x, labels, fontsize=7.5)
+    ax.set_ylabel("net Sharpe", fontsize=8)
+    ax.tick_params(labelsize=8, length=0)
+    handles, names = ax.get_legend_handles_labels()
+    if off.any():
+        handles.append(Line2D([], [], ls="none"))
+        names.append(f"* under {min_sessions} sessions, or off the scale (hollow)")
+    ax.legend(handles, names, fontsize=7, labelcolor=t["secondary"], loc="upper left", bbox_to_anchor=(0, -0.2),
+              ncols=3, handletextpad=0.2, columnspacing=0.8, borderaxespad=0.0)
+    if title:
+        ax.set_title("Net Sharpe by regime: the book (bars, 1 SE) and each sleeve", loc="left", fontsize=10,
+                     fontweight="bold", color=t["ink"])

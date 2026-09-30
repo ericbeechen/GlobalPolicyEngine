@@ -103,3 +103,7 @@ robustness:
 tags:
   robustness:
     modelling: "The robustness grid moves one choice at a time off the chosen specification; interactions between choices are not run"
+  elb_window:
+    modelling: "For up to two years after lift-off the z is standardised against a trailing window mostly of ELB sessions, so the first signals off the lower bound are measured against a quiet yardstick"
+  level_factor:
+    modelling: "The split of the book's P&L into level and relative value uses full-sample betas of each sleeve's unit P&L on the outrights: an ex post attribution, not a hedge that could have been run"

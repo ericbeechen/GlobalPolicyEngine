@@ -78,6 +78,16 @@ flips it. Each agent adds to its own section.
 - Rebuilt rows are kept in `data/panel/robustness/` under a fingerprint of what they read (the block, the input panels, the cache files, the chain's code); a cold build takes about 100s, `--rows KEY ...` splits it: `strategy/robustness.py` `Store`, `fingerprint`; V11; delete the directory to force a rebuild.
 - For week 10: `reports/results/robustness.json` has every cell (`rows.<key>.net|gross|own|ic`, `sample`, `sensitive`); `report/costs.inputs(like=)` builds a sleeve's inputs on another signal while reusing its unit P&L, sigma and costs.
 
+## Week 10: attribution and the tear sheet (2026-09-29)
+
+- **Proposed: the ELB treatment stays flat**, with exclude and hold shown beside it (-0.62 flat, -0.56 excluded, -0.70 held; hold loses 17.4% of capital on positions decided in the state): `reports/metrics.md` "The ELB"; A7; `config/strategy.yml` `evaluation.elb.chosen` flips it (every week 8-10 number moves with it).
+- **Proposed: the level verdict.** The level carries 63% of the book's gross P&L variance, so the report says the level dominates and that the book is closer to a duration timer than to relative value, while the loss is mostly the relative value's: A4; `report/attribution.py` `LEVEL_DOMINATES` (0.5) and `level_words`.
+- **Proposed: the reading of carry against rate** (the rate calls earn +1.31% a year, carry and roll cost -2.11%; "not a carry trade", correlation -0.16 with the carry benchmark): A5; `attribution.CARRY_WORDS`.
+- The regime table reads as description, not a test (two hiking cycles): A6; no key.
+- The post-lift-off window limitation, as a tag, not a fix: A8; `config/strategy.yml` `tags.elb_window`.
+- The tear sheet's wording, every sentence a template: `report/tearsheet.py` `framework` (the three sentences), `carries` (the four), the page's footnotes; A10; rerun `scripts/build_tearsheet.py` after an edit. The page has about 0.05in to spare at the bottom margin: a longer sentence raises.
+- The Windows machine: the regression references were frozen on the Mac and differ here in the last bits (6 tests fail on Windows, none on the Mac as of week 9). Keep one reference, or one per platform: A11; `scripts/regress.py freeze` (not run).
+
 ## Week 12: credit bridge (2026-09-28)
 
 - The pre-registered test 2 (written before the first run): negative sign, headline cell Baa - Aaa on z at h = 63 with ELB sessions in, and the rule that calls it (NW t ≤ -1.96 and the non-overlapping mean negative): `notes/DECISIONS.md` D1, `credit.supported`; no key flips it, and none should after the fact. D2 (the staleness rule) and D3 (test 3's hypothesis) likewise.

@@ -27,10 +27,11 @@ Working end to end for USD:
 - Costs, turnover and a hysteresis rule for every sleeve, with a stated treatment of the lower bound. Then one book, all five sleeves sized together under a shrunk covariance and a 5% vol target, and a robustness grid that moves one choice at a time off the chosen specification.
 - A credit bridge for USD: three tests of the gap against Baa - Aaa and four other spreads, with the predictive test's sign registered before the first run.
 - A weekly one-page brief now carries each sleeve's trade and its carry and roll.
+- Attribution and a one-page tear sheet, from one command: the book's P&L by component, by level factor, as carry against rate and by regime; the lower bound's treatment against its two alternatives; the IC at a week, a month and a quarter; and every number again without 2022 (`metrics.ex_2022`). The level carries 63% of the book's risk, so the report says it is closer to a duration timer than to relative value; without 2022 the net Sharpe falls to -0.99.
 - Every choice so far, with its date and reason, in [notes/DECISIONS.md](notes/DECISIONS.md). The ones left to the author are marked *proposed* and listed in [notes/author_review.md](notes/author_review.md).
-- `uv run pytest -q` gives 944 passed, 6 skipped.
+- `uv run pytest -q` runs 962 tests (6 skipped). On Windows the six bit-for-bit regression checks, frozen on the Mac, differ in the last bits of floating point; see notes/DECISIONS.md (A11).
 
-Not built yet: the tear sheet and metrics (week 10), the written note (week 11), and the generated limitations section and final hygiene pass (week 13). The plan and where it stands are in [notes/build_spec_w7_w13.md](notes/build_spec_w7_w13.md).
+Not built yet: the written note (week 11), and the generated limitations section and final hygiene pass (week 13). The plan and where it stands are in [notes/build_spec_w7_w13.md](notes/build_spec_w7_w13.md).
 
 ## Install
 
@@ -123,6 +124,12 @@ The book, then the robustness grid. The grid stops unless its baseline equals th
 ```bash
 uv run python scripts/build_portfolio.py
 uv run python scripts/build_robustness.py
+```
+
+The tear sheet, one page to `reports/tearsheet_<last session>.pdf`, with the attribution behind it in `reports/metrics.md` and `reports/results/metrics.json`. It runs the book in memory from the panels and the cache (about 10s), so it needs none of the reports above:
+
+```bash
+uv run python scripts/build_tearsheet.py
 ```
 
 Before changing anything that computes, freeze every stage's output over the full sample, then check after each change. A check stops at the last session the freeze covered, so an updated cache compares like for like. It exits non-zero on any difference, however small. The committed fixtures have their own reference, which the test suite checks:

@@ -73,7 +73,7 @@ def code_hits(path):
 
 
 def shared(root, exempt):
-    return sorted(p for p in root.rglob("*.py") if exempt.get(str(p.relative_to(root))) is None)
+    return sorted(p for p in root.rglob("*.py") if exempt.get(p.relative_to(root).as_posix()) is None)
 
 
 @pytest.mark.parametrize("path", shared(SRC, BACKENDS), ids=lambda p: str(p.relative_to(SRC)))
