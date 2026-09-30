@@ -29,9 +29,9 @@ Working end to end for USD:
 - A weekly one-page brief now carries each sleeve's trade and its carry and roll.
 - Attribution and a one-page tear sheet, from one command: the book's P&L by component, by level factor, as carry against rate and by regime; the lower bound's treatment against its two alternatives; the IC at a week, a month and a quarter; and every number again without 2022 (`metrics.ex_2022`). The level carries 63% of the book's risk, so the report says it is closer to a duration timer than to relative value; without 2022 the net Sharpe falls to -0.99.
 - Every choice so far, with its date and reason, in [notes/DECISIONS.md](notes/DECISIONS.md). The ones left to the author are marked *proposed* and listed in [notes/author_review.md](notes/author_review.md).
-- `uv run pytest -q` runs 962 tests (6 skipped). On Windows the six bit-for-bit regression checks, frozen on the Mac, differ in the last bits of floating point; see notes/DECISIONS.md (A11).
+- `uv run pytest -q` runs 966 tests (6 skipped), and passes on both the Mac and Windows. The committed fixture reference, frozen on the Mac, is checked to `regress.PLATFORM_ULPS` rather than bit for bit, so the last-bit floating-point differences between machines pass; see notes/DECISIONS.md (A18).
 
-Not built yet: the written note (week 11), and the generated limitations section and final hygiene pass (week 13). The plan and where it stands are in [notes/build_spec_w7_w13.md](notes/build_spec_w7_w13.md).
+Not built yet: the written note (week 11), and the generated limitations section and final hygiene pass (week 13).
 
 ## Install
 
