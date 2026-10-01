@@ -14,7 +14,14 @@ the macro vintages: for adding a series without refreshing the rest.
 
 Every currency needs the FRED key in .env: GBP's too, for its FX rate (DEXUSUK).
 
+Futures come from the Databento archive on disk. With DATABENTO_API_KEY in .env
+too, the days after the archive's last are pulled over Databento's historical
+API, each request priced first and the whole update capped at
+rates.LIVE_BUDGET_USD (a day of all three roots is about a cent).
+``--archive-only`` leaves the API alone.
+
     uv run --env-file .env python scripts/update_data.py
+    uv run --env-file .env python scripts/update_data.py --archive-only
     uv run --env-file .env python scripts/update_data.py --macro-only
     uv run --env-file .env python scripts/update_data.py --refetch DFEDTARL DFEDTARU
     uv run --env-file .env python scripts/update_data.py --ccy GBP
@@ -35,6 +42,8 @@ which.add_argument("--only", nargs="+", default=[], metavar="SERIES",
                    help="pull only these series from the sources block; no macro vintages")
 parser.add_argument("--refetch", nargs="+", default=[], metavar="SERIES",
                     help="drop these series from the cache first and pull them whole again")
+parser.add_argument("--archive-only", action="store_true",
+                    help="futures from the archive on disk only, even with an API key set")
 args = parser.parse_args()
 cfg = config.currency(args.ccy)
 sources = cfg["sources"]
@@ -81,14 +90,16 @@ if not args.macro_only:
             print(f"{name}/{series:<9} +{added:>6} rows   covered {report(name, series)}")
 
     for name, roots in sources.get("futures", {}).items():
-        source = registry.lookup(registry.FUTURES, name)()
+        source = registry.lookup(registry.FUTURES, name)(not args.archive_only)
         for root in filter(wanted, roots):
             def progress(lo, hi, n, root=root):
                 print(f"  {root} {lo.date()} .. {hi.date()}: +{n}", flush=True)
-            # Each root only over the days a job holding it covers, so a gap between jobs stays missing.
+            # Each root over the days a job holding it covers, so a gap between jobs stays missing,
+            # then any days after the last job the source can reach live.
             added = sum(source.update(root, args.ccy, first, last, cache, on_chunk=progress)
-                        for first, last in source.archive_ranges(root))
-            print(f"{name}/{root:<4} +{added:>6} rows   covered {report(name, root)}")
+                        for first, last in source.ranges(root, today))
+            cost = f"   ${source.spent:.4f} quoted so far" if source.spent else ""
+            print(f"{name}/{root:<4} +{added:>6} rows   covered {report(name, root)}{cost}")
 
 macro = cfg["macro"]
 pull = registry.lookup(registry.MACRO, macro["source"])

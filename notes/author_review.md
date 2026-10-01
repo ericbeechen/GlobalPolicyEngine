@@ -12,6 +12,13 @@ flips it. Each agent adds to its own section.
 - The headline portfolio construction, written as proposed: `config/strategy.yml`; its row is week 9's (P); `portfolio.headline: inverse_vol`.
 - The ELB treatment, written as proposed: `config/strategy.yml`; its row is week 8's (K), confirmed in week 10 (A); `evaluation.elb.chosen: flat`.
 
+## Live market data (2026-09-30)
+
+- Futures past the batch archive come from Databento's historical API whenever `DATABENTO_API_KEY` is in the environment: `src/policypath/sources/rates.py` `Settlements`; E14; `update_data.py --archive-only` keeps to the archive.
+- **Proposed:** the per-update budget, $1 by Databento's quote for each request (a day of the three roots is about $0.01): `rates.LIVE_BUDGET_USD`; E15.
+- **Proposed:** a day Databento calls degraded, pending or missing is never marked covered, so it is fetched again on every update until Databento calls it available: `Settlements._complete_through`; E14; no key.
+- Open: an update after CME's preliminary settle (about 15:00 ET) solves that session on the preliminary, and nothing in the panel or the brief marks it. The final replaces it at the next update if its price differs. Whether to flag such sessions is not decided: E14; no key.
+
 ## Week 7: expression and carry (2026-09-28)
 
 - `strategy/carry.py` (author-owned, agent draft): every carry, roll and funding formula and sign; the three checks (the identity, the full revaluation and its bound, convergence); the breakeven (CR_h, the edge, φ_h, φ*, E_h); C7-C13, departures 1-3 (C9-C11); `carry.horizon_days`, `carry.closure_min_pairs`.
