@@ -7,8 +7,8 @@ A signal is a session with |z| >= 1. Its breakeven is what the instrument it sel
 ## The answer
 
 - **A correct signal can still be a losing trade.** Of the 3,938 signal sessions whose next quarter went the signal's way on the rate, 19% (734) still lost money once carry and roll were counted, from 7% (GBP - USD 2y) to 36% (USD outright). On those the rate made +6.1bp a unit on average and carry and roll took -13.6bp. 428 of them are on the unfunded sleeves (USD outright, GBP outright), where carry is 0: there right on the rate means the held contracts beat the frozen curve's roll, and the loss means their own rates moved against the side, by less than the roll implied. The plainest case at an episode entry: GBP - USD 2y, receive on 29 Jun 2018 at z +1.1 (2y gilt vs 2y Treasury). The rate moved the signal's way by +8.5bp over the quarter, carry and roll took -11.0bp, and the quarter ended -2.5bp.
-- **Right but bleeding, known at the close.** On 53% of the 7,412 signal sessions the instrument's carry and roll over the next quarter, if the curve stood still, ran against the side, from 29% (GBP - USD 2y) to 71% (USD 2s10s). 17% did not pay for their bleed: the expected quarter (the share of the gap that has historically closed, plus carry and roll on the rest) was negative, from 1% (GBP 2s10s) to 29% (USD 2s10s).
-- **The breakeven's verdict turns on 2022.** Bleeding signal sessions earned +7.4bp a unit over the next quarter, the others +1.3bp; bleeding did worse in 1 of the 5 sleeves. Those that did not pay earned +11.6bp, the rest +3.0bp (worse in 0 of the 5). Leaving out every quarter that overlaps 2022 (6,302 signal sessions left): bleeding +0.8bp against +1.4bp (worse in 3 of 5 sleeves), not paying -0.7bp against +1.5bp (worse in 2 of 4). Leaving out every quarter that overlaps Dec 2021 to Aug 2023 (5,941 signal sessions left): bleeding -2.8bp against -0.9bp (worse in 3 of 5 sleeves), not paying -3.5bp against -1.5bp (worse in 3 of 4). In the full sample neither flag did worse; without 2022 both flags did worse. Carry and roll are a cost to charge against the edge either way; whether they are a reason to stand aside, this sample cannot say. The quarters overlap (about 64 sessions share each one), so these are descriptions, not tests.
+- **Right but bleeding, known at the close.** On 53% of the 7,410 signal sessions the instrument's carry and roll over the next quarter, if the curve stood still, ran against the side, from 29% (GBP - USD 2y) to 71% (USD 2s10s). 17% did not pay for their bleed: the expected quarter (the share of the gap that has historically closed, plus carry and roll on the rest) was negative, from 1% (GBP 2s10s) to 29% (USD 2s10s).
+- **The breakeven's verdict turns on 2022.** Bleeding signal sessions earned +7.4bp a unit over the next quarter, the others +1.3bp; bleeding did worse in 1 of the 5 sleeves. Those that did not pay earned +11.6bp, the rest +3.0bp (worse in 0 of the 5). Leaving out every quarter that overlaps 2022 (6,300 signal sessions left): bleeding +0.8bp against +1.4bp (worse in 3 of 5 sleeves), not paying -0.7bp against +1.5bp (worse in 2 of 4). Leaving out every quarter that overlaps Dec 2021 to Aug 2023 (5,939 signal sessions left): bleeding -2.8bp against -0.9bp (worse in 3 of 5 sleeves), not paying -3.5bp against -1.5bp (worse in 3 of 4). In the full sample neither flag did worse; without 2022 both flags did worse. Carry and roll are a cost to charge against the edge either way; whether they are a reason to stand aside, this sample cannot say. The quarters overlap (about 64 sessions share each one), so these are descriptions, not tests.
 - **The carry filter, a diagnostic.** At entry, where a filter would act, the 16 of 117 episode entries that did not pay earned -5.0bp over their next quarter against +3.2bp for the rest, the other way from the sessions. Skipping them would have added 80bp, +77bp of it from 2 GBP outright entries. 16 entries are too few to decide on: the carry filter stays a diagnostic (`positions.carry_filter: false`), and week 8 measures it under the hysteresis rule with costs.
 - **The expected quarter overstates.** +10.5bp a signal session on average, against +4.5bp realized (it is higher in 4 of the 5 sleeves). E_h counts every bp of the gap that closes as P&L, but only the market's part pays; the rule's part pays nothing. Over the whole sample a quarter closed 0.44 of the USD outright gap, 0.25 by the market and +0.19 by the rule (toward the market), and E_h there is +11.0bp against +2.8bp realized; a quarter closed 0.13 of the GBP outright gap, 0.45 by the market and -0.32 by the rule (away from the market), and E_h there is +5.5bp against +13.9bp realized.
 
@@ -24,16 +24,16 @@ Sessions with a z, a phi_h and a complete next quarter; signals are those with |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | USD outright | signals | 1,463 | 53% | 21% | 27% | 47% | 40% | 36% |
 | USD outright | all | 3,299 | 53% | 14% | 33% | 47% | 48% | 28% |
-| GBP outright | signals | 1,664 | 41% | 43% | 16% | 59% | 63% | 21% |
-| GBP outright | all | 3,437 | 47% | 27% | 26% | 53% | 58% | 20% |
+| GBP outright | signals | 1,662 | 41% | 43% | 16% | 59% | 63% | 21% |
+| GBP outright | all | 3,435 | 47% | 27% | 26% | 53% | 58% | 20% |
 | USD 2s10s | signals | 1,486 | 29% | 42% | 29% | 71% | 63% | 19% |
 | USD 2s10s | all | 3,049 | 33% | 33% | 34% | 67% | 57% | 19% |
 | GBP 2s10s | signals | 974 | 35% | 64% | 1% | 65% | 53% | 13% |
-| GBP 2s10s | all | 3,187 | 41% | 53% | 7% | 59% | 46% | 13% |
+| GBP 2s10s | all | 3,185 | 41% | 53% | 7% | 59% | 46% | 13% |
 | GBP - USD 2y | signals | 1,825 | 71% | 18% | 11% | 29% | 47% | 7% |
-| GBP - USD 2y | all | 3,224 | 61% | 17% | 23% | 39% | 50% | 10% |
-| pooled | signals | 7,412 | 47% | 35% | 17% | 53% | 53% | 19% |
-| pooled | all | 16,196 | 47% | 28% | 24% | 53% | 52% | 18% |
+| GBP - USD 2y | all | 3,222 | 61% | 17% | 23% | 39% | 50% | 10% |
+| pooled | signals | 7,410 | 47% | 35% | 17% | 53% | 53% | 19% |
+| pooled | all | 16,190 | 47% | 28% | 24% | 53% | 52% | 18% |
 
 ### What they earned over the next 91 days, bp per unit (mean, overlapping quarters)
 
@@ -41,18 +41,18 @@ Sessions with a z, a phi_h and a complete next quarter; signals are those with |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | USD outright | signals | 1,463 | +11.0 | +2.8 | -3.9 | +13.5 | +7.7 | +10.3 | -3.9 |
 | USD outright | all | 3,299 | +7.5 | -0.4 | -6.4 | +13.1 | +3.5 | +6.3 | -6.4 |
-| GBP outright | signals | 1,664 | +5.5 | +13.9 | +5.0 | +13.7 | +37.2 | +20.0 | +5.0 |
-| GBP outright | all | 3,437 | +3.9 | +7.4 | +6.3 | +11.6 | +5.1 | +8.4 | +6.3 |
+| GBP outright | signals | 1,662 | +5.5 | +13.9 | +5.1 | +13.7 | +37.2 | +20.0 | +5.1 |
+| GBP outright | all | 3,435 | +3.9 | +7.4 | +6.3 | +11.6 | +5.1 | +8.4 | +6.3 |
 | USD 2s10s | signals | 1,486 | +4.9 | +2.2 | +1.2 | +2.9 | +2.3 | +2.6 | +1.2 |
 | USD 2s10s | all | 3,049 | +3.1 | +0.6 | -3.8 | +5.4 | +0.2 | +2.7 | -3.8 |
 | GBP 2s10s | signals | 974 | +21.3 | -2.3 | +3.6 | -5.8 | +26.7 | -5.5 | +3.6 |
-| GBP 2s10s | all | 3,187 | +10.4 | -4.5 | -3.4 | -6.3 | +2.7 | -5.2 | -3.4 |
+| GBP 2s10s | all | 3,185 | +10.4 | -4.5 | -3.4 | -6.3 | +2.7 | -5.2 | -3.4 |
 | GBP - USD 2y | signals | 1,825 | +13.6 | +3.0 | +2.0 | +5.5 | +5.2 | +5.4 | +2.0 |
-| GBP - USD 2y | all | 3,224 | +8.7 | +2.5 | +4.1 | +1.0 | -0.7 | -0.0 | +4.1 |
-| pooled | signals | 7,412 | +10.5 | +4.5 | +1.3 | +5.3 | +11.6 | +7.4 | +1.3 |
-| pooled | all | 16,196 | +6.7 | +1.2 | -0.1 | +2.7 | +2.1 | +2.4 | -0.1 |
+| GBP - USD 2y | all | 3,222 | +8.7 | +2.5 | +4.1 | +1.0 | -0.7 | -0.0 | +4.1 |
+| pooled | signals | 7,410 | +10.5 | +4.5 | +1.3 | +5.3 | +11.6 | +7.4 | +1.3 |
+| pooled | all | 16,190 | +6.7 | +1.2 | -0.1 | +2.7 | +2.1 | +2.4 | -0.1 |
 
-### Right but bleeding by year: share of all 7,908 signal sessions, with a phi_h or not
+### Right but bleeding by year: share of all 7,905 signal sessions, with a phi_h or not
 
 | year | USD outright | GBP outright | USD 2s10s | GBP 2s10s | GBP - USD 2y |
 | --- | --- | --- | --- | --- | --- |
@@ -71,7 +71,7 @@ Sessions with a z, a phi_h and a complete next quarter; signals are those with |
 | 2023 | 0% | 86% | 0% | 100% | 64% |
 | 2024 | 6% | 100% | 100% | 100% | 32% |
 | 2025 | 0% | n/a | 94% | 100% | n/a |
-| 2026 | 3% | 4% | 0% | 45% | 60% |
+| 2026 | 3% | 4% | 0% | 45% | 59% |
 
 ### The carry filter (a diagnostic): episodes under the (enter 1, exit 0) pair
 
@@ -94,21 +94,21 @@ Each sleeve on its latest session. Positions for a USD 10,000-per-bp unit on the
 | sleeve | session | z | side | instrument | gap_bp | edge_bp | carry_bp | roll_bp | CR_h_bp | phi_h | E_h_bp | verdict |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | USD outright | 2026-09-29 | +2.44 | receive | ZQ Apr 2027 | +9.4 | +52.9 | +0.0 | +31.4 | +31.4 | 0.44 | +40.8 | earns carry and roll |
-| GBP outright | 2026-09-29 | +1.95 | receive | OIS forward 18 Mar-29 Apr 2027 | +142.6 | +89.4 | +0.0 | +36.3 | +36.3 | 0.13 | +43.1 | earns carry and roll |
+| GBP outright | 2026-09-25 | +1.83 | receive | OIS forward 18 Mar-29 Apr 2027 | +136.0 | +83.4 | +0.0 | +32.2 | +32.2 | 0.13 | +38.8 | earns carry and roll |
 | USD 2s10s | 2026-09-29 | +1.06 | receive | 2y vs 10y Treasury | -9.2 | +15.7 | +8.4 | +6.9 | +15.3 | 0.08 | +15.3 | earns carry and roll |
-| GBP 2s10s | 2026-09-29 | +0.01 | receive | 2y vs 10y gilt | +11.7 | +0.2 | +7.9 | +2.9 | +10.8 | 0.71 | +3.3 | earns carry and roll |
-| GBP - USD 2y | 2026-09-29 | +1.04 | receive | 2y gilt vs 2y Treasury | +133.2 | +36.8 | +0.6 | -3.0 | -2.4 | 0.17 | +4.4 | bleeds, pays |
+| GBP 2s10s | 2026-09-25 | +0.03 | receive | 2y vs 10y gilt | +11.9 | +0.4 | +7.3 | +2.7 | +10.0 | 0.71 | +3.2 | earns carry and roll |
+| GBP - USD 2y | 2026-09-25 | +0.86 | receive | 2y gilt vs 2y Treasury | +127.0 | +30.5 | +1.0 | -3.1 | -2.2 | 0.17 | +3.5 | bleeds, pays |
 
 | sleeve | leg | side | instrument | dv01 | position |
 | --- | --- | --- | --- | --- | --- |
 | USD outright | USD outright | receive | ZQ Apr 2027 | +10,000 | 240 contracts |
-| GBP outright | GBP outright | receive | OIS forward 18 Mar-29 Apr 2027 | +10,000 | GBP 671.8m |
+| GBP outright | GBP outright | receive | OIS forward 18 Mar-29 Apr 2027 | +10,000 | GBP 671.9m |
 | USD 2s10s | USD 2y | receive | 2y Treasury | +10,000 | USD 53.1m |
 | USD 2s10s | USD 10y | pay | 10y Treasury | -10,000 | USD 13.0m |
 | GBP 2s10s | GBP 2y | receive | 2y gilt | +10,000 | GBP 40.0m |
 | GBP 2s10s | GBP 10y | pay | 10y gilt | -10,000 | GBP 9.9m |
 | GBP - USD 2y | GBP 2y | receive | 2y gilt | +10,000 | GBP 40.0m |
-| GBP - USD 2y | USD 2y | pay | 2y Treasury | -10,000 | USD 53.1m |
+| GBP - USD 2y | USD 2y | pay | 2y Treasury | -10,000 | USD 53.0m |
 
 ## Instruments
 
@@ -118,10 +118,10 @@ Each sleeve on its latest session. Positions for a USD 10,000-per-bp unit on the
 | GBP outright | GBP outright | receive | the OIS forward over the fourth meeting's regime | boe OIS_SPOT | no | 11.23 GBP per bp, 1m notional |
 | USD 2s10s | USD 2y | receive | a 2y Treasury at par, struck at each close | fred DGS1, DGS2, DGS3, DGS5, DGS7, DGS10 | yes | 188.35 USD per bp, 1m notional |
 | USD 2s10s | USD 10y | pay | a 10y Treasury at par, struck at each close | fred DGS1, DGS2, DGS3, DGS5, DGS7, DGS10 | yes | 769.97 USD per bp, 1m notional |
-| GBP 2s10s | GBP 2y | receive | a 2y gilt at par, struck at each close | boe GLC_SPOT | yes | 188.71 GBP per bp, 1m notional |
-| GBP 2s10s | GBP 10y | pay | a 10y gilt at par, struck at each close | boe GLC_SPOT | yes | 765.90 GBP per bp, 1m notional |
-| GBP - USD 2y | GBP 2y | receive | a 2y gilt at par, struck at each close | boe GLC_SPOT | yes | 188.71 GBP per bp, 1m notional |
-| GBP - USD 2y | USD 2y | pay | a 2y Treasury at par, struck at each close | fred DGS1, DGS2, DGS3, DGS5, DGS7, DGS10 | yes | 188.35 USD per bp, 1m notional |
+| GBP 2s10s | GBP 2y | receive | a 2y gilt at par, struck at each close | boe GLC_SPOT | yes | 188.81 GBP per bp, 1m notional |
+| GBP 2s10s | GBP 10y | pay | a 10y gilt at par, struck at each close | boe GLC_SPOT | yes | 765.93 GBP per bp, 1m notional |
+| GBP - USD 2y | GBP 2y | receive | a 2y gilt at par, struck at each close | boe GLC_SPOT | yes | 188.81 GBP per bp, 1m notional |
+| GBP - USD 2y | USD 2y | pay | a 2y Treasury at par, struck at each close | fred DGS1, DGS2, DGS3, DGS5, DGS7, DGS10 | yes | 188.53 USD per bp, 1m notional |
 
 ZQ DV01, from the contract spec in config: 5,000,000 x 30/360 x 1bp = 41.6667 USD per bp a contract. CME quotes 41.67 (`contracts.ZQ.quoted`), the derived value rounded to the cent. Ticks: 0.0025 (front month) = 10.4167 and 0.005 = 20.8333; CME quotes 10.4175 and 20.8350, its rounded DV01 times the tick. No DV01 is typed in code (a test checks).
 
@@ -137,23 +137,23 @@ Every sleeve, leg and direction; a pay is the receive negated. Stale: sessions w
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | USD outright | USD outright | receive | 3926 | 8.9e-16 | 0.000 | 0.000 | 0 | 0 | 0 |
 | USD outright | USD outright | pay | 3926 | 8.9e-16 | 0.000 | 0.000 | 0 | 0 | 0 |
-| GBP outright | GBP outright | receive | 4064 | 7.1e-15 | 0.252 | 0.254 | 0 | 0 | 134 |
-| GBP outright | GBP outright | pay | 4064 | 7.1e-15 | 0.252 | 0.254 | 0 | 0 | 134 |
+| GBP outright | GBP outright | receive | 4062 | 7.1e-15 | 0.252 | 0.254 | 0 | 0 | 132 |
+| GBP outright | GBP outright | pay | 4062 | 7.1e-15 | 0.252 | 0.254 | 0 | 0 | 132 |
 | USD 2s10s | USD 2y | receive | 3926 | 3.6e-15 | 0.270 | 0.272 | 0 | 34 | 0 |
 | USD 2s10s | USD 10y | receive | 3926 | 3.6e-15 | 0.437 | 0.446 | 0 | 34 | 0 |
 | USD 2s10s | USD 2y | pay | 3926 | 3.6e-15 | 0.270 | 0.272 | 0 | 34 | 0 |
 | USD 2s10s | USD 10y | pay | 3926 | 3.6e-15 | 0.437 | 0.446 | 0 | 34 | 0 |
-| GBP 2s10s | GBP 2y | receive | 4064 | 7.1e-15 | 0.411 | 0.414 | 0 | 0 | 134 |
-| GBP 2s10s | GBP 10y | receive | 4064 | 7.1e-15 | 0.691 | 0.734 | 0 | 0 | 134 |
-| GBP 2s10s | GBP 2y | pay | 4064 | 7.1e-15 | 0.411 | 0.414 | 0 | 0 | 134 |
-| GBP 2s10s | GBP 10y | pay | 4064 | 7.1e-15 | 0.691 | 0.734 | 0 | 0 | 134 |
-| GBP - USD 2y | GBP 2y | receive | 3846 | 7.1e-15 | 0.411 | 0.414 | 0 | 0 | 42 |
-| GBP - USD 2y | USD 2y | receive | 3846 | 3.6e-15 | 0.270 | 0.272 | 0 | 31 | 0 |
-| GBP - USD 2y | GBP 2y | pay | 3846 | 7.1e-15 | 0.411 | 0.414 | 0 | 0 | 42 |
-| GBP - USD 2y | USD 2y | pay | 3846 | 3.6e-15 | 0.270 | 0.272 | 0 | 31 | 0 |
+| GBP 2s10s | GBP 2y | receive | 4062 | 7.1e-15 | 0.411 | 0.414 | 0 | 0 | 132 |
+| GBP 2s10s | GBP 10y | receive | 4062 | 7.1e-15 | 0.691 | 0.734 | 0 | 0 | 132 |
+| GBP 2s10s | GBP 2y | pay | 4062 | 7.1e-15 | 0.411 | 0.414 | 0 | 0 | 132 |
+| GBP 2s10s | GBP 10y | pay | 4062 | 7.1e-15 | 0.691 | 0.734 | 0 | 0 | 132 |
+| GBP - USD 2y | GBP 2y | receive | 3844 | 7.1e-15 | 0.411 | 0.414 | 0 | 0 | 40 |
+| GBP - USD 2y | USD 2y | receive | 3844 | 3.6e-15 | 0.270 | 0.272 | 0 | 31 | 0 |
+| GBP - USD 2y | GBP 2y | pay | 3844 | 7.1e-15 | 0.411 | 0.414 | 0 | 0 | 40 |
+| GBP - USD 2y | USD 2y | pay | 3844 | 3.6e-15 | 0.270 | 0.272 | 0 | 31 | 0 |
 
 - Largest identity residual: 7.1e-15bp. Sessions outside the revaluation bound: 0. The largest residual is 0.691bp (GBP 2s10s, GBP 10y), against a bound there of 0.734bp. Residuals sit just inside their bounds (the closest, GBP - USD 2y, USD 2y, at 0.999 of it), as they should: each bound is the size the leftover is predicted to have (a forward's move in rate times its move in discount factor; a par leg's DV01 drift plus convexity), so a residual at its bound is what the linear marks leave out and nothing else, and a flipped carry sign would sit far outside it. The build refuses to write this report if any check fails.
-- End to end: GBP outright under the linear rule, fx forced to 1, against the week 6 backtest (`data/panel/GBP_backtest.parquet`): 3,815 sessions from its first z, largest difference 1.4e-14bp. The held forward is the path's own meeting rate.
+- End to end: GBP outright under the linear rule, fx forced to 1, against the week 6 backtest (`data/panel/GBP_backtest.parquet`): 3,813 sessions from its first z, largest difference 7.1e-15bp. The held forward is the path's own meeting rate.
 
 ### Convexity: what the linear P&L leaves out
 
@@ -177,7 +177,7 @@ Legs are DV01-linear marks re-struck at each close, so convexity is not in the P
 | 2023 | +0.00 | +0.36 | -3.84 | -4.52 | -0.74 |
 | 2024 | +0.00 | +0.09 | -2.63 | -2.40 | -0.32 |
 | 2025 | -0.00 | +0.07 | -2.12 | -2.19 | -0.33 |
-| 2026 | +0.00 | +0.24 | -1.03 | -1.62 | +0.52 |
+| 2026 | +0.00 | +0.24 | -1.03 | -1.64 | +0.54 |
 
 Mean a year: USD outright +0.0bp, GBP outright +0.1bp, USD 2s10s -2.6bp, GBP 2s10s -2.7bp, GBP - USD 2y -0.0bp.
 
@@ -188,10 +188,10 @@ Whole sample:
 | sleeve | carry | roll | rate | total |
 | --- | --- | --- | --- | --- |
 | USD outright | +0.0 | +220.2 | -202.3 | +18.0 |
-| GBP outright | +0.0 | -422.4 | +1625.3 | +1202.9 |
+| GBP outright | +0.0 | -425.5 | +1641.2 | +1215.6 |
 | USD 2s10s | -232.5 | -101.8 | +685.6 | +351.3 |
 | GBP 2s10s | -127.1 | +3.1 | -535.0 | -659.0 |
-| GBP - USD 2y | +150.1 | +57.2 | +280.1 | +487.4 |
+| GBP - USD 2y | +150.1 | +57.3 | +276.9 | +484.4 |
 
 ### USD outright
 
@@ -232,7 +232,7 @@ Whole sample:
 | 2023 | +0.0 | -32.0 | +336.5 | +304.5 |
 | 2024 | +0.0 | -159.1 | +62.8 | -96.2 |
 | 2025 | +0.0 | -7.0 | +23.1 | +16.1 |
-| 2026 | +0.0 | +93.2 | -76.9 | +16.3 |
+| 2026 | +0.0 | +90.0 | -61.0 | +29.0 |
 
 ### USD 2s10s
 
@@ -271,7 +271,7 @@ Whole sample:
 | 2023 | -4.5 | -1.4 | -61.7 | -67.6 |
 | 2024 | -14.2 | -9.7 | +17.0 | -7.0 |
 | 2025 | -27.4 | -6.5 | +75.2 | +41.4 |
-| 2026 | +2.1 | -2.3 | -88.7 | -88.9 |
+| 2026 | +2.1 | -2.3 | -88.6 | -88.8 |
 
 ### GBP - USD 2y
 
@@ -291,7 +291,7 @@ Whole sample:
 | 2023 | -1.0 | -9.0 | +169.0 | +159.0 |
 | 2024 | +1.1 | +12.8 | -76.0 | -62.1 |
 | 2025 | +1.2 | +0.6 | +39.1 | +41.0 |
-| 2026 | +9.7 | -10.3 | +115.2 | +114.6 |
+| 2026 | +9.7 | -10.2 | +112.1 | +111.5 |
 
 ## The components
 
@@ -300,4 +300,4 @@ The slope component is the gap at the eighth meeting minus the gap at the first,
 | ccy | level z, raw slope z | level z, traded slope z | P&L, linear rule | P&L, unit receive |
 | --- | --- | --- | --- | --- |
 | USD | 0.85 | -0.07 | -0.02 | 0.31 |
-| GBP | 0.94 | 0.17 | 0.11 | 0.22 |
+| GBP | 0.94 | 0.17 | 0.11 | 0.21 |
