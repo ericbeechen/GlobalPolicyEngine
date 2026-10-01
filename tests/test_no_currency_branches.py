@@ -44,6 +44,7 @@ BACKENDS = {
     "report/labour.py": "the UK labour-market report (`macro.report: labour`)",
     "report/conditioning.py": "the check against the Bank's MPR paths (`validation.conditioning`)",
     "report/onepager.py": "the week 4 one-pager, USD prose (`report.onepager: true`)",
+    "report/numbers.py": "the note's numbers sheet: it reads the named reports of the note's two currencies",
     "fixtures.py": None,   # not exempt: listed so a typo in this table is caught
 }
 SCRIPT_BACKENDS = {
