@@ -51,7 +51,13 @@ The test suite runs on committed fixtures and needs neither the network nor the 
 uv run pytest -q
 ```
 
-Rebuilding everything takes two commands. The first needs the archive (paid, gitignored -- see [Data](#data)) and a free FRED key in `.env`. A first build takes about thirteen minutes; after that it is incremental, and a second run adds nothing:
+Every report below, from the cache and in the order listed, is one command; `--update` pulls new data first, and `--from <script>` resumes at a step:
+
+```bash
+uv run all
+```
+
+Step by step, rebuilding everything takes two commands. The first needs the archive (paid, gitignored -- see [Data](#data)) and a free FRED key in `.env`. A first build takes about thirteen minutes; after that it is incremental, and a second run adds nothing:
 
 ```bash
 uv run --env-file .env python scripts/update_data.py
