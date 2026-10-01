@@ -516,3 +516,30 @@ def test_lag_effect_counts_the_unweighted_forms_failures_on_a_hand_example():
     assert e["rho"]["a"] == pytest.approx(-0.3) and e["rho_min"]["a"] == pytest.approx(-0.6)
     assert e["size_max"]["a"] == pytest.approx(np.sqrt(1 / 0.4)) and e["size"]["b"] == pytest.approx(
         np.mean([np.sqrt(1 / 1.1), 1.0, 1.0]))
+
+
+def test_the_covariance_scored_as_a_forecast_is_the_books_and_its_factors_multiply_to_the_book_as_run(worlds):
+    clean, poisoned = worlds
+    names = list(clean.inputs)
+    rk = report.risk_of(clean, names)
+    hb = report.run_book(clean, rk, report.headline(clean.book))
+    s = report.risk_model(clean, rk, hb)
+    assert s["candidates"][0] == "configured" and set(s["families"]) == set(report.FAMILIES)
+    assert s["ahead"] == max(clean.inputs[n].sleeve.lag for n in names) + 1
+    assert s["first"] >= clean.days[rk.first + s["ahead"]]
+    h = s["headline"]
+    assert h["noise"] * h["tails"] * h["dynamics"] * h["execution"] == pytest.approx(h["as_run"], rel=1e-12)
+    summ = report.summary(hb, clean.book["book"]["capital"])
+    assert h["as_run"] == pytest.approx(summ["active_vol_pct"] / summ["exante_pct"], rel=1e-12)
+    for v in s["families"].values():
+        assert v["candidates"]["configured"]["qlike"] == 0.0 and v["sessions"] > 0
+    # what the book is sized on up to D is what the forecast is scored on, poisoned or not
+    pk = report.risk_of(poisoned, names)
+    r = clean.book["risk"]
+    est = (r["ewma_lambda"], r["nonsynchronous_lag"], r["sigma_floor"])
+    a = report.scoring.candidates(clean.units[names], *est)
+    b = report.scoring.candidates(poisoned.units[names], *est)
+    read = np.r_[True, (clean.days <= CUT)[:-1]]
+    for c in a:
+        np.testing.assert_array_equal(a[c][read], b[c][read])
+    np.testing.assert_array_equal(pk.floored[True][1][read], b["configured"][read])

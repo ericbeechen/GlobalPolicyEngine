@@ -47,6 +47,13 @@ reads the equity before it, which depends only on the scale at earlier
 closes, so the scale path is causal and has one fixed point. It is found by
 rerunning the book on the state machine's scale until the scale stops moving
 (two rounds on the headline).
+
+**The covariance as a forecast** (`risk_model`, `strategy/scoring.py`): the
+configured covariance and its one-choice-off neighbours scored against the
+unit P&L they forecast, at the book's horizon, on four kinds of test
+portfolio, and the headline's realized over ex-ante vol factored into the
+estimate's noise, the shocks' tails, the vol dynamics the EWMA misses and the
+book's execution. A diagnostic: no book reads it.
 """
 
 from dataclasses import dataclass, replace
@@ -66,7 +73,7 @@ from policypath.report import costs as sleeves
 from policypath.report.coverage import table
 from policypath.report.expression import _and, _plain
 from policypath.report.figures import THEMES, _style
-from policypath.strategy import costs, expression, portfolio, positions, risk
+from policypath.strategy import costs, expression, portfolio, positions, risk, scoring
 
 RV_KINDS = ("curve", "cross")
 CAUSES = ("signal", "resize", "rescale", "roll", "restrike")     # entries and exits, resizing, rescaling, maintenance
@@ -526,6 +533,79 @@ def lag_effect(rk, first):
             "bartlett_not_pd": int((np.linalg.eigvalsh(c.s[first:][ok])[:, 0] <= 0).sum())}
 
 
+FAMILIES = {"sleeves": "each sleeve alone", "random": "random portfolios (5.1)", "headline": "the headline's targets",
+            "alpha": "realized alpha (5.3)"}
+
+
+def risk_model(st, rk, hb):
+    """The covariance of sleeves `rk` scored as a forecast, and realized over ex-ante vol factored
+    (`strategy/scoring.py`), with `hb` the headline book on them.
+
+    {ahead, first, sessions, candidates, families: {family: `scoring.score`}, sleeves: {name: per-sleeve b,
+    kurtosis and benchmarks}, headline: the factors of the book's realized over ex-ante}. Raises if the configured
+    candidate is not the matrix the book sized on.
+    """
+    book, r = st.book, st.book["risk"]
+    names = rk.names
+    x = st.units[names]
+    xv = x.to_numpy(dtype=float)
+    lam, lags, floor = r["ewma_lambda"], r["nonsynchronous_lag"], r["sigma_floor"]
+    mats = scoring.candidates(x, lam, lags, floor)
+    cfg = mats[scoring.CONFIGURED]
+    if not np.array_equal(cfg, rk.floored[True][1], equal_nan=True):
+        raise RuntimeError("the configured candidate is not the covariance the book sizes on")
+    ahead = max(st.inputs[n].sleeve.lag for n in names) + 1
+    mh = {c: scoring.at_horizon(m, ahead) for c, m in mats.items()}
+    credited = pd.DataFrame({n: portfolio.credits(st.inputs[n].sleeve.sessions, st.days) for n in names})
+    clean = (credited == 1).all(axis=1).to_numpy()
+    rows = scoring.sample(xv, mh, clean, rk.first + ahead)
+    t, n = xv.shape
+    sd = np.sqrt(np.diagonal(cfg, axis1=1, axis2=2))
+    held = scoring.at_horizon(hb.targets.q[names].to_numpy(dtype=float), ahead)
+    on = rows & hb.run.daily["kept"].to_numpy() & (held != 0).any(axis=1)
+    alone = scoring.sleeves_alone(t, n)
+    weights = {"sleeves": alone, "random": scoring.at_horizon(scoring.random_weights(sd), ahead),
+               "headline": held[:, None, :]}
+    scored = {"sleeves": rows, "random": rows, "headline": on}
+    families, kept = {}, {}
+    for f, w in weights.items():
+        rr, hh = scoring.fixed(xv, mh, w, scored[f])
+        families[f] = scoring.score(rr, hh, scoring.DM_LAGS)
+        kept[f] = rr, hh[scoring.CONFIGURED]
+    ra, ha, _ = scoring.realized_alpha(xv, mh, rows)
+    families["alpha"] = scoring.score(ra, ha, 0)
+    construction = headline(book).construction
+    legs = _legs(st, names)
+
+    def make(m):
+        sdm = np.sqrt(np.diagonal(m, axis1=1, axis2=2))
+        tg = portfolio.targets(construction, st.g[names], st.z[names], sdm, m, legs, SESSIONS_PER_YEAR, 1.0, None,
+                               rk.first, book["portfolio"]["z_cap"])
+        return {"sleeves": alone, "headline": tg.q.to_numpy()[:, None, :]}
+
+    pool = scoring.sample(xv, {scoring.CONFIGURED: cfg}, clean, rk.first)
+    bench = scoring.benchmark(x, cfg, pool, {"sleeves": rows, "headline": on}, make, lam, lags, floor, ahead)
+    rs, hs_ = kept["sleeves"]
+    b_obs = np.sqrt((rs / hs_).mean(axis=0))
+    kurt = scoring.kurtosis(rs, hs_)
+    per = {nm: {"b": float(b_obs[i]), "kurtosis": float(kurt[i]), "gaussian": float(bench["gaussian"]["sleeves"][i]),
+                "bootstrap": float(bench["bootstrap"]["sleeves"][i])} for i, nm in enumerate(names)}
+    for v in per.values():
+        v |= {"noise": v["gaussian"], "tails": v["bootstrap"] / v["gaussian"], "dynamics": v["b"] / v["bootstrap"]}
+    rh, hh_ = kept["headline"]
+    s = summary(hb, book["book"]["capital"])
+    run = s["active_vol_pct"] / s["exante_pct"]
+    b_h = scoring.bias(rh, hh_)
+    g, bs = float(bench["gaussian"]["headline"][0]), float(bench["bootstrap"]["headline"][0])
+    head = {"b": b_h, "kurtosis": float(scoring.kurtosis(rh, hh_)[0]), "gaussian": g, "bootstrap": bs,
+            "noise": g, "tails": bs / g, "dynamics": b_h / bs, "as_run": run, "execution": run / b_h,
+            "sessions": int(on.sum())}
+    return {"ahead": ahead, "first": st.days[np.flatnonzero(rows)[0]], "sessions": int(rows.sum()),
+            "candidates": list(mats), "draws": scoring.DRAWS, "reps": scoring.REPS, "alpha_block": scoring.ALPHA_BLOCK,
+            "lambdas": [lam, *[a for a in scoring.LAMBDAS if a != lam]], "families": families, "sleeves": per,
+            "headline": head}
+
+
 # ---- the build ---------------------------------------------------------------------
 
 def headline(book):
@@ -548,7 +628,7 @@ class Build:
     (no correlations), and the RV-only headline; `summaries` their `summary`;
     `uncapped` the `summary` of `free`, the headline with the gross DV01 cap
     off; `week8` the week 8 equal-risk sums' `stats` ({sizing: stats}); `rv`
-    the RV sleeves.
+    the RV sleeves; `scores` the covariance scored as a forecast (`risk_model`).
     """
     setup: Setup
     risks: dict
@@ -558,6 +638,7 @@ class Build:
     week8: dict
     rv: tuple
     free: Book | None = None
+    scores: dict | None = None
 
 
 DIAGONAL = Choice("mean_variance", correlations=False)      # |z|-weighted inverse-vol: mean-variance's |z| channel
@@ -600,6 +681,7 @@ def build(world=None):
     week8["vol_scaled"]["vol_pct"] = sleeves._realized(
         sleeves.run_all(st.inputs, sleeves.chosen(book), book, st.days)[sleeves.SUM], capital)
     b = Build(st, risks, books, {ch: summary(x, capital) for ch, x in books.items()}, uncapped, week8, rv, free_book)
+    b.scores = risk_model(st, risks[None], books[headline(book)])
     check(b)
     return b
 
@@ -806,9 +888,77 @@ def _vol_words(b):
     if above:
         out += (f" The gap is consistent with the EWMA lagging a rise in vol (its weights' mean age is "
                 f"{1 / (1 - lam):.0f} sessions), with the noise of a {b.risks[None].cov.n_eff[-1]:.0f}-session "
-                "effective sample, which alone pushes realized above ex-ante, and with fat tails; the report does not "
-                "separate them.")
+                "effective sample, which alone pushes realized above ex-ante, and with fat tails"
+                + (f". {_gap_words(b)}" if b.scores else "; the report does not separate them."))
     return out + f" Ex-ante is under the {book['book']['vol_target']:.0%} target where the cap binds: {_cap_years(vy)}."
+
+
+def _gap_words(b):
+    """Realized over ex-ante factored (`risk_model`), and whether a faster EWMA closes the vol dynamics' part."""
+    s = b.scores
+    h = s["headline"]
+    fast = min(s["lambdas"])
+    key = f"lambda {fast:g}"
+    out = (f"Scored as a forecast (below), they separate: on the headline's targets as decided, realized over "
+           f"ex-ante is {h['b']:.3f}, of which {h['noise']:.3f} is the noise of the estimate alone (the same estimate "
+           f"on iid Gaussian P&L), x {h['tails']:.3f} the shocks' own tails and co-movement (on their resampled rows) "
+           f"and x {h['dynamics']:.3f} the vol moves the EWMA does not track; the band, the cap, the calendar and the "
+           f"costs take it to the book's {h['as_run']:.3f} (x {h['execution']:.3f}).")
+    if key in s["families"]["headline"]["candidates"] and h["dynamics"] > 1:
+        bf = s["families"]["headline"]["candidates"][key]["b"]
+        out += (f" A faster EWMA does not close the last part: at lambda {fast:g} it is {bf:.3f}, the noise of a "
+                "shorter sample outweighing the vol it catches." if bf >= h["b"] else
+                f" A faster EWMA narrows it: at lambda {fast:g} it is {bf:.3f}.")
+    return out
+
+
+DAILY = ("sleeves", "random", "headline")       # the families scored by session; "alpha" is by block
+
+
+def _cand(c):
+    return "the configured covariance" if c == scoring.CONFIGURED else c
+
+
+def _moved(s, families, sign):
+    """[(candidate, family, numbers)] whose QLIKE differs from the configured one's by two DM t on the side `sign`."""
+    out = []
+    for f in families:
+        for c, v in s["families"][f]["candidates"].items():
+            if c != scoring.CONFIGURED and np.sign(v["qlike"]) == sign and abs(v["qlike_t"]) >= 2:
+                out.append((c, f, v))
+    return out
+
+
+def _forecast_words(b):
+    """The forecast bullet: which candidates QLIKE separates from the configured covariance, by two DM t."""
+    s = b.scores
+    r = b.setup.book["risk"]
+    better, worse = _moved(s, DAILY, -1), _moved(s, DAILY, 1)
+    title = ("Scored as a forecast of the P&L it sizes, no alternative beats the configured covariance"
+             if not better else f"Scored as a forecast of the P&L it sizes, {_and(dict.fromkeys(c for c, *_ in better))} "
+             "beat the configured covariance")
+    one = lambda c, f, v: f"{c} on {FAMILIES[f]} ({v['qlike']:+.4f}, t {v['qlike_t']:+.1f})"
+    out = (f"- **{title}.** QLIKE at the book's horizon ({s['ahead']} sessions), over {s['sessions']:,} sessions from "
+           f"{s['first']:%b %Y}, against the configured covariance (lambda {r['ewma_lambda']:g}, the lag term, shrunk, "
+           f"floored), with its Diebold-Mariano t: "
+           + (f"better by two t, {_and(one(*x) for x in better)}; " if better else "")
+           + (f"worse by two t, {_and(one(*x) for x in worse)}; " if worse else "")
+           + f"every other difference on {_and(FAMILIES[f] for f in DAILY)} is within two t.")
+    a = s["families"]["alpha"]
+    cfg = a["candidates"][scoring.CONFIGURED]
+    ab, aw = _moved(s, ["alpha"], -1), _moved(s, ["alpha"], 1)
+    out += (f" Along realized-alpha directions (Procedure 5.3, {a['sessions']} blocks: the precision matrix "
+            f"mean-variance reads), realized over ex-ante is {cfg['b']:.2f}"
+            + (": Sigma^-1 leans on directions whose risk it understates" if cfg["b"] > 1.1 else "")
+            + (f"; {_and(f'{c} ({v['qlike']:+.3f}, t {v['qlike_t']:+.1f}, realized over ex-ante {v['b']:.2f})' for c, _, v in ab)} "
+               "score better there" if ab else "")
+            + (f", {_and(f'{c} ({v['qlike']:+.3f}, t {v['qlike_t']:+.1f}, {v['b']:.2f})' for c, _, v in aw)} worse" if aw
+               else "") + ".")
+    hurt = list(dict.fromkeys(FAMILIES[f] for c, f, _ in [*worse, *aw] if c == "unshrunk"))
+    if hurt:
+        out += (f" Without the shrinkage the covariance scores worse on {_and(hurt)}, which read the correlations; "
+                "each sleeve alone cannot see it.")
+    return out
 
 
 def answer(b):
@@ -852,7 +1002,7 @@ def answer(b):
         f"on {pct(hs['capped'])} of the sessions with a position; without it the headline nets "
         f"{sr(un['net_sr'], un['net_se'])}, {gap(difference(b.free, hb))} against the capped book, with a worst "
         f"drawdown of {un['max_dd_pct']:.1f}%.")
-    lines += [_halves_words(b), _vol_words(b)]
+    lines += [_halves_words(b), _vol_words(b)] + ([_forecast_words(b)] if b.scores else [])
     return [_head(b), "", *lines]
 
 
@@ -1189,6 +1339,80 @@ def _lag_words(b, e):
             "long-run variance for every sleeve, not a timing correction only.")
 
 
+def _t(x):
+    return "" if pd.isna(x) else f"{x:+.1f}"
+
+
+def _forecast_table(b):
+    rows = []
+    for f, x in b.scores["families"].items():
+        for c, v in x["candidates"].items():
+            rows.append({"test portfolios": FAMILIES[f], "covariance": c, "realized over ex-ante": f"{v['b']:.3f}",
+                         "QLIKE less configured": f"{v['qlike']:+.4f}", "QLIKE: DM t": _t(v["qlike_t"]),
+                         "MSE over configured": f"{v['mse_ratio']:.3f}", "MSE: DM t": _t(v["mse_t"])})
+    return pd.DataFrame(rows)
+
+
+def _gap_table(b):
+    s = b.scores
+    h = s["headline"]
+    row = lambda name, v: {"P&L": name, "realized over ex-ante": f"{v['b']:.3f}", "kurtosis": f"{v['kurtosis']:.1f}",
+                           "noise (Gaussian)": f"{v['noise']:.3f}", "x tails (bootstrap / Gaussian)": f"{v['tails']:.3f}",
+                           "x vol dynamics": f"{v['dynamics']:.3f}",
+                           "x band, cap, calendar, costs": f"{v['execution']:.3f}" if "execution" in v else "",
+                           "the book as run": f"{v['as_run']:.3f}" if "as_run" in v else ""}
+    return pd.DataFrame([row(n, v) for n, v in s["sleeves"].items()]
+                        + [row(f"the headline's targets ({_name(headline(b.setup.book))})", h)])
+
+
+def _forecast_section(b):
+    """The covariance as a forecast: what is scored, the table, and what realized over ex-ante is made of."""
+    s = b.scores
+    r = b.setup.book["risk"]
+    alts = [c for c in s["candidates"] if c != scoring.CONFIGURED]
+    return [
+        "## The covariance as a forecast",
+        "",
+        "Paleologo's evaluation of a risk model (*The Elements of Quantitative Investing*, 2024, ch. 5), "
+        "`strategy/scoring.py`: it changes nothing the book does. The configured covariance (lambda "
+        f"{r['ewma_lambda']:g}, the lag term, shrunk, floored: the one the book sizes on) is scored beside "
+        f"{_and(alts)}, each one choice moved off it. Every forecast is scored at the book's horizon: the matrix a "
+        f"close sizes on against the unit P&L of the session its position is held into, {s['ahead']} sessions later, "
+        f"over the {s['sessions']:,} sessions from {s['first']:%b %Y} on which every sleeve is credited exactly one "
+        "session of its own (no stale or catch-up sessions). The test portfolios: each sleeve alone; "
+        f"{s['draws']} random portfolios a session in the book's risk units (Procedure 5.1, u / sd, u ~ N(0, I), a "
+        "fixed seed); the headline's targets as decided (before the band and the execution); and realized alpha "
+        f"(Procedure 5.3): over {s['families']['alpha']['sessions']} non-overlapping {s['alpha_block']}-session "
+        "blocks, Sigma^-1 times the block's mean unit P&L, against the block's sample covariance. That tests the "
+        "precision matrix mean-variance reads; for Gaussian P&L a block's sample mean and covariance are "
+        "independent, so a correct Sigma scores 1, and it reads the future by design.",
+        "",
+        "Realized over ex-ante is sqrt(mean(r / h)), r the portfolio's squared P&L and h its forecast: what a book "
+        "holding it at the forecast's risk would see. QLIKE, r/h - log(r/h) - 1, and MSE, (r - h)^2, are the losses "
+        "Patton (2011) shows rank forecasts correctly through a noisy realized variance; each candidate's mean less "
+        "the configured one's (negative is better; MSE as a ratio) carries its Diebold-Mariano t, Newey-West with "
+        f"Bartlett weights to {scoring.DM_LAGS} sessions (none for the blocks, which do not overlap). Each sleeve "
+        "alone cannot tell shrinkage apart: it moves only the correlations.",
+        "",
+        table(_forecast_table(b)),
+        "",
+        "### What realized over ex-ante is made of",
+        "",
+        "A book sized on an estimate runs above its ex-ante vol even where the estimate is right on average: it puts "
+        "on more where the estimate is low, and fat tails make the estimate noisier. So the same estimate and the "
+        f"same portfolios are run on P&L with no vol dynamics, {s['reps']} draws of each: iid Gaussian (the noise "
+        "alone), and iid rows of the sleeves' own shocks, whitened by the configured 1-step covariance and rescaled "
+        "to an identity (their tails and co-movement, not their clustering). Realized over ex-ante then factors as "
+        "noise x tails x the vol dynamics the EWMA does not track and, for the book, x the band, the cap, the "
+        "calendar and the costs: the book as run is its realized over its ex-ante vol on the sessions with a "
+        "position, as in the answer. Kurtosis is of the P&L standardised by its forecast (3 if Gaussian). The "
+        "benchmark is ex post: it pools the whole sample's shocks.",
+        "",
+        table(_gap_table(b)),
+        "",
+    ]
+
+
 # ---- the report --------------------------------------------------------------------
 
 def markdown(b):
@@ -1308,6 +1532,7 @@ def markdown(b):
         "",
         table(lag_rows),
         "",
+        *(_forecast_section(b) if b.scores else []),
         "## The drawdown control",
         "",
         table(_overlay_table(b)),
@@ -1360,6 +1585,8 @@ def markdown(b):
         "add up (mean-variance's two channels sum to its difference from inverse-vol).",
         "- The drawdown control's scale is the fixed point of its state machine on the book's own equity "
         f"({b.summaries[Choice(h.construction, overlay=True)]['rounds']} rounds for the headline).",
+        *(["- The configured covariance the forecast section scores is the matrix the book sizes on, bit for bit."]
+          if b.scores else []),
         "",
     ]
     return "\n".join(lines)
@@ -1467,6 +1694,7 @@ def results(b):
         "share_of_exante_variance": hb.targets.share[hb.targets.exante > 0].mean().to_dict(),
         "outright_share_of_exante_variance": _outright_share(b),
         "stale": stale(hb).to_dict("index"),
+        **({"risk_model": b.scores} if b.scores else {}),
     })
 
 
