@@ -75,65 +75,65 @@
   },
   "GBP outright": {
    "signals": {
-    "sessions": 1662,
-    "bleeding": 0.589651,
-    "no_pay": 0.158845,
+    "sessions": 1665,
+    "bleeding": 0.588589,
+    "no_pay": 0.158559,
     "shares": {
-     "earns": 0.410349,
-     "bleeds_pays": 0.430806,
-     "no_pay": 0.158845
+     "earns": 0.411411,
+     "bleeds_pays": 0.43003,
+     "no_pay": 0.158559
     },
-    "right": 0.632972,
+    "right": 0.631832,
     "right_sessions": 1052,
     "right_but_lost": 0.206274,
     "right_but_lost_sessions": 217,
     "right_but_lost_rate_bp": 7.97759,
     "right_but_lost_carry_roll_bp": -19.3013,
-    "expected_bp": 5.49236,
-    "next_bp": 13.9028,
+    "expected_bp": 5.51525,
+    "next_bp": 13.8299,
     "next_bleeding_bp": 20.0223,
-    "next_rest_bp": 5.1092,
+    "next_rest_bp": 4.97058,
     "next_no_pay_bp": 37.212,
-    "next_pays_bp": 9.50102,
+    "next_pays_bp": 9.42383,
     "next_by_group_bp": {
-     "earns": 5.1092,
+     "earns": 4.97058,
      "bleeds_pays": 13.6843,
      "no_pay": 37.212
     },
     "count_by_group": {
-     "earns": 682,
+     "earns": 685,
      "bleeds_pays": 716,
      "no_pay": 264
     }
    },
    "all": {
-    "sessions": 3435,
-    "bleeding": 0.525764,
-    "no_pay": 0.255604,
+    "sessions": 3438,
+    "bleeding": 0.525305,
+    "no_pay": 0.255381,
     "shares": {
-     "earns": 0.474236,
-     "bleeds_pays": 0.27016,
-     "no_pay": 0.255604
+     "earns": 0.474695,
+     "bleeds_pays": 0.269924,
+     "no_pay": 0.255381
     },
-    "right": 0.582824,
+    "right": 0.582315,
     "right_sessions": 2002,
     "right_but_lost": 0.204795,
     "right_but_lost_sessions": 410,
     "right_but_lost_rate_bp": 8.08586,
     "right_but_lost_carry_roll_bp": -17.2092,
-    "expected_bp": 3.85221,
-    "next_bp": 7.43521,
+    "expected_bp": 3.86472,
+    "next_bp": 7.40556,
     "next_bleeding_bp": 8.43672,
-    "next_rest_bp": 6.32487,
+    "next_rest_bp": 6.26445,
     "next_no_pay_bp": 5.11529,
-    "next_pays_bp": 8.2318,
+    "next_pays_bp": 8.19105,
     "next_by_group_bp": {
-     "earns": 6.32487,
+     "earns": 6.26445,
      "bleeds_pays": 11.5792,
      "no_pay": 5.11529
     },
     "count_by_group": {
-     "earns": 1629,
+     "earns": 1632,
      "bleeds_pays": 928,
      "no_pay": 878
     }
@@ -239,34 +239,34 @@
     }
    },
    "all": {
-    "sessions": 3185,
-    "bleeding": 0.594349,
-    "no_pay": 0.0684458,
+    "sessions": 3188,
+    "bleeding": 0.59473,
+    "no_pay": 0.0683814,
     "shares": {
-     "earns": 0.405651,
-     "bleeds_pays": 0.525903,
-     "no_pay": 0.0684458
+     "earns": 0.40527,
+     "bleeds_pays": 0.526349,
+     "no_pay": 0.0683814
     },
-    "right": 0.463108,
+    "right": 0.462673,
     "right_sessions": 1475,
     "right_but_lost": 0.132881,
     "right_but_lost_sessions": 196,
     "right_but_lost_rate_bp": 4.31238,
     "right_but_lost_carry_roll_bp": -9.43367,
-    "expected_bp": 10.354,
-    "next_bp": -4.48385,
-    "next_bleeding_bp": -5.24176,
+    "expected_bp": 10.3525,
+    "next_bp": -4.48058,
+    "next_bleeding_bp": -5.23507,
     "next_rest_bp": -3.37338,
     "next_no_pay_bp": 2.74226,
-    "next_pays_bp": -5.01479,
+    "next_pays_bp": -5.01074,
     "next_by_group_bp": {
      "earns": -3.37338,
-     "bleeds_pays": -6.28087,
+     "bleeds_pays": -6.27145,
      "no_pay": 2.74226
     },
     "count_by_group": {
      "earns": 1292,
-     "bleeds_pays": 1675,
+     "bleeds_pays": 1678,
      "no_pay": 218
     }
    }
@@ -305,101 +305,101 @@
     }
    },
    "all": {
-    "sessions": 3222,
-    "bleeding": 0.394475,
-    "no_pay": 0.22905,
+    "sessions": 3225,
+    "bleeding": 0.395039,
+    "no_pay": 0.229147,
     "shares": {
-     "earns": 0.605525,
-     "bleeds_pays": 0.165425,
-     "no_pay": 0.22905
+     "earns": 0.604961,
+     "bleeds_pays": 0.165891,
+     "no_pay": 0.229147
     },
-    "right": 0.497517,
-    "right_sessions": 1603,
-    "right_but_lost": 0.0998129,
+    "right": 0.497984,
+    "right_sessions": 1606,
+    "right_but_lost": 0.0996264,
     "right_but_lost_sessions": 160,
     "right_but_lost_rate_bp": 4.64099,
     "right_but_lost_carry_roll_bp": -10.1226,
-    "expected_bp": 8.73,
-    "next_bp": 2.48992,
-    "next_bleeding_bp": -0.0313676,
+    "expected_bp": 8.72245,
+    "next_bp": 2.4948,
+    "next_bleeding_bp": -0.0130622,
     "next_rest_bp": 4.13244,
-    "next_no_pay_bp": -0.741754,
-    "next_pays_bp": 3.45005,
+    "next_no_pay_bp": -0.733885,
+    "next_pays_bp": 3.45458,
     "next_by_group_bp": {
      "earns": 4.13244,
-     "bleeds_pays": 0.952245,
-     "no_pay": -0.741754
+     "bleeds_pays": 0.982616,
+     "no_pay": -0.733885
     },
     "count_by_group": {
      "earns": 1951,
-     "bleeds_pays": 533,
-     "no_pay": 738
+     "bleeds_pays": 535,
+     "no_pay": 739
     }
    }
   },
   "pooled": {
    "signals": {
-    "sessions": 7411,
-    "bleeding": 0.52557,
-    "no_pay": 0.174875,
+    "sessions": 7414,
+    "bleeding": 0.525357,
+    "no_pay": 0.174804,
     "shares": {
-     "earns": 0.47443,
-     "bleeds_pays": 0.350695,
-     "no_pay": 0.174875
+     "earns": 0.474643,
+     "bleeds_pays": 0.350553,
+     "no_pay": 0.174804
     },
-    "right": 0.531372,
+    "right": 0.531157,
     "right_sessions": 3938,
     "right_but_lost": 0.186389,
     "right_but_lost_sessions": 734,
     "right_but_lost_rate_bp": 6.11926,
     "right_but_lost_carry_roll_bp": -13.5779,
-    "expected_bp": 10.5271,
-    "next_bp": 4.53019,
+    "expected_bp": 10.5302,
+    "next_bp": 4.51762,
     "next_bleeding_bp": 7.41079,
-    "next_rest_bp": 1.33909,
+    "next_rest_bp": 1.31532,
     "next_no_pay_bp": 11.5891,
-    "next_pays_bp": 3.03414,
+    "next_pays_bp": 3.01964,
     "next_by_group_bp": {
-     "earns": 1.33909,
+     "earns": 1.31532,
      "bleeds_pays": 5.32725,
      "no_pay": 11.5891
     },
     "count_by_group": {
-     "earns": 3516,
+     "earns": 3519,
      "bleeds_pays": 2599,
      "no_pay": 1296
     }
    },
    "all": {
-    "sessions": 16192,
-    "bleeding": 0.529706,
-    "no_pay": 0.244998,
+    "sessions": 16201,
+    "bleeding": 0.529782,
+    "no_pay": 0.244923,
     "shares": {
-     "earns": 0.470294,
-     "bleeds_pays": 0.284708,
-     "no_pay": 0.244998
+     "earns": 0.470218,
+     "bleeds_pays": 0.284859,
+     "no_pay": 0.244923
     },
-    "right": 0.518836,
-    "right_sessions": 8401,
-    "right_but_lost": 0.182478,
+    "right": 0.518733,
+    "right_sessions": 8404,
+    "right_but_lost": 0.182413,
     "right_but_lost_sessions": 1533,
     "right_but_lost_rate_bp": 6.22954,
     "right_but_lost_carry_roll_bp": -13.8301,
-    "expected_bp": 6.69537,
-    "next_bp": 1.22196,
-    "next_bleeding_bp": 2.41636,
-    "next_rest_bp": -0.123316,
-    "next_no_pay_bp": 2.13902,
-    "next_pays_bp": 0.924379,
+    "expected_bp": 6.69675,
+    "next_bp": 1.21762,
+    "next_bleeding_bp": 2.41702,
+    "next_rest_bp": -0.13372,
+    "next_no_pay_bp": 2.13976,
+    "next_pays_bp": 0.918501,
     "next_by_group_bp": {
-     "earns": -0.123316,
-     "bleeds_pays": 2.65501,
-     "no_pay": 2.13902
+     "earns": -0.13372,
+     "bleeds_pays": 2.65541,
+     "no_pay": 2.13976
     },
     "count_by_group": {
-     "earns": 7615,
-     "bleeds_pays": 4610,
-     "no_pay": 3967
+     "earns": 7618,
+     "bleeds_pays": 4615,
+     "no_pay": 3968
     }
    }
   }
@@ -411,33 +411,33 @@
     "2022-12-31"
    ],
    "signals": {
-    "sessions": 6301,
-    "bleeding": 0.478654,
-    "no_pay": 0.160451,
+    "sessions": 6304,
+    "bleeding": 0.478426,
+    "no_pay": 0.160374,
     "shares": {
-     "earns": 0.521346,
-     "bleeds_pays": 0.318203,
-     "no_pay": 0.160451
+     "earns": 0.521574,
+     "bleeds_pays": 0.318052,
+     "no_pay": 0.160374
     },
-    "right": 0.491192,
+    "right": 0.490958,
     "right_sessions": 3095,
     "right_but_lost": 0.200646,
     "right_but_lost_sessions": 621,
     "right_but_lost_rate_bp": 5.09389,
     "right_but_lost_carry_roll_bp": -12.0994,
-    "expected_bp": 9.7596,
-    "next_bp": 1.11746,
+    "expected_bp": 9.76362,
+    "next_bp": 1.1043,
     "next_bleeding_bp": 0.836689,
-    "next_rest_bp": 1.37525,
+    "next_rest_bp": 1.34978,
     "next_no_pay_bp": -0.744014,
-    "next_pays_bp": 1.47322,
+    "next_pays_bp": 1.45734,
     "next_by_group_bp": {
-     "earns": 1.37525,
+     "earns": 1.34978,
      "bleeds_pays": 1.63374,
      "no_pay": -0.744014
     },
     "count_by_group": {
-     "earns": 3285,
+     "earns": 3288,
      "bleeds_pays": 2005,
      "no_pay": 1011
     }
@@ -476,33 +476,33 @@
      }
     },
     "GBP outright": {
-     "sessions": 1403,
-     "bleeding": 0.526728,
-     "no_pay": 0.0926586,
+     "sessions": 1406,
+     "bleeding": 0.525605,
+     "no_pay": 0.0924609,
      "shares": {
-      "earns": 0.473272,
-      "bleeds_pays": 0.43407,
-      "no_pay": 0.0926586
+      "earns": 0.474395,
+      "bleeds_pays": 0.433144,
+      "no_pay": 0.0924609
      },
-     "right": 0.588738,
+     "right": 0.587482,
      "right_sessions": 826,
      "right_but_lost": 0.239709,
      "right_but_lost_sessions": 198,
      "right_but_lost_rate_bp": 6.2406,
      "right_but_lost_carry_roll_bp": -17.563,
-     "expected_bp": 8.57214,
-     "next_bp": 6.49728,
+     "expected_bp": 8.59267,
+     "next_bp": 6.42678,
      "next_bleeding_bp": 8.09678,
-     "next_rest_bp": 4.7171,
+     "next_rest_bp": 4.5765,
      "next_no_pay_bp": 12.85,
-     "next_pays_bp": 5.84853,
+     "next_pays_bp": 5.77238,
      "next_by_group_bp": {
-      "earns": 4.7171,
+      "earns": 4.5765,
       "bleeds_pays": 7.08215,
       "no_pay": 12.85
      },
      "count_by_group": {
-      "earns": 664,
+      "earns": 667,
       "bleeds_pays": 609,
       "no_pay": 130
      }
@@ -611,33 +611,33 @@
     "2023-08-31"
    ],
    "signals": {
-    "sessions": 5940,
-    "bleeding": 0.474074,
-    "no_pay": 0.16431,
+    "sessions": 5943,
+    "bleeding": 0.473835,
+    "no_pay": 0.164227,
     "shares": {
-     "earns": 0.525926,
-     "bleeds_pays": 0.309764,
-     "no_pay": 0.16431
+     "earns": 0.526165,
+     "bleeds_pays": 0.309608,
+     "no_pay": 0.164227
     },
-    "right": 0.473064,
+    "right": 0.472825,
     "right_sessions": 2810,
     "right_but_lost": 0.220641,
     "right_but_lost_sessions": 620,
     "right_but_lost_rate_bp": 5.09803,
     "right_but_lost_carry_roll_bp": -12.1136,
-    "expected_bp": 9.14713,
-    "next_bp": -1.8101,
+    "expected_bp": 9.1517,
+    "next_bp": -1.82259,
     "next_bleeding_bp": -2.79988,
-    "next_rest_bp": -0.917907,
+    "next_rest_bp": -0.94249,
     "next_no_pay_bp": -3.50985,
-    "next_pays_bp": -1.4759,
+    "next_pays_bp": -1.49104,
     "next_by_group_bp": {
-     "earns": -0.917907,
+     "earns": -0.94249,
      "bleeds_pays": -2.42329,
      "no_pay": -3.50985
     },
     "count_by_group": {
-     "earns": 3124,
+     "earns": 3127,
      "bleeds_pays": 1840,
      "no_pay": 976
     }
@@ -676,33 +676,33 @@
      }
     },
     "GBP outright": {
-     "sessions": 1274,
-     "bleeding": 0.496075,
-     "no_pay": 0.0745683,
+     "sessions": 1277,
+     "bleeding": 0.49491,
+     "no_pay": 0.0743931,
      "shares": {
-      "earns": 0.503925,
-      "bleeds_pays": 0.421507,
-      "no_pay": 0.0745683
+      "earns": 0.50509,
+      "bleeds_pays": 0.420517,
+      "no_pay": 0.0743931
      },
-     "right": 0.55573,
+     "right": 0.554424,
      "right_sessions": 708,
      "right_but_lost": 0.279661,
      "right_but_lost_sessions": 198,
      "right_but_lost_rate_bp": 6.2406,
      "right_but_lost_carry_roll_bp": -17.563,
-     "expected_bp": 8.50225,
-     "next_bp": 0.44816,
+     "expected_bp": 8.52503,
+     "next_bp": 0.384753,
      "next_bleeding_bp": -3.08475,
-     "next_rest_bp": 3.92604,
+     "next_rest_bp": 3.78433,
      "next_no_pay_bp": -10.5571,
-     "next_pays_bp": 1.33493,
+     "next_pays_bp": 1.26417,
      "next_by_group_bp": {
-      "earns": 3.92604,
+      "earns": 3.78433,
       "bleeds_pays": -1.76282,
       "no_pay": -10.5571
      },
      "count_by_group": {
-      "earns": 642,
+      "earns": 645,
       "bleeds_pays": 537,
       "no_pay": 95
      }
@@ -813,9 +813,9 @@
    "rule": 0.188155
   },
   "GBP outright": {
-   "phi": 0.128662,
-   "market": 0.450555,
-   "rule": -0.321893
+   "phi": 0.127904,
+   "market": 0.449344,
+   "rule": -0.32144
   }
  },
  "carry_filter": {
@@ -883,12 +883,12 @@
    {
     "sleeve": "GBP outright",
     "leg": "GBP outright",
-    "sessions": 4062,
+    "sessions": 4065,
     "identity_max_bp": 7.10543e-15,
     "full_residual_max_bp": 0.252429,
     "bound_at_max_bp": 0.253836,
     "stale": 0,
-    "fx_stale": 132
+    "fx_stale": 135
    },
    {
     "sleeve": "USD 2s10s",
@@ -913,41 +913,41 @@
    {
     "sleeve": "GBP 2s10s",
     "leg": "GBP 2y",
-    "sessions": 4062,
+    "sessions": 4065,
     "identity_max_bp": 7.10543e-15,
     "full_residual_max_bp": 0.410908,
     "bound_at_max_bp": 0.414326,
     "stale": 0,
-    "fx_stale": 132
+    "fx_stale": 135
    },
    {
     "sleeve": "GBP 2s10s",
     "leg": "GBP 10y",
-    "sessions": 4062,
+    "sessions": 4065,
     "identity_max_bp": 7.10543e-15,
     "full_residual_max_bp": 0.691171,
     "bound_at_max_bp": 0.733525,
     "stale": 0,
-    "fx_stale": 132
+    "fx_stale": 135
    },
    {
     "sleeve": "GBP - USD 2y",
     "leg": "GBP 2y",
-    "sessions": 3844,
+    "sessions": 3847,
     "identity_max_bp": 7.10543e-15,
     "full_residual_max_bp": 0.410908,
     "bound_at_max_bp": 0.414326,
     "stale": 0,
-    "fx_stale": 40
+    "fx_stale": 43
    },
    {
     "sleeve": "GBP - USD 2y",
     "leg": "USD 2y",
-    "sessions": 3844,
+    "sessions": 3847,
     "identity_max_bp": 3.55271e-15,
     "full_residual_max_bp": 0.27021,
     "bound_at_max_bp": 0.272026,
-    "stale": 31,
+    "stale": 32,
     "fx_stale": 0
    }
   ],
@@ -955,17 +955,17 @@
    {
     "sleeve": "GBP outright",
     "backtest": "GBP",
-    "sessions": 3813,
+    "sessions": 3816,
     "max_bp": 7.10543e-15
    }
   ]
  },
  "convexity_bp_per_year": {
   "USD outright": 2.7478e-15,
-  "GBP outright": 0.111945,
+  "GBP outright": 0.111906,
   "USD 2s10s": -2.59106,
-  "GBP 2s10s": -2.66655,
-  "GBP - USD 2y": -0.00555786
+  "GBP 2s10s": -2.66555,
+  "GBP - USD 2y": -0.00699014
  },
  "contracts": [
   {
@@ -1000,10 +1000,10 @@
    "curve_outright_unit": 0.309125
   },
   "GBP": {
-   "level_raw_slope_z": 0.935897,
-   "level_orthogonal_slope_z": 0.171907,
-   "curve_outright_pnl": 0.107527,
-   "curve_outright_unit": 0.214781
+   "level_raw_slope_z": 0.935966,
+   "level_orthogonal_slope_z": 0.171728,
+   "curve_outright_pnl": 0.107464,
+   "curve_outright_unit": 0.215195
   }
  },
  "episodes": 127,
@@ -1020,14 +1020,14 @@
    "verdict": "earns carry and roll"
   },
   "GBP outright": {
-   "session": "2026-09-25",
-   "z": 1.83194,
+   "session": "2026-09-30",
+   "z": 1.92526,
    "side": "receive",
    "instrument": "OIS forward 18 Mar-29 Apr 2027",
-   "gap_bp": 135.98,
-   "edge_bp": 83.376,
-   "cr_h_bp": 32.1668,
-   "expected_bp": 38.7555,
+   "gap_bp": 141.723,
+   "edge_bp": 88.3549,
+   "cr_h_bp": 35.1113,
+   "expected_bp": 41.9214,
    "verdict": "earns carry and roll"
   },
   "USD 2s10s": {
@@ -1042,25 +1042,25 @@
    "verdict": "earns carry and roll"
   },
   "GBP 2s10s": {
-   "session": "2026-09-25",
-   "z": 0.0277035,
+   "session": "2026-09-30",
+   "z": 0.0923062,
    "side": "receive",
    "instrument": "2y vs 10y gilt",
-   "gap_bp": 11.8793,
-   "edge_bp": 0.427853,
-   "cr_h_bp": 9.99521,
-   "expected_bp": 3.1968,
+   "gap_bp": 12.8751,
+   "edge_bp": 1.42559,
+   "cr_h_bp": 10.2861,
+   "expected_bp": 3.99007,
    "verdict": "earns carry and roll"
   },
   "GBP - USD 2y": {
-   "session": "2026-09-25",
-   "z": 0.86113,
+   "session": "2026-09-30",
+   "z": 0.629509,
    "side": "receive",
    "instrument": "2y gilt vs 2y Treasury",
-   "gap_bp": 127.005,
-   "edge_bp": 30.4552,
-   "cr_h_bp": -2.16838,
-   "expected_bp": 3.52639,
+   "gap_bp": 118.726,
+   "edge_bp": 22.2285,
+   "cr_h_bp": -2.78374,
+   "expected_bp": 1.58067,
    "verdict": "bleeds, pays"
   }
  }

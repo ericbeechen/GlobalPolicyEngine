@@ -29,6 +29,7 @@ from policypath.sources.base import VINTAGE_COLUMNS, require_published
 
 CACHE_DIR = Path(__file__).resolve().parents[3] / "data" / "cache"
 MANIFEST = "manifest.json"
+UPDATES = "updates.json"      # {currency: when its last full update finished}
 DAY = pd.Timedelta(days=1)
 
 
@@ -89,6 +90,28 @@ def fetched(source, series, currency, root=CACHE_DIR):
 def last_covered(source, series, currency, root=CACHE_DIR):
     ranges = fetched(source, series, currency, root)
     return ranges[-1][1] if ranges else None
+
+
+def mark_updated(currency, root=CACHE_DIR):
+    """Record that a full update of `currency`'s sources has just finished (`update_data.py` calls it)."""
+    path = root / UPDATES
+    stamps = json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
+    stamps[currency] = _now().isoformat(timespec="seconds")
+    root.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(stamps, indent=2, sort_keys=True), encoding="utf-8")
+
+
+def last_updated(currency, root=CACHE_DIR):
+    """When a full update of `currency` last finished (New York time), or None if never.
+
+    Not a key's own fetch time: a source that re-reads nothing once a day is
+    covered (the futures archive) leaves its key's time alone on a day with no
+    new settle, while one that re-reads its last week (the Bank's curves) moves
+    it on every run.
+    """
+    path = root / UPDATES
+    stamp = json.loads(path.read_text(encoding="utf-8")).get(currency) if path.exists() else None
+    return pd.Timestamp(stamp) if stamp else None
 
 
 def missing(source, series, currency, start, end, root=CACHE_DIR):

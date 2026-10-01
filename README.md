@@ -51,13 +51,13 @@ The test suite runs on committed fixtures and needs neither the network nor the 
 uv run pytest -q
 ```
 
-Every report below, from the cache and in the order listed, is one command; `--update` pulls new data first, and `--from <script>` resumes at a step:
+Every report below is one command. It first brings the cache up to date for every enabled currency, then stops unless each currency's market data was pulled the same day, so no report is cut at an older date for one currency than another. Then it builds in the order listed. `--cache-only` builds from the cache as it is (the check still runs), and `--from <script>` resumes at a step:
 
 ```bash
 uv run all
 ```
 
-Step by step, rebuilding everything takes two commands. The first needs the archive (paid, gitignored -- see [Data](#data)) and a free FRED key in `.env`. A first build takes about thirteen minutes; after that it is incremental, and a second run adds nothing:
+Step by step, rebuilding everything takes two commands. The first updates every enabled currency (`--ccy` names fewer) and needs the archive (paid, gitignored -- see [Data](#data)) and a free FRED key in `.env`. A first build takes about thirteen minutes; after that it is incremental, and a second run adds nothing:
 
 ```bash
 uv run --env-file .env python scripts/update_data.py

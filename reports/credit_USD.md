@@ -25,24 +25,24 @@ Weekly Δspread on the regressors, coefficient (NW t, lag 4), bp per bp. One sam
 
 | spread | spec | weeks | R² % | ZQ rate, meeting 4 | minus the rule's rate, meeting 4 | orthogonal slope | differential, meeting 4 (GBP - USD 2y signal) | Treasury 10s30s | 10y Treasury yield, week before |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Baa - Aaa | market | 756 | 0.3 | -0.025 (-1.0) |  |  |  |  |  |
-| Baa - Aaa | components | 756 | 0.8 | -0.022 (-1.0) | -0.000 (-0.0) | +0.032 (+1.3) | +0.003 (+0.2) |  |  |
-| Baa - Aaa | components + control | 756 | 1.5 | -0.047 (-1.6) | -0.001 (-0.0) | +0.020 (+0.9) | +0.000 (+0.0) | -0.114 (-2.0) |  |
-| Baa - Aaa | components, without 2020-02-15 to 2020-04-30 | 744 | 0.0 | -0.004 (-0.2) | -0.002 (-0.1) | +0.004 (+0.2) | -0.004 (-0.4) |  |  |
-| Baa - 30y Treasury | market | 756 | 2.4 | -0.100 (-2.1) |  |  |  |  |  |
-| Baa - 30y Treasury | components | 756 | 6.0 | -0.065 (-2.1) | +0.096 (+1.0) | -0.081 (-1.7) | +0.049 (+1.4) |  | -0.034 (-1.1) |
-| Baa - 30y Treasury | components + control | 756 | 7.5 | -0.117 (-1.9) | +0.096 (+1.0) | -0.104 (-1.8) | +0.043 (+1.3) | -0.236 (-1.3) | -0.032 (-1.1) |
-| Baa - 30y Treasury | components, without 2020-02-15 to 2020-04-30 | 744 | 2.1 | -0.045 (-1.7) | -0.009 (-0.3) | -0.042 (-1.6) | +0.014 (+0.6) |  | -0.011 (-0.6) |
-| Baa - 10y Treasury | market | 756 | 15.4 | -0.301 (-7.1) |  |  |  |  |  |
-| Baa - 10y Treasury | components | 756 | 22.7 | -0.285 (-7.4) | +0.095 (+1.0) | -0.181 (-3.3) | +0.026 (+0.8) |  | -0.023 (-0.7) |
-| Baa - 10y Treasury | components + control | 756 | 34.0 | -0.117 (-1.9) | +0.096 (+1.0) | -0.104 (-1.8) | +0.043 (+1.3) | +0.764 (+4.3) | -0.032 (-1.1) |
-| Baa - 10y Treasury | components, without 2020-02-15 to 2020-04-30 | 744 | 20.1 | -0.265 (-10.5) | -0.015 (-0.4) | -0.131 (-4.3) | -0.004 (-0.2) |  | -0.002 (-0.1) |
-| ICE BofA IG OAS | market | 155 | 8.5 | -0.119 (-3.8) |  |  |  |  |  |
-| ICE BofA IG OAS | components | 155 | 13.5 | -0.156 (-3.8) | -0.016 (-0.3) | +0.042 (+1.0) | -0.063 (-1.8) |  |  |
-| ICE BofA IG OAS | components + control | 155 | 14.1 | -0.133 (-3.1) | -0.021 (-0.4) | +0.048 (+1.1) | -0.061 (-1.7) | +0.108 (+1.2) |  |
-| ICE BofA HY OAS | market | 155 | 4.4 | -0.354 (-2.1) |  |  |  |  |  |
-| ICE BofA HY OAS | components | 155 | 8.6 | -0.513 (-2.3) | -0.093 (-0.5) | +0.082 (+0.5) | -0.248 (-1.7) |  |  |
-| ICE BofA HY OAS | components + control | 155 | 10.5 | -0.349 (-1.5) | -0.126 (-0.7) | +0.129 (+0.8) | -0.231 (-1.6) | +0.792 (+2.1) |  |
+| Baa - Aaa | market | 757 | 0.3 | -0.025 (-1.0) |  |  |  |  |  |
+| Baa - Aaa | components | 757 | 0.8 | -0.022 (-1.0) | -0.000 (-0.0) | +0.032 (+1.3) | +0.003 (+0.2) |  |  |
+| Baa - Aaa | components + control | 757 | 1.5 | -0.047 (-1.6) | -0.000 (-0.0) | +0.020 (+1.0) | +0.000 (+0.0) | -0.114 (-2.0) |  |
+| Baa - Aaa | components, without 2020-02-15 to 2020-04-30 | 745 | 0.0 | -0.004 (-0.2) | -0.001 (-0.1) | +0.004 (+0.2) | -0.004 (-0.4) |  |  |
+| Baa - 30y Treasury | market | 757 | 2.4 | -0.101 (-2.1) |  |  |  |  |  |
+| Baa - 30y Treasury | components | 757 | 6.0 | -0.066 (-2.2) | +0.097 (+1.0) | -0.080 (-1.6) | +0.048 (+1.3) |  | -0.034 (-1.1) |
+| Baa - 30y Treasury | components + control | 757 | 7.5 | -0.117 (-1.9) | +0.097 (+1.0) | -0.103 (-1.8) | +0.043 (+1.3) | -0.233 (-1.3) | -0.031 (-1.1) |
+| Baa - 30y Treasury | components, without 2020-02-15 to 2020-04-30 | 745 | 2.0 | -0.045 (-1.7) | -0.008 (-0.3) | -0.041 (-1.6) | +0.013 (+0.6) |  | -0.010 (-0.6) |
+| Baa - 10y Treasury | market | 757 | 15.4 | -0.302 (-7.1) |  |  |  |  |  |
+| Baa - 10y Treasury | components | 757 | 22.7 | -0.286 (-7.5) | +0.098 (+1.0) | -0.178 (-3.3) | +0.025 (+0.7) |  | -0.022 (-0.7) |
+| Baa - 10y Treasury | components + control | 757 | 34.0 | -0.117 (-1.9) | +0.097 (+1.0) | -0.103 (-1.8) | +0.043 (+1.3) | +0.767 (+4.3) | -0.031 (-1.1) |
+| Baa - 10y Treasury | components, without 2020-02-15 to 2020-04-30 | 745 | 20.0 | -0.266 (-10.5) | -0.012 (-0.4) | -0.127 (-4.2) | -0.005 (-0.2) |  | -0.001 (-0.0) |
+| ICE BofA IG OAS | market | 156 | 8.6 | -0.121 (-3.9) |  |  |  |  |  |
+| ICE BofA IG OAS | components | 156 | 14.7 | -0.159 (-3.9) | -0.008 (-0.2) | +0.047 (+1.2) | -0.067 (-1.9) |  |  |
+| ICE BofA IG OAS | components + control | 156 | 15.4 | -0.134 (-3.1) | -0.014 (-0.3) | +0.054 (+1.3) | -0.064 (-1.9) | +0.118 (+1.3) |  |
+| ICE BofA HY OAS | market | 156 | 4.6 | -0.368 (-2.2) |  |  |  |  |  |
+| ICE BofA HY OAS | components | 156 | 9.9 | -0.532 (-2.4) | -0.041 (-0.2) | +0.119 (+0.8) | -0.274 (-1.9) |  |  |
+| ICE BofA HY OAS | components + control | 156 | 12.0 | -0.351 (-1.5) | -0.081 (-0.4) | +0.167 (+1.1) | -0.254 (-1.8) | +0.862 (+2.3) |  |
 
 Baa - 10y Treasury is Baa - 30y Treasury plus the Treasury 10s30s, so with the Treasury 10s30s as a control their other coefficients are identical and the control's differs by exactly one.
 

@@ -48,7 +48,7 @@
    "stale_hy_oas_lag1": "+0.11",
    "stale_hy_oas_lag0": "-0.00",
    "stale_hy_oas_ar1_ex_crash_2020": "-0.08",
-   "t1_quality_weeks": 756,
+   "t1_quality_weeks": 757,
    "t1_quality_first": "2012-03-07",
    "t1_quality_r2_market_pct": "0.3",
    "t1_quality_r2_components_pct": "0.8",
@@ -56,48 +56,48 @@
    "t1_quality_market_coef": "-0.025",
    "t1_quality_market_t": "-1.04",
    "t1_quality_control_coef": "-0.114",
-   "t1_quality_control_t": "-2.02",
+   "t1_quality_control_t": "-2.00",
    "t1_quality_r2_ex_crash_2020_pct": "0.0",
-   "t1_baa_30y_weeks": 756,
+   "t1_baa_30y_weeks": 757,
    "t1_baa_30y_first": "2012-03-07",
    "t1_baa_30y_r2_market_pct": "2.4",
    "t1_baa_30y_r2_components_pct": "6.0",
    "t1_baa_30y_r2_control_pct": "7.5",
-   "t1_baa_30y_market_coef": "-0.100",
-   "t1_baa_30y_market_t": "-2.13",
-   "t1_baa_30y_control_coef": "-0.236",
-   "t1_baa_30y_control_t": "-1.34",
-   "t1_baa_30y_r2_ex_crash_2020_pct": "2.1",
-   "t1_baa_10y_weeks": 756,
+   "t1_baa_30y_market_coef": "-0.101",
+   "t1_baa_30y_market_t": "-2.14",
+   "t1_baa_30y_control_coef": "-0.233",
+   "t1_baa_30y_control_t": "-1.32",
+   "t1_baa_30y_r2_ex_crash_2020_pct": "2.0",
+   "t1_baa_10y_weeks": 757,
    "t1_baa_10y_first": "2012-03-07",
    "t1_baa_10y_r2_market_pct": "15.4",
    "t1_baa_10y_r2_components_pct": "22.7",
    "t1_baa_10y_r2_control_pct": "34.0",
-   "t1_baa_10y_market_coef": "-0.301",
-   "t1_baa_10y_market_t": "-7.09",
-   "t1_baa_10y_control_coef": "+0.764",
-   "t1_baa_10y_control_t": "+4.32",
-   "t1_baa_10y_r2_ex_crash_2020_pct": "20.1",
-   "t1_ig_oas_weeks": 155,
+   "t1_baa_10y_market_coef": "-0.302",
+   "t1_baa_10y_market_t": "-7.10",
+   "t1_baa_10y_control_coef": "+0.767",
+   "t1_baa_10y_control_t": "+4.34",
+   "t1_baa_10y_r2_ex_crash_2020_pct": "20.0",
+   "t1_ig_oas_weeks": 156,
    "t1_ig_oas_first": "2023-10-11",
-   "t1_ig_oas_r2_market_pct": "8.5",
-   "t1_ig_oas_r2_components_pct": "13.5",
-   "t1_ig_oas_r2_control_pct": "14.1",
-   "t1_ig_oas_market_coef": "-0.119",
-   "t1_ig_oas_market_t": "-3.81",
-   "t1_ig_oas_control_coef": "+0.108",
-   "t1_ig_oas_control_t": "+1.16",
-   "t1_ig_oas_r2_ex_crash_2020_pct": "13.5",
-   "t1_hy_oas_weeks": 155,
+   "t1_ig_oas_r2_market_pct": "8.6",
+   "t1_ig_oas_r2_components_pct": "14.7",
+   "t1_ig_oas_r2_control_pct": "15.4",
+   "t1_ig_oas_market_coef": "-0.121",
+   "t1_ig_oas_market_t": "-3.92",
+   "t1_ig_oas_control_coef": "+0.118",
+   "t1_ig_oas_control_t": "+1.29",
+   "t1_ig_oas_r2_ex_crash_2020_pct": "14.7",
+   "t1_hy_oas_weeks": 156,
    "t1_hy_oas_first": "2023-10-11",
-   "t1_hy_oas_r2_market_pct": "4.4",
-   "t1_hy_oas_r2_components_pct": "8.6",
-   "t1_hy_oas_r2_control_pct": "10.5",
-   "t1_hy_oas_market_coef": "-0.354",
-   "t1_hy_oas_market_t": "-2.10",
-   "t1_hy_oas_control_coef": "+0.792",
-   "t1_hy_oas_control_t": "+2.07",
-   "t1_hy_oas_r2_ex_crash_2020_pct": "8.6",
+   "t1_hy_oas_r2_market_pct": "4.6",
+   "t1_hy_oas_r2_components_pct": "9.9",
+   "t1_hy_oas_r2_control_pct": "12.0",
+   "t1_hy_oas_market_coef": "-0.368",
+   "t1_hy_oas_market_t": "-2.21",
+   "t1_hy_oas_control_coef": "+0.862",
+   "t1_hy_oas_control_t": "+2.32",
+   "t1_hy_oas_r2_ex_crash_2020_pct": "9.9",
    "t2_quality_h21_z_all_slope": "-0.96",
    "t2_quality_h21_z_all_t": "-1.78",
    "t2_quality_h21_z_all_n": 3656,
@@ -445,398 +445,398 @@
    "quality": {
     "market": {
      "coef": {
-      "const": -0.093237,
-      "market": -0.025158
+      "const": -0.091887,
+      "market": -0.025225
      },
      "se": {
-      "const": 0.17973,
-      "market": 0.024259
+      "const": 0.179431,
+      "market": 0.024233
      },
      "t": {
-      "const": -0.518763,
-      "market": -1.037064
+      "const": -0.512106,
+      "market": -1.040968
      },
-     "r2": 0.00298,
-     "n": 756,
+     "r2": 0.002997,
+     "n": 757,
      "first": "2012-03-07",
-     "last": "2026-09-23"
+     "last": "2026-09-30"
     },
     "components": {
      "coef": {
-      "const": -0.093819,
-      "market": -0.021727,
-      "model": -0.000433,
-      "slope": 0.031581,
-      "differential": 0.002931
+      "const": -0.09326,
+      "market": -0.021768,
+      "model": -0.000309,
+      "slope": 0.031734,
+      "differential": 0.002872
      },
      "se": {
-      "const": 0.179664,
-      "market": 0.022737,
-      "model": 0.016857,
-      "slope": 0.024456,
-      "differential": 0.012291
+      "const": 0.179464,
+      "market": 0.02271,
+      "model": 0.016771,
+      "slope": 0.024287,
+      "differential": 0.012292
      },
      "t": {
-      "const": -0.522192,
-      "market": -0.955576,
-      "model": -0.025671,
-      "slope": 1.291333,
-      "differential": 0.238468
+      "const": -0.519661,
+      "market": -0.958524,
+      "model": -0.018431,
+      "slope": 1.306597,
+      "differential": 0.233636
      },
-     "r2": 0.008424,
-     "n": 756,
+     "r2": 0.008491,
+     "n": 757,
      "first": "2012-03-07",
-     "last": "2026-09-23"
+     "last": "2026-09-30"
     },
     "components_control": {
      "coef": {
-      "const": -0.092258,
-      "market": -0.046761,
-      "model": -0.000578,
-      "slope": 0.02009,
-      "differential": 0.000331,
-      "control": -0.11417
+      "const": -0.091124,
+      "market": -0.04672,
+      "model": -0.000324,
+      "slope": 0.02046,
+      "differential": 0.000224,
+      "control": -0.113595
      },
      "se": {
-      "const": 0.178382,
-      "market": 0.029102,
-      "model": 0.017238,
-      "slope": 0.021575,
-      "differential": 0.012073,
-      "control": 0.056627
+      "const": 0.178288,
+      "market": 0.029112,
+      "model": 0.017157,
+      "slope": 0.021419,
+      "differential": 0.012061,
+      "control": 0.056666
      },
      "t": {
-      "const": -0.517191,
-      "market": -1.606813,
-      "model": -0.033502,
-      "slope": 0.931173,
-      "differential": 0.027449,
-      "control": -2.016188
+      "const": -0.511102,
+      "market": -1.604837,
+      "model": -0.018891,
+      "slope": 0.955222,
+      "differential": 0.018556,
+      "control": -2.004649
      },
-     "r2": 0.015395,
-     "n": 756,
+     "r2": 0.01541,
+     "n": 757,
      "first": "2012-03-07",
-     "last": "2026-09-23"
+     "last": "2026-09-30"
     }
    },
    "baa_30y": {
     "market": {
      "coef": {
-      "const": -0.064837,
-      "market": -0.100484
+      "const": -0.061218,
+      "market": -0.100665
      },
      "se": {
-      "const": 0.303807,
-      "market": 0.047164
+      "const": 0.303276,
+      "market": 0.047125
      },
      "t": {
-      "const": -0.213414,
-      "market": -2.130543
+      "const": -0.201856,
+      "market": -2.136151
      },
-     "r2": 0.023997,
-     "n": 756,
+     "r2": 0.024083,
+     "n": 757,
      "first": "2012-03-07",
-     "last": "2026-09-23"
+     "last": "2026-09-30"
     },
     "components": {
      "coef": {
-      "const": -0.179504,
-      "market": -0.065339,
-      "model": 0.096023,
-      "slope": -0.080939,
-      "differential": 0.048505,
-      "yield_lag": -0.034183
+      "const": -0.175052,
+      "market": -0.065702,
+      "model": 0.097103,
+      "slope": -0.079599,
+      "differential": 0.048023,
+      "yield_lag": -0.033615
      },
      "se": {
-      "const": 0.247455,
-      "market": 0.030404,
-      "model": 0.096869,
-      "slope": 0.048907,
-      "differential": 0.03589,
-      "yield_lag": 0.030346
+      "const": 0.247017,
+      "market": 0.030316,
+      "model": 0.096698,
+      "slope": 0.048843,
+      "differential": 0.035921,
+      "yield_lag": 0.030384
      },
      "t": {
-      "const": -0.725398,
-      "market": -2.149025,
-      "model": 0.991267,
-      "slope": -1.654954,
-      "differential": 1.351488,
-      "yield_lag": -1.126442
+      "const": -0.708661,
+      "market": -2.16723,
+      "model": 1.004186,
+      "slope": -1.629687,
+      "differential": 1.336897,
+      "yield_lag": -1.106326
      },
-     "r2": 0.060225,
-     "n": 756,
+     "r2": 0.059956,
+     "n": 757,
      "first": "2012-03-07",
-     "last": "2026-09-23"
+     "last": "2026-09-30"
     },
     "components_control": {
      "coef": {
-      "const": -0.177454,
-      "market": -0.11717,
-      "model": 0.095894,
-      "slope": -0.104463,
-      "differential": 0.043202,
-      "control": -0.236113,
-      "yield_lag": -0.031595
+      "const": -0.17193,
+      "market": -0.116991,
+      "model": 0.097242,
+      "slope": -0.102506,
+      "differential": 0.042666,
+      "control": -0.233238,
+      "yield_lag": -0.030918
      },
      "se": {
-      "const": 0.244948,
-      "market": 0.06015,
-      "model": 0.097178,
-      "slope": 0.058385,
-      "differential": 0.032491,
-      "control": 0.176826,
-      "yield_lag": 0.029229
+      "const": 0.244774,
+      "market": 0.060075,
+      "model": 0.097142,
+      "slope": 0.058203,
+      "differential": 0.032476,
+      "control": 0.176634,
+      "yield_lag": 0.029205
      },
      "t": {
-      "const": -0.724455,
-      "market": -1.947958,
-      "model": 0.986785,
-      "slope": -1.789216,
-      "differential": 1.32966,
-      "control": -1.335287,
-      "yield_lag": -1.080917
+      "const": -0.702402,
+      "market": -1.94741,
+      "model": 1.001033,
+      "slope": -1.76119,
+      "differential": 1.313786,
+      "control": -1.320459,
+      "yield_lag": -1.058654
      },
-     "r2": 0.075256,
-     "n": 756,
+     "r2": 0.074654,
+     "n": 757,
      "first": "2012-03-07",
-     "last": "2026-09-23"
+     "last": "2026-09-30"
     }
    },
    "baa_10y": {
     "market": {
      "coef": {
-      "const": -0.062431,
-      "market": -0.301127
+      "const": -0.054477,
+      "market": -0.301525
      },
      "se": {
-      "const": 0.304966,
-      "market": 0.042496
+      "const": 0.30435,
+      "market": 0.042486
      },
      "t": {
-      "const": -0.204716,
-      "market": -7.085936
+      "const": -0.178996,
+      "market": -7.097068
      },
-     "r2": 0.153894,
-     "n": 756,
+     "r2": 0.154149,
+     "n": 757,
      "first": "2012-03-07",
-     "last": "2026-09-23"
+     "last": "2026-09-30"
     },
     "components": {
      "coef": {
-      "const": -0.170823,
-      "market": -0.284857,
-      "model": 0.095478,
-      "slope": -0.18057,
-      "differential": 0.026045,
-      "yield_lag": -0.02322
+      "const": -0.161667,
+      "market": -0.285604,
+      "model": 0.097699,
+      "slope": -0.177814,
+      "differential": 0.025054,
+      "yield_lag": -0.022051
      },
      "se": {
-      "const": 0.254979,
-      "market": 0.038293,
-      "model": 0.099514,
-      "slope": 0.053993,
-      "differential": 0.0341,
-      "yield_lag": 0.033254
+      "const": 0.254394,
+      "market": 0.038159,
+      "model": 0.099276,
+      "slope": 0.053974,
+      "differential": 0.034135,
+      "yield_lag": 0.033267
      },
      "t": {
-      "const": -0.66995,
-      "market": -7.438783,
-      "model": 0.959443,
-      "slope": -3.344341,
-      "differential": 0.763799,
-      "yield_lag": -0.698257
+      "const": -0.635499,
+      "market": -7.484527,
+      "model": 0.984116,
+      "slope": -3.294449,
+      "differential": 0.733967,
+      "yield_lag": -0.662872
      },
-     "r2": 0.227289,
-     "n": 756,
+     "r2": 0.22652,
+     "n": 757,
      "first": "2012-03-07",
-     "last": "2026-09-23"
+     "last": "2026-09-30"
     },
     "components_control": {
      "coef": {
-      "const": -0.177454,
-      "market": -0.11717,
-      "model": 0.095894,
-      "slope": -0.104463,
-      "differential": 0.043202,
-      "control": 0.763887,
-      "yield_lag": -0.031595
+      "const": -0.17193,
+      "market": -0.116991,
+      "model": 0.097242,
+      "slope": -0.102506,
+      "differential": 0.042666,
+      "control": 0.766762,
+      "yield_lag": -0.030918
      },
      "se": {
-      "const": 0.244948,
-      "market": 0.06015,
-      "model": 0.097178,
-      "slope": 0.058385,
-      "differential": 0.032491,
-      "control": 0.176826,
-      "yield_lag": 0.029229
+      "const": 0.244774,
+      "market": 0.060075,
+      "model": 0.097142,
+      "slope": 0.058203,
+      "differential": 0.032476,
+      "control": 0.176634,
+      "yield_lag": 0.029205
      },
      "t": {
-      "const": -0.724455,
-      "market": -1.947958,
-      "model": 0.986785,
-      "slope": -1.789216,
-      "differential": 1.32966,
-      "control": 4.320002,
-      "yield_lag": -1.080917
+      "const": -0.702402,
+      "market": -1.94741,
+      "model": 1.001033,
+      "slope": -1.76119,
+      "differential": 1.313786,
+      "control": 4.340957,
+      "yield_lag": -1.058654
      },
-     "r2": 0.339637,
-     "n": 756,
+     "r2": 0.339843,
+     "n": 757,
      "first": "2012-03-07",
-     "last": "2026-09-23"
+     "last": "2026-09-30"
     }
    },
    "ig_oas": {
     "market": {
      "coef": {
-      "const": -0.211514,
-      "market": -0.118564
+      "const": -0.16576,
+      "market": -0.121141
      },
      "se": {
-      "const": 0.298942,
-      "market": 0.031093
+      "const": 0.30089,
+      "market": 0.030865
      },
      "t": {
-      "const": -0.707542,
-      "market": -3.813268
+      "const": -0.5509,
+      "market": -3.924929
      },
-     "r2": 0.084668,
-     "n": 155,
+     "r2": 0.086455,
+     "n": 156,
      "first": "2023-10-11",
-     "last": "2026-09-23"
+     "last": "2026-09-30"
     },
     "components": {
      "coef": {
-      "const": -0.106382,
-      "market": -0.155825,
-      "model": -0.016047,
-      "slope": 0.042031,
-      "differential": -0.063276
+      "const": -0.082017,
+      "market": -0.158511,
+      "model": -0.008382,
+      "slope": 0.047369,
+      "differential": -0.067064
      },
      "se": {
-      "const": 0.299808,
-      "market": 0.040922,
-      "model": 0.047304,
-      "slope": 0.042284,
-      "differential": 0.035591
+      "const": 0.296733,
+      "market": 0.040218,
+      "model": 0.047653,
+      "slope": 0.040746,
+      "differential": 0.034614
      },
      "t": {
-      "const": -0.354835,
-      "market": -3.807845,
-      "model": -0.339231,
-      "slope": 0.994026,
-      "differential": -1.777851
+      "const": -0.276402,
+      "market": -3.941259,
+      "model": -0.17589,
+      "slope": 1.162529,
+      "differential": -1.937503
      },
-     "r2": 0.135267,
-     "n": 155,
+     "r2": 0.14682,
+     "n": 156,
      "first": "2023-10-11",
-     "last": "2026-09-23"
+     "last": "2026-09-30"
     },
     "components_control": {
      "coef": {
-      "const": -0.140601,
-      "market": -0.133492,
-      "model": -0.020524,
-      "slope": 0.048439,
-      "differential": -0.061004,
-      "control": 0.107603
+      "const": -0.121229,
+      "market": -0.133858,
+      "model": -0.01383,
+      "slope": 0.054008,
+      "differential": -0.064307,
+      "control": 0.117863
      },
      "se": {
-      "const": 0.289225,
-      "market": 0.043307,
-      "model": 0.04695,
-      "slope": 0.044524,
-      "differential": 0.035231,
-      "control": 0.093141
+      "const": 0.286908,
+      "market": 0.043398,
+      "model": 0.047168,
+      "slope": 0.042687,
+      "differential": 0.034307,
+      "control": 0.091428
      },
      "t": {
-      "const": -0.486132,
-      "market": -3.082472,
-      "model": -0.437152,
-      "slope": 1.087917,
-      "differential": -1.731541,
-      "control": 1.155266
+      "const": -0.422536,
+      "market": -3.084421,
+      "model": -0.29321,
+      "slope": 1.26523,
+      "differential": -1.874453,
+      "control": 1.289136
      },
-     "r2": 0.141097,
-     "n": 155,
+     "r2": 0.153694,
+     "n": 156,
      "first": "2023-10-11",
-     "last": "2026-09-23"
+     "last": "2026-09-30"
     }
    },
    "hy_oas": {
     "market": {
      "coef": {
-      "const": -0.688437,
-      "market": -0.35351
+      "const": -0.428384,
+      "market": -0.368157
      },
      "se": {
-      "const": 1.112561,
-      "market": 0.168176
+      "const": 1.151248,
+      "market": 0.166774
      },
      "t": {
-      "const": -0.618786,
-      "market": -2.102027
+      "const": -0.372104,
+      "market": -2.207526
      },
-     "r2": 0.044121,
-     "n": 155,
+     "r2": 0.045988,
+     "n": 156,
      "first": "2023-10-11",
-     "last": "2026-09-23"
+     "last": "2026-09-30"
     },
     "components": {
      "coef": {
-      "const": -0.193804,
-      "market": -0.513281,
-      "model": -0.09339,
-      "slope": 0.081914,
-      "differential": -0.247903
+      "const": -0.026512,
+      "market": -0.531723,
+      "model": -0.04076,
+      "slope": 0.118563,
+      "differential": -0.273915
      },
      "se": {
-      "const": 1.130652,
-      "market": 0.223133,
-      "model": 0.187071,
-      "slope": 0.154763,
-      "differential": 0.144467
+      "const": 1.135267,
+      "market": 0.21992,
+      "model": 0.190084,
+      "slope": 0.15211,
+      "differential": 0.14217
      },
      "t": {
-      "const": -0.171409,
-      "market": -2.300332,
-      "model": -0.499225,
-      "slope": 0.529284,
-      "differential": -1.715981
+      "const": -0.023354,
+      "market": -2.417806,
+      "model": -0.21443,
+      "slope": 0.779455,
+      "differential": -1.926667
      },
-     "r2": 0.086181,
-     "n": 155,
+     "r2": 0.099036,
+     "n": 156,
      "first": "2023-10-11",
-     "last": "2026-09-23"
+     "last": "2026-09-30"
     },
     "components_control": {
      "coef": {
-      "const": -0.445536,
-      "market": -0.348991,
-      "model": -0.126329,
-      "slope": 0.129051,
-      "differential": -0.23119,
-      "control": 0.791575
+      "const": -0.313181,
+      "market": -0.35149,
+      "model": -0.080593,
+      "slope": 0.167104,
+      "differential": -0.253756,
+      "control": 0.861673
      },
      "se": {
-      "const": 1.091823,
-      "market": 0.228705,
-      "model": 0.187224,
-      "slope": 0.161549,
-      "differential": 0.140538,
-      "control": 0.383182
+      "const": 1.103139,
+      "market": 0.228692,
+      "model": 0.188677,
+      "slope": 0.157609,
+      "differential": 0.138194,
+      "control": 0.37125
      },
      "t": {
-      "const": -0.408066,
-      "market": -1.525945,
-      "model": -0.674747,
-      "slope": 0.798832,
-      "differential": -1.645041,
-      "control": 2.065794
+      "const": -0.2839,
+      "market": -1.536956,
+      "model": -0.427149,
+      "slope": 1.060243,
+      "differential": -1.836225,
+      "control": 2.321003
      },
-     "r2": 0.104676,
-     "n": 155,
+     "r2": 0.120195,
+     "n": 156,
      "first": "2023-10-11",
-     "last": "2026-09-23"
+     "last": "2026-09-30"
     }
    }
   },
@@ -844,152 +844,152 @@
    "quality": {
     "crash_2020": {
      "coef": {
-      "const": -0.182563,
-      "market": -0.004258,
-      "model": -0.001704,
-      "slope": 0.003678,
-      "differential": -0.003641
+      "const": -0.181274,
+      "market": -0.004384,
+      "model": -0.001375,
+      "slope": 0.00404,
+      "differential": -0.003773
      },
      "se": {
-      "const": 0.136085,
-      "market": 0.022326,
-      "model": 0.021221,
-      "slope": 0.017352,
-      "differential": 0.010391
+      "const": 0.13605,
+      "market": 0.022323,
+      "model": 0.021094,
+      "slope": 0.017253,
+      "differential": 0.010371
      },
      "t": {
-      "const": -1.341534,
-      "market": -0.190722,
-      "model": -0.080304,
-      "slope": 0.211941,
-      "differential": -0.350407
+      "const": -1.33241,
+      "market": -0.196408,
+      "model": -0.065204,
+      "slope": 0.234168,
+      "differential": -0.363822
      },
-     "r2": 0.000286,
-     "n": 744,
+     "r2": 0.000324,
+     "n": 745,
      "first": "2012-03-07",
-     "last": "2026-09-23"
+     "last": "2026-09-30"
     }
    },
    "baa_30y": {
     "crash_2020": {
      "coef": {
-      "const": -0.222339,
-      "market": -0.044696,
-      "model": -0.009448,
-      "slope": -0.042108,
-      "differential": 0.013938,
-      "yield_lag": -0.010949
+      "const": -0.217282,
+      "market": -0.04522,
+      "model": -0.008096,
+      "slope": -0.040555,
+      "differential": 0.013405,
+      "yield_lag": -0.010402
      },
      "se": {
-      "const": 0.20233,
-      "market": 0.027058,
-      "model": 0.028511,
-      "slope": 0.025606,
-      "differential": 0.022422,
+      "const": 0.202342,
+      "market": 0.02708,
+      "model": 0.028318,
+      "slope": 0.025473,
+      "differential": 0.022437,
       "yield_lag": 0.017048
      },
      "t": {
-      "const": -1.098895,
-      "market": -1.651838,
-      "model": -0.331386,
-      "slope": -1.644448,
-      "differential": 0.621631,
-      "yield_lag": -0.642224
+      "const": -1.073836,
+      "market": -1.669849,
+      "model": -0.285877,
+      "slope": -1.592096,
+      "differential": 0.597452,
+      "yield_lag": -0.610159
      },
-     "r2": 0.020821,
-     "n": 744,
+     "r2": 0.020244,
+     "n": 745,
      "first": "2012-03-07",
-     "last": "2026-09-23"
+     "last": "2026-09-30"
     }
    },
    "baa_10y": {
     "crash_2020": {
      "coef": {
-      "const": -0.199423,
-      "market": -0.265412,
-      "model": -0.014882,
-      "slope": -0.130506,
-      "differential": -0.003655,
-      "yield_lag": -0.001956
+      "const": -0.189327,
+      "market": -0.266458,
+      "model": -0.012182,
+      "slope": -0.127407,
+      "differential": -0.004719,
+      "yield_lag": -0.000865
      },
      "se": {
-      "const": 0.224393,
-      "market": 0.025334,
-      "model": 0.034778,
-      "slope": 0.030074,
-      "differential": 0.023868,
-      "yield_lag": 0.025153
+      "const": 0.22422,
+      "market": 0.025467,
+      "model": 0.034506,
+      "slope": 0.030003,
+      "differential": 0.023922,
+      "yield_lag": 0.025141
      },
      "t": {
-      "const": -0.888723,
-      "market": -10.476487,
-      "model": -0.427932,
-      "slope": -4.33948,
-      "differential": -0.153146,
-      "yield_lag": -0.077778
+      "const": -0.84438,
+      "market": -10.463067,
+      "model": -0.35304,
+      "slope": -4.246487,
+      "differential": -0.197279,
+      "yield_lag": -0.034415
      },
-     "r2": 0.201415,
-     "n": 744,
+     "r2": 0.200235,
+     "n": 745,
      "first": "2012-03-07",
-     "last": "2026-09-23"
+     "last": "2026-09-30"
     }
    },
    "ig_oas": {
     "crash_2020": {
      "coef": {
-      "const": -0.106382,
-      "market": -0.155825,
-      "model": -0.016047,
-      "slope": 0.042031,
-      "differential": -0.063276
+      "const": -0.082017,
+      "market": -0.158511,
+      "model": -0.008382,
+      "slope": 0.047369,
+      "differential": -0.067064
      },
      "se": {
-      "const": 0.299808,
-      "market": 0.040922,
-      "model": 0.047304,
-      "slope": 0.042284,
-      "differential": 0.035591
+      "const": 0.296733,
+      "market": 0.040218,
+      "model": 0.047653,
+      "slope": 0.040746,
+      "differential": 0.034614
      },
      "t": {
-      "const": -0.354835,
-      "market": -3.807845,
-      "model": -0.339231,
-      "slope": 0.994026,
-      "differential": -1.777851
+      "const": -0.276402,
+      "market": -3.941259,
+      "model": -0.17589,
+      "slope": 1.162529,
+      "differential": -1.937503
      },
-     "r2": 0.135267,
-     "n": 155,
+     "r2": 0.14682,
+     "n": 156,
      "first": "2023-10-11",
-     "last": "2026-09-23"
+     "last": "2026-09-30"
     }
    },
    "hy_oas": {
     "crash_2020": {
      "coef": {
-      "const": -0.193804,
-      "market": -0.513281,
-      "model": -0.09339,
-      "slope": 0.081914,
-      "differential": -0.247903
+      "const": -0.026512,
+      "market": -0.531723,
+      "model": -0.04076,
+      "slope": 0.118563,
+      "differential": -0.273915
      },
      "se": {
-      "const": 1.130652,
-      "market": 0.223133,
-      "model": 0.187071,
-      "slope": 0.154763,
-      "differential": 0.144467
+      "const": 1.135267,
+      "market": 0.21992,
+      "model": 0.190084,
+      "slope": 0.15211,
+      "differential": 0.14217
      },
      "t": {
-      "const": -0.171409,
-      "market": -2.300332,
-      "model": -0.499225,
-      "slope": 0.529284,
-      "differential": -1.715981
+      "const": -0.023354,
+      "market": -2.417806,
+      "model": -0.21443,
+      "slope": 0.779455,
+      "differential": -1.926667
      },
-     "r2": 0.086181,
-     "n": 155,
+     "r2": 0.099036,
+     "n": 156,
      "first": "2023-10-11",
-     "last": "2026-09-23"
+     "last": "2026-09-30"
     }
    }
   },

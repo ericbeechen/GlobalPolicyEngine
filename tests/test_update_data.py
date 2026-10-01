@@ -24,9 +24,14 @@ def pulled(monkeypatch):
         def __init__(self, *lag):
             pass
 
+        spent = 0.0
+
         def update(self, series, *args, **kwargs):
             calls.append(series)
             return 0
+
+        def ranges(self, series, end):
+            return [(end, end)]
 
     for table in ("DAILY", "ESTIMATES", "CURVES", "FUTURES"):
         monkeypatch.setattr(registry, table, dict.fromkeys(getattr(registry, table), Recorder))
@@ -61,3 +66,31 @@ def test_only_refuses_a_series_the_block_does_not_list_and_goes_without_macro_on
         run(monkeypatch, "--ccy", ccy, "--only", *one_of_each(ccy), "--macro-only")
     assert "not allowed with argument --only" in capsys.readouterr().err
     assert pulled == []
+
+
+def test_with_no_ccy_every_enabled_currency_is_updated(monkeypatch, pulled):
+    wanted = [s for ccy in config.enabled() for s in one_of_each(ccy)]
+    run(monkeypatch, "--only", *wanted)
+    assert sorted(pulled) == sorted(wanted)
+
+
+@pytest.fixture
+def stamped(monkeypatch, pulled):
+    """The currencies `cache.mark_updated` was called for; macro pulls return nothing and write nothing."""
+    from policypath.sources import cache
+    marks = []
+    monkeypatch.setattr(registry, "MACRO", dict.fromkeys(registry.MACRO, lambda *a: (None, None)))
+    monkeypatch.setattr(cache, "write_vintages", lambda *a, **k: 0)
+    monkeypatch.setattr(cache, "mark_updated", lambda ccy, *a, **k: marks.append(ccy))
+    return marks
+
+
+def test_a_full_update_stamps_every_currency_it_updated(monkeypatch, stamped):
+    run(monkeypatch)
+    assert stamped == config.enabled()
+
+
+def test_a_partial_pull_stamps_nothing(monkeypatch, stamped):
+    run(monkeypatch, "--only", *one_of_each(config.enabled()[0]))
+    run(monkeypatch, "--macro-only")
+    assert stamped == []
