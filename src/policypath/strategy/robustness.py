@@ -139,7 +139,7 @@ def rebuild(ccy, cfg, panels, root=cache.CACHE_DIR, market=False, model=True):
         sessions, meetings = panel.build(ccy, start=days.min(), end=days.max(), root=root, cfg=cfg)
     i = path.inputs(ccy, root, rule=cfg["rule"])
     summaries, paths = path.build(sessions, meetings, panels["macro"], i["sep"], i["target"], i["fixings"],
-                                  cfg["rule"])
+                                  cfg["rule"], i["projected"])
     return summaries, gap.build(paths, cfg["signal"])
 
 

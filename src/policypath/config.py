@@ -343,7 +343,9 @@ RSTAR_SCHEMA = {
 }
 
 # Checked where a block has them.
-OPTIONAL_SCHEMA = {"sources.estimates": _lags}
+# ``sources.vintages``: series pulled whole with every real-time vintage (the macro sources' pullers), for
+# a variant that reads one outside the nowcast (``rule.projected``).
+OPTIONAL_SCHEMA = {"sources.estimates": _lags, "sources.vintages": _named_lists}
 
 # Week 9's model-side robustness variants: optional keys a variant's override adds
 # (a block without them is the baseline). Each is checked where a block has it, and
@@ -363,6 +365,8 @@ VARIANT_SCHEMA = {
     "rule.estimate": {"rule.estimate.prior_quarters": _non_negative,               # model/estimate.py
                       "rule.estimate.drop_cuts_to_floor": bool},
     "rule.conditioning": {"rule.conditioning.converge.half_life_quarters": _positive},   # model.path.converge_goals
+    "rule.projected": {"rule.projected.source": str, "rule.projected.series": str,       # model.path.projected_path
+                       "rule.projected.label": str},
 }
 
 # The expression layer's blocks, also checked only where a block has them. Under
@@ -471,7 +475,7 @@ def _expressions(block):
 def _cached(block):
     """Every (source, series) the block's sources cache."""
     out = set()
-    for kind in ("daily", "curves", "futures", "estimates"):
+    for kind in ("daily", "curves", "futures", "estimates", "vintages"):
         for source, series in block.get("sources", {}).get(kind, {}).items():
             out |= {(source, s) for s in series}
     return out
@@ -491,6 +495,8 @@ def _refs(block):
     rstar = block["rule"]["rstar"]
     if "constant" not in rstar:
         out.append(("rule.rstar", rstar["source"], rstar["series"]))
+    if "projected" in block["rule"]:
+        out.append(("rule.projected", block["rule"]["projected"]["source"], block["rule"]["projected"]["series"]))
     if "sofr" in block:
         sofr = block["sofr"]
         out += [("sofr", sofr["source"], sofr["series"]),

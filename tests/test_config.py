@@ -296,6 +296,7 @@ VARIANTS = {
     "converge": {"rule": {"conditioning": {"converge": {"half_life_quarters": 4}}}},
     "nss": {"market": {"curve": {"method": "nss"}}},
     "window_365": {"signal": {"window": "365D", "min_periods": 125}},
+    "projected": {"rule": {"projected": {"source": "alfred", "series": "FEDTARMD", "label": "SEP median"}}},
 }
 
 
@@ -307,7 +308,8 @@ def with_variant(block, over):
 def variant_blocks():
     """(currency, variant, block with the variant) for every variant that applies to the currency's block."""
     applies = {"hlw": lambda b: ("nyfed", "HLW_RSTAR") in config._cached(b),
-               "nss": lambda b: b["market"]["extractor"] == "forward_curve"}
+               "nss": lambda b: b["market"]["extractor"] == "forward_curve",
+               "projected": lambda b: ("alfred", "FEDTARMD") in config._cached(b)}
     return [(c, name, with_variant(BLOCKS[c], over)) for c in ENABLED for name, over in VARIANTS.items()
             if applies.get(name, lambda b: True)(BLOCKS[c])]
 
@@ -328,7 +330,8 @@ def test_a_variant_key_needs_the_paths_under_it(ccy, name, block, path):
                                              ("estimated", "rule.estimate.prior_quarters", -1),
                                              ("estimated", "rule.estimate.drop_cuts_to_floor", "yes"),
                                              ("converge", "rule.conditioning.converge.half_life_quarters", 0),
-                                             ("nss", "market.curve.method", "cubic_spline")])
+                                             ("nss", "market.curve.method", "cubic_spline"),
+                                             ("projected", "rule.projected.series", 7)])
 def test_a_bad_variant_value_is_named(name, path, bad):
     ccy, _, block = copy.deepcopy(next(v for v in variant_blocks() if v[1] == name))
     *parents, last = path.split(".")
@@ -341,6 +344,17 @@ def test_a_currency_that_caches_no_hlw_cannot_take_the_hlw_override():
     for ccy in [c for c in ENABLED if ("nyfed", "HLW_RSTAR") not in config._cached(BLOCKS[c])]:
         problems = config.validate(ccy, with_variant(BLOCKS[ccy], VARIANTS["hlw"]))
         assert any("rule.rstar reads nyfed/HLW_RSTAR" in p for p in problems)
+
+
+def test_a_projected_path_nothing_caches_is_refused():
+    """The projected-path override reads a vintage series ``sources.vintages`` must cache; without it, refused by name."""
+    for ccy in [c for c in ENABLED if ("alfred", "FEDTARMD") not in config._cached(BLOCKS[c])]:
+        problems = config.validate(ccy, with_variant(BLOCKS[ccy], VARIANTS["projected"]))
+        assert any("rule.projected reads alfred/FEDTARMD" in p for p in problems)
+    ccy = next(c for c in ENABLED if ("alfred", "FEDTARMD") in config._cached(BLOCKS[c]))
+    block = copy.deepcopy(with_variant(BLOCKS[ccy], VARIANTS["projected"]))
+    del block["sources"]["vintages"]
+    assert any("rule.projected reads alfred/FEDTARMD" in p for p in config.validate(ccy, block))
 
 
 def test_an_unknown_calendar_or_extractor_is_refused():

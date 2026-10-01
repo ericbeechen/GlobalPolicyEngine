@@ -7,8 +7,9 @@ pulled whole each time and checked against what is cached. Deleting data/ and
 running this rebuilds everything.
 
 What is pulled is the config's ``sources`` block (daily series with their
-publication lags, curves, futures roots, quarterly estimates) and its ``macro``
-block; which code pulls it is sources/registry.py. A new currency is never an
+publication lags, curves, futures roots, quarterly estimates, series kept with
+every real-time vintage) and its ``macro`` block; which code pulls it is
+sources/registry.py. A new currency is never an
 edit here. ``--only`` pulls just the series it names and nothing else, not even
 the macro vintages: for adding a series without refreshing the rest.
 
@@ -48,7 +49,7 @@ args = parser.parse_args()
 cfg = config.currency(args.ccy)
 sources = cfg["sources"]
 today = pd.Timestamp.today().normalize()
-KINDS = ("daily", "estimates", "curves", "futures")
+KINDS = ("daily", "estimates", "curves", "futures", "vintages")
 listed = {s for kind in KINDS for group in sources.get(kind, {}).values() for s in group}
 if set(args.only) - listed:
     parser.error(f"--only {sorted(set(args.only) - listed)}: not under sources in the {args.ccy} block")
@@ -100,6 +101,14 @@ if not args.macro_only:
                         for first, last in source.ranges(root, today))
             cost = f"   ${source.spent:.4f} quoted so far" if source.spent else ""
             print(f"{name}/{root:<4} +{added:>6} rows   covered {report(name, root)}{cost}")
+
+# Series kept with every real-time vintage outside the nowcast, pulled whole like the macro ones (with them under --macro-only).
+for name, series_list in sources.get("vintages", {}).items():
+    pull = registry.lookup(registry.MACRO, name)
+    for series in filter(wanted, series_list):
+        vintages, meta = pull(series, cfg["history_start"])
+        added = cache.write_vintages(vintages, name, series, args.ccy, meta=meta)
+        print(f"{name}/{series:<14} +{added:>6} rows")
 
 macro = cfg["macro"]
 pull = registry.lookup(registry.MACRO, macro["source"])

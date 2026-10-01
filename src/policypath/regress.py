@@ -100,7 +100,7 @@ def outputs(ccy, root=cache.CACHE_DIR, end=None, macro_days=None, overrides=None
         macro = pd.DataFrame([nowcast.nowcast(d, ccy, panel, cfg["macro"]) for d in macro_days])
     inputs = model_path.inputs(ccy, root, rule=cfg["rule"])
     summaries, paths = model_path.build(sessions, meetings, macro, inputs["sep"], inputs["target"],
-                                        inputs["fixings"], cfg["rule"])
+                                        inputs["fixings"], cfg["rule"], inputs["projected"])
     signal = gap.build(paths, cfg["signal"])
     backtest = pd.concat({k: policy.run(signal, *marks, k, cfg["backtest"])
                           for k in sorted(signal["k"].unique())}, names=["k", "session"]).reset_index()

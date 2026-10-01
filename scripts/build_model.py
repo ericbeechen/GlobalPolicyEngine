@@ -36,7 +36,7 @@ if args.onepager and not cfg["report"]["onepager"]:
 sessions, meetings, macro = (panel.load(args.ccy, name) for name in ["sessions", "meetings", "macro"])
 inputs = path.inputs(args.ccy)
 summaries, paths = path.build(sessions, meetings, macro, inputs["sep"], inputs["target"], inputs["fixings"],
-                              cfg["rule"])
+                              cfg["rule"], inputs["projected"])
 signal = gap.build(paths, cfg["signal"])
 headline, tables, result = report.checks(sessions, summaries, paths, signal, meetings, cfg)
 today = report.snapshot(paths["session"].max(), paths, summaries, sessions, signal)

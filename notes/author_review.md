@@ -19,6 +19,12 @@ flips it. Each agent adds to its own section.
 - **Proposed:** a day Databento calls degraded, pending or missing is never marked covered, so it is fetched again on every update until Databento calls it available: `Settlements._complete_through`; E14; no key.
 - Open: an update after CME's preliminary settle (about 15:00 ET) solves that session on the preliminary, and nothing in the panel or the brief marks it. The final replaces it at the next update if its price differs. Whether to flag such sessions is not decided: E14; no key.
 
+## The Fed's projected path as the reference (2026-09-30)
+
+- The projected-path variant (`rule.projected`, the SEP median funds rate from ALFRED) is built and tested but is not a row of the grid: adding it moves the grid's common sample from 2014-05 to 2016-08, and every number in `reports/robustness.md` with it. `config/strategy.yml` `robustness.choices`; V15.
+- **Proposed:** the path between year-end projections is linear in time, and a year's projection lapses once its last meeting is past: `model/path.py` `projected_path`; V16; no key.
+- **Proposed reading:** the dots do not rescue the USD outright (-0.82 against -0.61 net; IC(21) -0.27, t -3.2), and the dots move toward the market rather than the market toward them. The USD market leads both of the Fed's references. A trade on that (the sign flipped) would need registering before it is judged: V18; no key.
+
 ## Week 7: expression and carry (2026-09-28)
 
 - `strategy/carry.py` (author-owned, agent draft): every carry, roll and funding formula and sign; the three checks (the identity, the full revaluation and its bound, convergence); the breakeven (CR_h, the edge, φ_h, φ*, E_h); C7-C13, departures 1-3 (C9-C11); `carry.horizon_days`, `carry.closure_min_pairs`.

@@ -19,6 +19,11 @@ unemployment gap on zero, each halving its distance every h quarters, so the
 rule's goal moves meeting by meeting (`converge_goals`). ``estimate:
 {prior_quarters: n0}`` replaces the imposed coefficients on each session with
 ones estimated from the quarters before it (`model/estimate.py`).
+
+A third, ``projected: {source, series, label}``, swaps the rule's path for the
+central bank's own projection of its policy rate (the FOMC's SEP median, say),
+as published by the session (`projected_path`). The summary is still the
+rule's, so the ELB state, and with it the sessions the book counts, do not move.
 """
 
 import numpy as np
@@ -83,15 +88,18 @@ def inputs(ccy, root=cache.CACHE_DIR, rule=None):
 
     ``target`` is the policy rate in force (`policy_rate_log`); ``sep`` is the
     log r* is read from (the SEP's, or HLW's under a robustness override), None
-    where r* is a constant. `rule` replaces the config's ``rule`` block (a
-    variant's, merged by the caller); by default the config's own.
+    where r* is a constant; ``projected`` the real-time vintages of the
+    projected policy rate under ``rule.projected``, else None. `rule` replaces
+    the config's ``rule`` block (a variant's, merged by the caller); by default
+    the config's own.
     """
     cfg = config.currency(ccy)
     rule = cfg["rule"] if rule is None else rule
-    rs = rule["rstar"]
+    rs, pr = rule["rstar"], rule.get("projected")
     return {"sep": None if "constant" in rs else cache.log(rs["source"], rs["series"], ccy, root),
             "target": policy_rate_log(rule["policy_rate"], ccy, root),
-            "fixings": cache.log(cfg["overnight"]["source"], cfg["overnight"]["series"], ccy, root)}
+            "fixings": cache.log(cfg["overnight"]["source"], cfg["overnight"]["series"], ccy, root),
+            "projected": None if pr is None else cache.vintages(pr["source"], pr["series"], ccy, root)}
 
 
 def policy_rate(target, as_of, seen=None):
@@ -145,12 +153,43 @@ def converge_goals(as_of, dates, inflation, u_gap, r_star, spec):
     return np.maximum(rates, lower_bound(spec, as_of))
 
 
-def model_path(as_of, effective_dates, macro, sep, target, fixings, spec):
+def projected_path(as_of, dates, r0, vintages):
+    """The central bank's own projection of its policy rate at each of `dates`, as published by the end of `as_of`.
+
+    `vintages` (date, value, realtime_start, realtime_end) holds year-end
+    projections, each dated on the first day of its year, as an annual
+    series is, and current from ``realtime_start`` to ``realtime_end``
+    inclusive (NaT while current). The path runs linearly in time from `r0`,
+    the rate in force on `as_of`, through each year's projection on 31
+    December. A year counts only while one of `dates` still falls in it: once
+    its last meeting is past, its year-end rate is the rate in force, not the
+    projection. Past the last year projected the path is flat. All NaN if
+    nothing has been published by `as_of`.
+    """
+    as_of = pd.Timestamp(as_of)
+    dates = pd.DatetimeIndex(dates)
+    live = vintages[(vintages["realtime_start"] <= as_of)
+                    & (vintages["realtime_end"].isna() | (vintages["realtime_end"] >= as_of))
+                    & vintages["value"].notna()]
+    if live.empty:
+        return np.full(len(dates), np.nan)
+    ends = pd.DatetimeIndex(pd.to_datetime(live["date"].dt.year.astype(str) + "-12-31"))
+    keep = (ends > as_of) & (ends.year >= dates.min().year)   # this year's only if a meeting of it is ahead
+    anchors = pd.Series(live["value"].to_numpy()[keep], index=ends[keep]).sort_index()
+    if anchors.empty:
+        return np.full(len(dates), r0)
+    days = np.array([0.0, *(anchors.index - as_of).days])
+    rates = np.array([r0, *anchors.to_numpy()])
+    return np.interp((dates - as_of).days.to_numpy().astype(float), days, rates)
+
+
+def model_path(as_of, effective_dates, macro, sep, target, fixings, spec, projected=None):
     """The rule's path over `effective_dates` from session `as_of`, in the overnight rate's terms.
 
     `macro` is the nowcast as of the session (a row of ``nowcast.build``), `sep`,
     `target` and `fixings` are logs with ``published``; `spec` is the rule
-    block. Returns (summary, frame of k, effective_date, model, model_mid).
+    block, and `projected` the vintages ``spec["projected"]`` names (`inputs`).
+    Returns (summary, frame of k, effective_date, model, model_mid).
     The summary is today's picture under either conditioning: its notional
     and goal are the rule's at today's inflation and gap. ``at_elb`` says the
     goal is on the floor at every meeting ahead, so a rate on the floor stays
@@ -179,7 +218,10 @@ def model_path(as_of, effective_dates, macro, sep, target, fixings, spec):
         at_elb = bool((goals <= elb).all())   # the goals are floored: on the floor at every meeting
     else:
         goals, at_elb = goal, unconstrained < elb
-    mid = inertial_path(r0, goals, len(dates), spec, as_of)
+    if "projected" in spec:
+        mid = projected_path(as_of, dates, r0, projected)
+    else:
+        mid = inertial_path(r0, goals, len(dates), spec, as_of)
     frame = pd.DataFrame({"k": np.arange(1, len(dates) + 1), "effective_date": dates,
                           "model": mid + spread, "model_mid": mid})
     summary = {"macro_as_of": pd.Timestamp(macro["as_of"]), "inflation": pi, "u_gap": gap, **r,
@@ -189,7 +231,7 @@ def model_path(as_of, effective_dates, macro, sep, target, fixings, spec):
     return summary, frame
 
 
-def build(sessions, meetings, macro, sep, target, fixings, spec):
+def build(sessions, meetings, macro, sep, target, fixings, spec, projected=None):
     """The model path on every solved session the nowcast covers.
 
     `sessions` and `meetings` are the panel's frames, `macro` the nowcast panel.
@@ -200,7 +242,8 @@ def build(sessions, meetings, macro, sep, target, fixings, spec):
 
     With ``estimate`` in `spec`, the imposed rule runs first; its quarter ends
     give each session's coefficients (`estimate.coefficients`), and the rule
-    runs again with them. The summaries then carry the estimates.
+    runs again with them. The summaries then carry the estimates. `projected`
+    is what ``rule.projected`` reads (`inputs`), where `spec` has it.
     """
     ok = sessions[sessions["error"].isna()][["session"]].sort_values("session")
     ok = ok.astype({"session": "datetime64[ns]"})
@@ -211,15 +254,15 @@ def build(sessions, meetings, macro, sep, target, fixings, spec):
     by = dict(tuple(meetings.groupby("session")))
     # Every session reads the same two logs: sorted once here rather than on each read.
     target, fixings = cache.Presorted(target), cache.Presorted(fixings)
-    summaries, paths = _run(ok, by, sep, target, fixings, spec)
+    summaries, paths = _run(ok, by, sep, target, fixings, spec, projected=projected)
     if "estimate" not in spec:
         return summaries, paths
     coefficients = estimate.coefficients(summaries, spec)
-    summaries, paths = _run(ok, by, sep, target, fixings, spec, coefficients)
+    summaries, paths = _run(ok, by, sep, target, fixings, spec, coefficients, projected)
     return summaries.merge(coefficients, on="session", how="left"), paths
 
 
-def _run(ok, by, sep, target, fixings, spec, coefficients=None):
+def _run(ok, by, sep, target, fixings, spec, coefficients=None, projected=None):
     """`model_path` on every row of `ok`, with the imposed coefficients or each session's from `coefficients`."""
     rules = None if coefficients is None else {
         day: {**spec, "coefficients": {"inflation_gap": a, "unemployment_gap": b}}
@@ -230,7 +273,7 @@ def _run(ok, by, sep, target, fixings, spec, coefficients=None):
         day = row["session"]
         m = by[day].sort_values("k")
         summary, frame = model_path(day, m["effective_date"], {**row, "as_of": row["macro_as_of"]},
-                                    sep, target, fixings, spec if rules is None else rules[day])
+                                    sep, target, fixings, spec if rules is None else rules[day], projected)
         summaries.append({"session": day, **summary})
         frames.append(m[["session", "k", "announcement_date", "effective_date"]]
                       .assign(market=m["rate"].to_numpy(), model=frame["model"].to_numpy(),

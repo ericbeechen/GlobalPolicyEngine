@@ -42,7 +42,7 @@ if macro_day < pd.Timestamp(cfg["macro"]["start"]):
 inputs = path.inputs(args.ccy)
 macro = nowcast.nowcast(macro_day, args.ccy)
 summary, model = path.model_path(session, m["effective_date"], macro, inputs["sep"], inputs["target"],
-                                 inputs["fixings"], rule)
+                                 inputs["fixings"], rule, inputs["projected"])
 src = "constant" if pd.isna(summary["sep_date"]) else f"{rule['rstar']['label']} {summary['sep_date']:%Y-%m-%d}"
 if pd.isna(summary["sep_date"]) and "before_first" in rule["rstar"]:
     src = f"none yet: {rule['rstar']['before_first_label']}"

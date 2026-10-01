@@ -60,6 +60,11 @@ USD:
     # (2019Q2 on 2019-09-03); HLW follows Canada's GDP, not LW's US one.
     estimates:
       nyfed: {HLW_RSTAR: 65}
+    # Pulled whole with every ALFRED vintage, outside the nowcast. FEDTARMD is the SEP
+    # median funds rate at each year end, a vintage per SEP from 2015-12-16: the
+    # projected-path variant's reference (rule.projected), never the model's own.
+    vintages:
+      alfred: [FEDTARMD]
     tags:
       HLW_RSTAR:
         lag: "an HLW r* vintage is known 65 days after its quarter (HLW's schedules run 58-65), or from its release day where that came later (2022Q4, 2025Q3, 2025Q4)"

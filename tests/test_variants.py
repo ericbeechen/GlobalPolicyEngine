@@ -14,7 +14,7 @@ import pytest
 from policypath import config, fixtures, regimes, regress
 from policypath.curves import nss
 from policypath.model import estimate
-from policypath.model.path import converge_goals, model_path
+from policypath.model.path import converge_goals, model_path, projected_path
 from policypath.model.reaction import inertial_path, notional
 from policypath.model.rstar import rstar
 
@@ -306,3 +306,56 @@ def test_no_estimate_on_or_before_a_date_moves_when_everything_after_it_is_poiso
     want = estimate.coefficients(model, SPEC)[upto.to_numpy()].reset_index(drop=True)
     pd.testing.assert_frame_equal(estimate.coefficients(poisoned, SPEC)[upto.to_numpy()].reset_index(drop=True), want)
     pd.testing.assert_frame_equal(estimate.coefficients(model[upto], SPEC), want)
+
+
+# ---- the projected policy path ---------------------------------------------------------------
+
+def projections(*vintages):
+    """ALFRED-shaped vintages of a year-end projection: (realtime_start, realtime_end or None, {year: value})."""
+    rows = [{"date": T(f"{y}-01-01"), "value": v, "realtime_start": T(start),
+             "realtime_end": T(end) if end else pd.NaT}
+            for start, end, years in vintages for y, v in years.items()]
+    return pd.DataFrame(rows)
+
+
+SEPS = projections(("2023-12-13", "2024-03-19", {2024: 4.6, 2025: 3.6, 2026: 2.9}),
+                   ("2024-03-20", None, {2024: 4.6, 2025: 3.9, 2026: 3.1}))
+
+
+def test_the_projected_path_runs_from_the_rate_in_force_through_each_year_end_projection():
+    got = projected_path(AS_OF, DATES, 5.375, SEPS)
+    ends = [T("2024-12-31"), T("2025-12-31")]
+    want = np.interp((DATES - AS_OF).days, [0, *[(e - AS_OF).days for e in ends]], [5.375, 4.6, 3.6])
+    assert got == pytest.approx(want), "the December SEP, the one published by AS_OF"
+    assert projected_path(T("2024-03-20"), DATES[2:], 5.375, SEPS)[-1] == pytest.approx(
+        np.interp((DATES[-1] - T("2024-03-20")).days, [0, (T("2024-12-31") - T("2024-03-20")).days,
+                                                      (T("2025-12-31") - T("2024-03-20")).days], [5.375, 4.6, 3.9]))
+
+
+def test_a_projection_is_read_only_from_its_release_day_and_never_after_it_is_superseded():
+    assert np.isnan(projected_path(T("2023-12-12"), DATES, 5.375, SEPS)).all(), "nothing published yet"
+    on_release = projected_path(T("2023-12-13"), DATES, 5.375, SEPS)
+    assert not np.isnan(on_release).any()
+    poisoned = pd.concat([SEPS, projections(("2024-01-11", None, {2024: 99.0, 2025: 99.0}))])
+    assert projected_path(AS_OF, DATES, 5.375, poisoned) == pytest.approx(projected_path(AS_OF, DATES, 5.375, SEPS))
+
+
+def test_once_the_years_last_meeting_is_past_its_projection_gives_way_to_the_rate_in_force():
+    """On 20 December no meeting of the year is ahead: the year-end rate is the rate in force, whatever was projected."""
+    late = T("2024-12-20")
+    ahead = pd.DatetimeIndex(["2025-01-29", "2025-03-19", "2025-12-10"])
+    got = projected_path(late, ahead, 4.375, SEPS)
+    end = (T("2025-12-31") - late).days
+    assert got == pytest.approx(np.interp((ahead - late).days, [0, end], [4.375, 3.9]))
+
+
+def test_under_a_projected_path_the_model_is_the_projection_on_the_overnight_rate_and_the_summary_the_rules():
+    spec = {**USD_RULE, "rstar": {"constant": 0.5},
+            "projected": {"source": "alfred", "series": "FEDTARMD", "label": "SEP median"}}
+    rule = {k: v for k, v in spec.items() if k != "projected"}
+    macro = {"as_of": AS_OF, "published": AS_OF, spec["inflation"]: 3.5, spec["gap"]: -0.4}
+    s_proj, p_proj = model_path(AS_OF, DATES, macro, None, flat_log(5.375), flat_log(5.33, lag=1), spec, SEPS)
+    s_rule, p_rule = model_path(AS_OF, DATES, macro, None, flat_log(5.375), flat_log(5.33, lag=1), rule)
+    assert s_proj == s_rule
+    assert p_proj["model_mid"].to_numpy() == pytest.approx(projected_path(AS_OF, DATES, 5.375, SEPS))
+    assert (p_proj["model"] - p_proj["model_mid"]).to_numpy() == pytest.approx(5.33 - 5.375)
