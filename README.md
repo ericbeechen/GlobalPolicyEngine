@@ -42,150 +42,6 @@ The measurement, for each currency, is the implied path the market was pricing a
 | DV01 | Dollar value of a 1 basis point move |
 | Sleeve | One traded expression of the signal, e.g. the USD outright |
 
-## Status
-
-Working end to end for USD and GBP:
-
-- A cache under `data/` that one command rebuilds from nothing: ZQ, SR1 and SR3 settlements out of a Databento GLBX.MDP3 archive on disk, and EFFR, SOFR and the target range from FRED. Every observation carries a reference date and a publication date, and a revised value is a new vintage, not an overwrite. A revision the source can't date, and no longer serves once replaced, exists only in this cache, so `scripts/backup_cache.py` snapshots it after each update.
-- The FOMC meeting calendar, scraped and committed, with announcements from 2010-01-27 through 2027-12-08 (146 meetings). Each has an announcement date, an effective date, a `scheduled` flag and, for the 17-18 March 2020 meeting the Fed brought forward to the Sunday, the day it was called off. Each session sees the calendar as it stood that day: the two March 2020 emergency cuts are pillars only from their announcement, and the meeting they replaced is one until it was cancelled.
-- A piecewise-constant EFFR path over the next eight meetings on every ZQ session from 2010-06-07 to 2026-10-01: 4,118 sessions, no solver failures, 99.68% of Fed business days. The 13 missing days are Good Fridays, Fridays CME closed for a Saturday holiday, and two days (2020-02-27, 2020-06-30) Databento flags as degraded, with no ZQ settle in the archive. The coverage report lists them.
-- A SOFR discount curve bootstrapped in QuantLib from SR3 futures and SOFR fixings, and a cross-check of the ZQ path against SR1 (below).
-- A real-time macro nowcast on every Fed business day from 2011-03-04, the first day every input has an ALFRED vintage (CBO's natural rate from 2011-02-02, average hourly earnings from 2011-03-04).
-- A model path on each of the 3,929 sessions since then: the Fed's balanced-approach rule from the Monetary Policy Report, in its inertial form, fed by that day's nowcast, with r* from the FOMC's longer-run dot and an explicit floor at the lower bound. The gap between the two paths, per meeting and z-scored on its trailing two years.
-- GBP through the same interface (below): the Bank of England's fitted OIS curve on every London business day from 2009-08-03 (4,336 sessions, no failures), a real-time UK nowcast from the ONS's own revisions triangles from 2010-08-26, and the same rule. The GBP path lands on the Bank's own MPR conditioning paths to 1.00bp on average over 29 reports.
-- Every currency-specific value in `config/currencies.yml`, validated against a schema when it loads, and a test that fails if a shared module names a currency in code. Adding a currency is a config block, a meetings file, and a source module only if its data comes from a new provider.
-- A regression harness (`scripts/regress.py`) that freezes every stage's output and checks it bit for bit. Both currencies' full samples are identical to week 5 after the week 6 refactor, and again after weeks 7-12. The look-ahead tests run per currency.
-- Five sleeves that trade the gap (below): the USD and GBP outrights at the fourth meeting, USD and GBP 2s10s on an orthogonalised slope, and the GBP - USD 2y differential. Each has real instruments (ZQ contracts, OIS forwards, par Treasuries and gilts), carry and roll with three independent checks on the P&L, and a breakeven that says, at the close, whether a signal pays for its bleed.
-- Costs, turnover and a hysteresis rule for every sleeve, with a stated treatment of the lower bound. Then one book, all five sleeves sized together under a shrunk covariance and a 5% vol target, and a robustness grid that moves one choice at a time off the chosen specification.
-- A credit bridge for USD: three tests of the gap against Baa - Aaa and four other spreads, with the predictive test's sign registered before the first run.
-- A weekly one-page brief, generated from cache: both currencies' paths, the gaps, the GBP - USD differential, each sleeve's trade with its carry and roll, and what changed since last week and why.
-- Attribution and a one-page tear sheet, from one command: the book's P&L by component, by level factor, as carry against rate and by regime; the lower bound's treatment against its two alternatives; the IC at a week, a month and a quarter; and every number again without 2022 (`metrics.ex_2022`). 63% of the variance of the daily gross P&L is the exposure to the front end, so the book is closer to a duration timer than it is to a relative value trade; without 2022 the net Sharpe ratio falls to -0.98.
-- Every choice so far, with its date and reason, in [notes/DECISIONS.md](notes/DECISIONS.md). The ones left to the author are marked *proposed* and listed in [notes/author_review.md](notes/author_review.md).
-- `uv run pytest -q` runs the full suite on committed fixtures, and passes on both the Mac and Windows. The committed fixture reference, frozen on the Mac, is checked to `regress.PLATFORM_ULPS` rather than bit for bit, so the last-bit floating-point differences between machines pass; see notes/DECISIONS.md (A18).
-
-Not built yet: the generated limitations section and final hygiene pass (week 13).
-
-## Install
-
-Python >=3.12 (developed on 3.13; the code uses 3.12 f-string syntax). Dependencies are `pandas`, `pyarrow`, `databento`, `requests`, `pyyaml`, `matplotlib`, `openpyxl` and `QuantLib`, the last pinned to an exact version because its bindings change signatures between releases. `beautifulsoup4` is dev-only, used by the FOMC scraper, which never runs inside the test suite.
-
-```bash
-uv sync
-```
-
-The package is src-layout (`src/policypath/`) and is installed editable by `uv sync`, so it is imported as `policypath`, never off `sys.path`.
-
-## Quick start
-
-The test suite runs on committed fixtures and needs neither the network nor the Databento archive:
-
-```bash
-uv run pytest -q
-```
-
-Every report below is one command. It first brings the cache up to date for every enabled currency, then stops unless each currency's market data was pulled the same day, so no report is cut at an older date for one currency than another. Then it builds in the order listed. `--cache-only` builds from the cache as it is (the check still runs), and `--from <script>` resumes at a step:
-
-```bash
-uv run all
-```
-
-Step by step, rebuilding everything takes two commands. The first updates every enabled currency (`--ccy` names fewer) and needs the archive (paid, gitignored -- see [Data](#data)) and a free FRED key in `.env`. A first build takes about thirteen minutes; after that it is incremental, and a second run adds nothing:
-
-```bash
-uv run --env-file .env python scripts/update_data.py
-```
-
-The second reads only the cache. It writes the path panel to `data/panel/`, and the coverage report, the SR1 cross-check and the figures to `reports/`:
-
-```bash
-uv run python scripts/build_panel.py
-```
-
-One session, solved exactly as the panel solves it:
-
-```bash
-uv run python scripts/run_implied_path.py 2024-09-17
-```
-
-The macro side needs only the FRED key, not the archive. Pull every ALFRED vintage, then catalogue what each series covers and build the real-time nowcast from the cache (`reports/vintages_USD.md`, `reports/nowcast_USD.md` and its figures):
-
-```bash
-uv run --env-file .env python scripts/update_data.py --macro-only
-uv run python scripts/catalogue_vintages.py
-uv run python scripts/build_nowcast.py
-```
-
-One date's nowcast, as it could have been read that evening:
-
-```bash
-uv run python scripts/run_nowcast.py 2024-01-20
-```
-
-With the panel and the nowcast built, one more command writes the model path, the gap signal, the backtest, `reports/model_USD.md`, its figures and the dated one-page note `reports/onepager_USD_<session>.pdf`. Another prints one session's market and model paths side by side:
-
-```bash
-uv run python scripts/build_model.py
-uv run python scripts/run_model_path.py 2021-11-01
-```
-
-GBP needs no archive, but its update needs the FRED key too, for the dollar-sterling rate (DEXUSUK). Pull the Bank of England's curves, SONIA and Bank Rate and the ONS vintages, then build the panel, the nowcast and the model, and check the path against the Bank's MPR conditioning paths:
-
-```bash
-uv run --env-file .env python scripts/update_data.py --ccy GBP
-uv run python scripts/build_panel.py --ccy GBP
-uv run python scripts/build_nowcast.py --ccy GBP
-uv run python scripts/build_model.py --ccy GBP
-uv run python scripts/check_mpr.py
-```
-
-With both currencies' panels, nowcasts and models built, the strategy layer reads only `data/panel/` and the cache. The expression and carry come first, since the brief's trades table reads them. Then the credit bridge:
-
-```bash
-uv run python scripts/build_expression.py
-uv run python scripts/build_credit.py
-```
-
-The weekly brief, for every currency in `config/brief.yml`, one page to `reports/brief_<date>.pdf`. `--date` gives the brief that could have been sent on a past day:
-
-```bash
-uv run python scripts/build_brief.py
-```
-
-Costs and the hysteresis grid, per sleeve (`reports/costs.md`):
-
-```bash
-uv run python scripts/build_strategy.py
-```
-
-The book, then the robustness grid. The grid stops unless its baseline equals the book's headline in `reports/results/portfolio.json`, so the book goes first. A first grid build rebuilds every row's signal (about 100s); after that it reuses the ones whose inputs have not changed, and `--rows` rebuilds only the rows it names:
-
-```bash
-uv run python scripts/build_portfolio.py
-uv run python scripts/build_robustness.py
-```
-
-The tear sheet, one page to `reports/tearsheet_<last session>.pdf`, with the attribution behind it in `reports/metrics.md` and `reports/results/metrics.json`. It runs the book in memory from the panels and the cache (about 10s), so it needs none of the reports above:
-
-```bash
-uv run python scripts/build_tearsheet.py
-```
-
-The numbers sheet, last: every number the note quotes, read from the reports above and their JSON, each linked to the report line that prints it, in `reports/numbers.md`. It needs no data and stops if a report no longer prints a number its JSON holds. The test suite fails while the committed sheet is behind the reports, so rerun it after any build above:
-
-```bash
-uv run python scripts/build_numbers.py
-```
-
-Before changing anything that computes, freeze every stage's output over the full sample, then check after each change. A check stops at the last session the freeze covered, so an updated cache compares like for like. It exits non-zero on any difference, however small. The committed fixtures have their own reference, which the test suite checks:
-
-```bash
-uv run python scripts/regress.py freeze
-```
-
-```bash
-uv run python scripts/regress.py check
-```
-
 ## USD: the path from Fed Funds futures
 
 `policypath.curves.policy_path.implied_path` takes the implied average rate per contract month (`100 - price`) and the meeting effective dates, and returns the overnight rate in force in each regime between them.
@@ -345,6 +201,150 @@ The results (`reports/credit_USD.md`). Contemporaneously, a repricing of the pol
 - Settlements may be preliminary
 - Only two currencies so far, and two hiking cycles
 - Overlapping windows inflate t-stats
+
+## Status
+
+Working end to end for USD and GBP:
+
+- A cache under `data/` that one command rebuilds from nothing: ZQ, SR1 and SR3 settlements out of a Databento GLBX.MDP3 archive on disk, and EFFR, SOFR and the target range from FRED. Every observation carries a reference date and a publication date, and a revised value is a new vintage, not an overwrite. A revision the source can't date, and no longer serves once replaced, exists only in this cache, so `scripts/backup_cache.py` snapshots it after each update.
+- The FOMC meeting calendar, scraped and committed, with announcements from 2010-01-27 through 2027-12-08 (146 meetings). Each has an announcement date, an effective date, a `scheduled` flag and, for the 17-18 March 2020 meeting the Fed brought forward to the Sunday, the day it was called off. Each session sees the calendar as it stood that day: the two March 2020 emergency cuts are pillars only from their announcement, and the meeting they replaced is one until it was cancelled.
+- A piecewise-constant EFFR path over the next eight meetings on every ZQ session from 2010-06-07 to 2026-10-01: 4,118 sessions, no solver failures, 99.68% of Fed business days. The 13 missing days are Good Fridays, Fridays CME closed for a Saturday holiday, and two days (2020-02-27, 2020-06-30) Databento flags as degraded, with no ZQ settle in the archive. The coverage report lists them.
+- A SOFR discount curve bootstrapped in QuantLib from SR3 futures and SOFR fixings, and a cross-check of the ZQ path against SR1 (below).
+- A real-time macro nowcast on every Fed business day from 2011-03-04, the first day every input has an ALFRED vintage (CBO's natural rate from 2011-02-02, average hourly earnings from 2011-03-04).
+- A model path on each of the 3,929 sessions since then: the Fed's balanced-approach rule from the Monetary Policy Report, in its inertial form, fed by that day's nowcast, with r* from the FOMC's longer-run dot and an explicit floor at the lower bound. The gap between the two paths, per meeting and z-scored on its trailing two years.
+- GBP through the same interface (below): the Bank of England's fitted OIS curve on every London business day from 2009-08-03 (4,336 sessions, no failures), a real-time UK nowcast from the ONS's own revisions triangles from 2010-08-26, and the same rule. The GBP path lands on the Bank's own MPR conditioning paths to 1.00bp on average over 29 reports.
+- Every currency-specific value in `config/currencies.yml`, validated against a schema when it loads, and a test that fails if a shared module names a currency in code. Adding a currency is a config block, a meetings file, and a source module only if its data comes from a new provider.
+- A regression harness (`scripts/regress.py`) that freezes every stage's output and checks it bit for bit. Both currencies' full samples are identical to week 5 after the week 6 refactor, and again after weeks 7-12. The look-ahead tests run per currency.
+- Five sleeves that trade the gap (below): the USD and GBP outrights at the fourth meeting, USD and GBP 2s10s on an orthogonalised slope, and the GBP - USD 2y differential. Each has real instruments (ZQ contracts, OIS forwards, par Treasuries and gilts), carry and roll with three independent checks on the P&L, and a breakeven that says, at the close, whether a signal pays for its bleed.
+- Costs, turnover and a hysteresis rule for every sleeve, with a stated treatment of the lower bound. Then one book, all five sleeves sized together under a shrunk covariance and a 5% vol target, and a robustness grid that moves one choice at a time off the chosen specification.
+- A credit bridge for USD: three tests of the gap against Baa - Aaa and four other spreads, with the predictive test's sign registered before the first run.
+- A weekly one-page brief, generated from cache: both currencies' paths, the gaps, the GBP - USD differential, each sleeve's trade with its carry and roll, and what changed since last week and why.
+- Attribution and a one-page tear sheet, from one command: the book's P&L by component, by level factor, as carry against rate and by regime; the lower bound's treatment against its two alternatives; the IC at a week, a month and a quarter; and every number again without 2022 (`metrics.ex_2022`). 63% of the variance of the daily gross P&L is the exposure to the front end, so the book is closer to a duration timer than it is to a relative value trade; without 2022 the net Sharpe ratio falls to -0.98.
+- Every choice so far, with its date and reason, in [notes/DECISIONS.md](notes/DECISIONS.md). The ones left to the author are marked *proposed* and listed in [notes/author_review.md](notes/author_review.md).
+- `uv run pytest -q` runs the full suite on committed fixtures, and passes on both the Mac and Windows. The committed fixture reference, frozen on the Mac, is checked to `regress.PLATFORM_ULPS` rather than bit for bit, so the last-bit floating-point differences between machines pass; see notes/DECISIONS.md (A18).
+
+Not built yet: the generated limitations section and final hygiene pass (week 13).
+
+## Install
+
+Python >=3.12 (developed on 3.13; the code uses 3.12 f-string syntax). Dependencies are `pandas`, `pyarrow`, `databento`, `requests`, `pyyaml`, `matplotlib`, `openpyxl` and `QuantLib`, the last pinned to an exact version because its bindings change signatures between releases. `beautifulsoup4` is dev-only, used by the FOMC scraper, which never runs inside the test suite.
+
+```bash
+uv sync
+```
+
+The package is src-layout (`src/policypath/`) and is installed editable by `uv sync`, so it is imported as `policypath`, never off `sys.path`.
+
+## Quick start
+
+The test suite runs on committed fixtures and needs neither the network nor the Databento archive:
+
+```bash
+uv run pytest -q
+```
+
+Every report below is one command. It first brings the cache up to date for every enabled currency, then stops unless each currency's market data was pulled the same day, so no report is cut at an older date for one currency than another. Then it builds in the order listed. `--cache-only` builds from the cache as it is (the check still runs), and `--from <script>` resumes at a step:
+
+```bash
+uv run all
+```
+
+Step by step, rebuilding everything takes two commands. The first updates every enabled currency (`--ccy` names fewer) and needs the archive (paid, gitignored -- see [Data](#data)) and a free FRED key in `.env`. A first build takes about thirteen minutes; after that it is incremental, and a second run adds nothing:
+
+```bash
+uv run --env-file .env python scripts/update_data.py
+```
+
+The second reads only the cache. It writes the path panel to `data/panel/`, and the coverage report, the SR1 cross-check and the figures to `reports/`:
+
+```bash
+uv run python scripts/build_panel.py
+```
+
+One session, solved exactly as the panel solves it:
+
+```bash
+uv run python scripts/run_implied_path.py 2024-09-17
+```
+
+The macro side needs only the FRED key, not the archive. Pull every ALFRED vintage, then catalogue what each series covers and build the real-time nowcast from the cache (`reports/vintages_USD.md`, `reports/nowcast_USD.md` and its figures):
+
+```bash
+uv run --env-file .env python scripts/update_data.py --macro-only
+uv run python scripts/catalogue_vintages.py
+uv run python scripts/build_nowcast.py
+```
+
+One date's nowcast, as it could have been read that evening:
+
+```bash
+uv run python scripts/run_nowcast.py 2024-01-20
+```
+
+With the panel and the nowcast built, one more command writes the model path, the gap signal, the backtest, `reports/model_USD.md`, its figures and the dated one-page note `reports/onepager_USD_<session>.pdf`. Another prints one session's market and model paths side by side:
+
+```bash
+uv run python scripts/build_model.py
+uv run python scripts/run_model_path.py 2021-11-01
+```
+
+GBP needs no archive, but its update needs the FRED key too, for the dollar-sterling rate (DEXUSUK). Pull the Bank of England's curves, SONIA and Bank Rate and the ONS vintages, then build the panel, the nowcast and the model, and check the path against the Bank's MPR conditioning paths:
+
+```bash
+uv run --env-file .env python scripts/update_data.py --ccy GBP
+uv run python scripts/build_panel.py --ccy GBP
+uv run python scripts/build_nowcast.py --ccy GBP
+uv run python scripts/build_model.py --ccy GBP
+uv run python scripts/check_mpr.py
+```
+
+With both currencies' panels, nowcasts and models built, the strategy layer reads only `data/panel/` and the cache. The expression and carry come first, since the brief's trades table reads them. Then the credit bridge:
+
+```bash
+uv run python scripts/build_expression.py
+uv run python scripts/build_credit.py
+```
+
+The weekly brief, for every currency in `config/brief.yml`, one page to `reports/brief_<date>.pdf`. `--date` gives the brief that could have been sent on a past day:
+
+```bash
+uv run python scripts/build_brief.py
+```
+
+Costs and the hysteresis grid, per sleeve (`reports/costs.md`):
+
+```bash
+uv run python scripts/build_strategy.py
+```
+
+The book, then the robustness grid. The grid stops unless its baseline equals the book's headline in `reports/results/portfolio.json`, so the book goes first. A first grid build rebuilds every row's signal (about 100s); after that it reuses the ones whose inputs have not changed, and `--rows` rebuilds only the rows it names:
+
+```bash
+uv run python scripts/build_portfolio.py
+uv run python scripts/build_robustness.py
+```
+
+The tear sheet, one page to `reports/tearsheet_<last session>.pdf`, with the attribution behind it in `reports/metrics.md` and `reports/results/metrics.json`. It runs the book in memory from the panels and the cache (about 10s), so it needs none of the reports above:
+
+```bash
+uv run python scripts/build_tearsheet.py
+```
+
+The numbers sheet, last: every number the note quotes, read from the reports above and their JSON, each linked to the report line that prints it, in `reports/numbers.md`. It needs no data and stops if a report no longer prints a number its JSON holds. The test suite fails while the committed sheet is behind the reports, so rerun it after any build above:
+
+```bash
+uv run python scripts/build_numbers.py
+```
+
+Before changing anything that computes, freeze every stage's output over the full sample, then check after each change. A check stops at the last session the freeze covered, so an updated cache compares like for like. It exits non-zero on any difference, however small. The committed fixtures have their own reference, which the test suite checks:
+
+```bash
+uv run python scripts/regress.py freeze
+```
+
+```bash
+uv run python scripts/regress.py check
+```
 
 ## Data
 
