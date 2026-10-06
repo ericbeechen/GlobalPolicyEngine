@@ -1,4 +1,4 @@
-"""The credit bridge (week 12): three tests of the policy-path gap against credit spreads, per currency with a credit block.
+"""The credit bridge: three tests of the policy-path gap against credit spreads, per currency with a credit block.
 
 Reads data/panel/ (signal, paths, model; the cross sleeves' other currencies'
 signal) and the cache, and writes only its own outputs:

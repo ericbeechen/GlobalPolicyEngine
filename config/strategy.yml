@@ -39,15 +39,15 @@ risk:
   max_gross_dv01_per_capital: 0.004   # per bp: one 25bp step against every leg costs the drawdown trigger, 10% (P7)
 portfolio:
   constructions: [erc, mean_variance, inverse_vol]
-  headline: inverse_vol       # proposed
+  headline: inverse_vol       # inverse_vol | erc | mean_variance
   z_cap: 3.0
   min_history: 250
   drawdown: {trigger: 0.10, release: 0.05, scale: 0.5}
 evaluation:
-  elb: {chosen: flat}          # proposed; flat | exclude | hold
+  elb: {chosen: flat}          # flat | exclude | hold
   ic_horizons: [5, 21, 63]
   exclude: {ex_2022: ["2022-01-01", "2022-12-31"], ex_2022_23: ["2021-12-01", "2023-08-31"]}
-# Week 9's grid (strategy/robustness.py, scripts/build_robustness.py): the headline book with one choice at a time
+# The robustness grid (strategy/robustness.py, scripts/build_robustness.py): the headline book with one choice at a time
 # moved off the chosen value above, every other choice left where it is, so interactions are not run. A row
 # overrides currency blocks (every: the same for each currency the book trades; currencies: {ccy: ...}), merged as
 # regress.merge does (an r* block replaces rule.rstar whole), and/or this file (book:). It moves the signal only:

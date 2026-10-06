@@ -2,7 +2,7 @@
 
 Two currencies on two calendars, every series the book's five sleeves read
 (ZQ settles, Treasury par yields, the OIS and gilt spot curves, the FX rate),
-the week 6 backtest recomputed on the synthetic GBP panel. Checks: the three
+the crude backtest recomputed on the synthetic GBP panel. Checks: the three
 checks hold on every sleeve and session, the GBP outright reproduces the
 backtest, a stale mark books no rate move, and nothing credited or expected
 through D moves when every mark, z and overnight rate after D is poisoned
@@ -209,7 +209,7 @@ def test_pnl_is_the_held_position_times_the_unit(built):
                        equal_nan=True)
 
 
-def test_the_gbp_outright_reproduces_the_week_6_backtest(built):
+def test_the_gbp_outright_reproduces_the_crude_backtest(built):
     w, sleeves = built
     backtest = policy.run(w.panel("GBP", "signal"), w.panel("GBP", "sessions"), w.panel("GBP", "meetings"),
                           GBP["backtest"]["horizon"], GBP["backtest"]).reset_index(names="session")

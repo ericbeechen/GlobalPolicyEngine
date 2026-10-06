@@ -272,8 +272,8 @@ def signal_notes(r):
         Row("Worst drawdown", f"{dd['depth']:.1f}% of capital, {dd['peak'][:7]} to {dd['trough'][:7]} "
             f"({dd['years']:.1f} years); worst 21-session loss {dd['worst_month']:.1f}%",
             r.cite(METRICS, f"{dd['depth']:.1f}% of capital", f"{dd['worst_month']:.1f}%")),
-        Row("Level share of risk (proposed)", f"{pct(lv['variance_share'])} of the variance of daily gross P&L",
-            r.cite(METRICS, f"{pct(lv['variance_share'])} of the variance"), "DECISIONS A4, the author's to own."),
+        Row("Level share of risk", f"{pct(lv['variance_share'])} of the variance of daily gross P&L",
+            r.cite(METRICS, f"{pct(lv['variance_share'])} of the variance"), "DECISIONS A4."),
         Row("GBP outright when hiking", f"Net SR {sr(gbp['net_sr'], gbp['net_se'])}, {gbp['sessions']:,} sessions, "
             f"{gbp['trades']} trades", r.cite(METRICS, "| GBP outright | GBP |", gbp_cell, section="By regime"),
             "Where the only positive sleeve earns."),

@@ -1,6 +1,6 @@
-"""The robustness grid: the headline book with one choice at a time moved off the chosen specification. Week 9.
+"""The robustness grid: the headline book with one choice at a time moved off the chosen specification.
 
-The plan's question is not whether every cell works but whether the result
+The question is not whether every cell works but whether the result
 hinges on one. So each row (``config/strategy.yml: robustness.choices``) moves
 one choice (r*, the coefficients, the z window, the curve fit, the
 conditioning, the slope, the carry filter) and leaves every other where the
@@ -349,7 +349,7 @@ def paired_se(x, x0, mask, periods, lags=None):
     difference is much less noisy than either Sharpe (SE ~ 1 / sqrt(years)).
     Without `lags` it is iid, as `metrics.sharpe_se`. For a Sharpe's own SE
     iid is the least the uncertainty can be; for this difference it is no bound
-    either way: on the week 9 grid the Newey-West version (`PAIRED_LAGS`) is
+    either way: on the grid the Newey-West version (`PAIRED_LAGS`) is
     below the iid one on 10 of the 13 rows (the carry filter's 0.043 against
     0.053). 0 for the baseline against itself.
     """

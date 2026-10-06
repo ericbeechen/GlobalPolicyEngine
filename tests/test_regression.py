@@ -1,7 +1,7 @@
 """The whole chain, on the committed fixtures, bit for bit against the reference frozen before the refactor.
 
 `tests/data/reference/<ccy>/` was written by ``scripts/regress.py freeze
---fixtures`` at the week 5 code, on the Mac. It is checked on the Mac and on
+--fixtures`` before the config refactor, on the Mac. It is checked on the Mac and on
 Windows, whose floating point differs in the last bits, so floats compare to
 `regress.PLATFORM_ULPS` ulps of their column's largest magnitude (at most 9e-13
 of it, `policypath.regress`) and everything else exactly. Refreezing is a

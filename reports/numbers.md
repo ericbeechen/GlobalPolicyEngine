@@ -26,9 +26,9 @@ Every value below is formatted from the JSON or a generated report and found aga
 |---|---|---|---|
 | ZQ: sessions with a market path | 4,118, 0 solver failures | [coverage_USD.md:6](coverage_USD.md:6) | 2010-06-07 to 2026-10-01 ([coverage_USD.md:3](coverage_USD.md:3)) |
 | ZQ: coverage | 99.68% of Fed business days; 13 missing | [coverage_USD.md:7](coverage_USD.md:7), [coverage_USD.md:13](coverage_USD.md:13) | Missing days are listed in the coverage report. |
-| ZQ: front-contract pinning (static) | Error in the implied step: mean 5.8bp → 0.5bp, worst 34bp → 1.6bp | [README.md:197](../README.md:197), [DECISIONS.md:21](../notes/DECISIONS.md:21) | A one-off study, measured against the actual decision on 46 announcement days since 2021. |
+| ZQ: front-contract pinning (static) | Error in the implied step: mean 5.8bp → 0.5bp, worst 34bp → 1.6bp | [README.md:53](../README.md:53), [DECISIONS.md:21](../notes/DECISIONS.md:21) | A one-off study, measured against the actual decision on 46 announcement days since 2021. |
 | ZQ: SR1 cross-check | Implied minus later-realized SOFR - EFFR basis: mean +0.52bp, mean absolute 1.86bp, within 3bp on 80% | [sofr_check_USD.md:10](sofr_check_USD.md:10), [sofr_check_USD.md:11](sofr_check_USD.md:11) | 2,116 sessions, 2018-05-07 to 2026-10-01 |
-| ZQ: FedWatch (static) | No historical comparison: FedWatch publishes no history | [README.md:358](../README.md:358) | Captures go forward only. |
+| ZQ: FedWatch (static) | No historical comparison: FedWatch publishes no history | [README.md:364](../README.md:364) | Captures go forward only. |
 | BoE OIS: sessions with a market path | 4,336, 0 solver failures | [coverage_GBP.md:6](coverage_GBP.md:6) | 2009-08-03 to 2026-10-01 ([coverage_GBP.md:3](coverage_GBP.md:3)) |
 | MPR conditioning-path check | Mean absolute difference 1.00bp; mean signed -0.46bp; worst 7.22bp | [mpr_check_GBP.md:5](mpr_check_GBP.md:5), [mpr_check_GBP.md:6](mpr_check_GBP.md:6) | 29 reports, August 2019 to July 2026, 87 quarters inside the eight-meeting path |
 | MPR: why the differences have a sign | They correlate -0.59 with the move priced inside the quarter | [mpr_check_GBP.md:9](mpr_check_GBP.md:9) | The Bank averages a smooth spline; the path is a step. |
@@ -36,7 +36,7 @@ Every value below is formatted from the JSON or a generated report and found aga
 | GBP model path | 4,066 sessions, 1,930 on the floor | [model_GBP.md:5](model_GBP.md:5), [model_GBP.md:6](model_GBP.md:6) |  |
 | Why the USD sample starts when it does | Nowcast from 2011-03-04; CBO natural-rate (NROU) vintages from 2011-02-02 | [nowcast_USD.md:3](nowcast_USD.md:3), [vintages_USD.md:20](vintages_USD.md:20) | The first day every input has an ALFRED vintage. |
 | CPI-to-PCE bridge | RMSE 0.075pp m/m, MAE 0.057pp | [nowcast_USD.md:8](nowcast_USD.md:8), [nowcast_USD.md:17](nowcast_USD.md:17) | Real time, against PCE's first print, 185 months, 60-month fit window |
-| No-lookahead test (static) | The whole chain on inputs truncated at D; everything after D poisoned | [README.md:226](../README.md:226) | Runs per currency. |
+| No-lookahead test (static) | The whole chain on inputs truncated at D; everything after D poisoned | [README.md:82](../README.md:82) | Runs per currency. |
 | z | Gap at meeting 4 against its two-year trailing window, a year of history first | [model_USD.md:8](model_USD.md:8) | First z: USD 2012-02-29, GBP 2011-08-24 ([model_GBP.md:8](model_GBP.md:8)) |
 
 ## The level
@@ -75,7 +75,7 @@ The t is Newey-West, Bartlett weights to lag h. A persistent z keeps the product
 |---|---|---|---|
 | Book: gross a year, vol | -0.72% of capital gross, 5.3% vol | [metrics.md:8](metrics.md:8) |  |
 | Worst drawdown | 57.5% of capital, 2014-04 to 2021-09 (7.5 years); worst 21-session loss 10.8% | [metrics.md:12](metrics.md:12) |  |
-| Level share of risk (proposed) | 63% of the variance of daily gross P&L | [metrics.md:7](metrics.md:7) | DECISIONS A4, the author's to own. |
+| Level share of risk | 63% of the variance of daily gross P&L | [metrics.md:7](metrics.md:7) | DECISIONS A4. |
 | GBP outright when hiking | Net SR +1.76 (0.87), 850 sessions, 4 trades | [metrics.md:129](metrics.md:129) | Where the only positive sleeve earns. |
 
 ## Costs
@@ -89,7 +89,7 @@ The t is Newey-West, Bartlett weights to lag h. A persistent z keeps the product
 | Re-strikes, the par legs | 0.31% of capital a year, 13% of cost | metrics.json costs[book].cost.restrike | Quarterly, from marking a constant-maturity bond. |
 | USD outright's rolls | 0.58% a year | [metrics.md:11](metrics.md:11) |  |
 | Calendar-spread sensitivity | Rolls at half price save 0.4% a year: net -3.19% → -2.78%; gross stays -0.72% | metrics.json costs[book].cost.roll / 2 | Rolls are charged as two outright one-ways, the conservative end. Gross is before costs, so no cost treatment moves it. |
-| Hand check (static) | USD outright 2018, contract by contract: 58,462 contracts, $1,276,426, the cost charged to the dollar | [DECISIONS.md:218](../notes/DECISIONS.md:218) | Done 2026-09-29, before the 2026-09-30 regeneration. It's not in any report. |
+| Hand check (static) | USD outright 2018, contract by contract: 58,462 contracts, $1,276,426, the cost charged to the dollar | [DECISIONS.md:216](../notes/DECISIONS.md:216) | Done 2026-09-29, before the 2026-09-30 regeneration. It's not in any report. |
 
 ## Breakeven
 

@@ -16,8 +16,8 @@ A sleeve (``config/strategy.yml: sleeves``) is one of three expressions:
 Positions are book-currency DV01 per bp, positive = receive the sleeve's first
 leg. For every sleeve z > 0 means the market prices more tightening than its
 reference (the rule, or the other currency), so the priced rate is too high:
-receive. The rule here is `linear`, s = z (week 6's sizing); hysteresis, the
-ELB state and costs come from week 8's modules, which hand `run` any series of
+receive. The rule here is `linear`, s = z (the crude backtest's sizing); hysteresis, the
+ELB state and costs come from `strategy/positions.py` and `strategy/costs.py`, which hand `run` any series of
 decided positions and read its per-leg frame (executed DV01, the instrument
 it is in, its native units).
 
@@ -162,7 +162,7 @@ def build(world=None):
 
 
 def linear(sleeve):
-    """The linear rule: decide s = z at each session's close (week 6's sizing, one unit of DV01 per unit of z)."""
+    """The linear rule: decide s = z at each session's close (the crude backtest's sizing, one unit of DV01 per unit of z)."""
     return sleeve.component["z"].rename("decided")
 
 
@@ -269,7 +269,7 @@ def ahead(sleeve, h, min_pairs, side=None):
 
 
 def backtest_residual(sleeve, backtest):
-    """The end-to-end check: this outright sleeve, linear rule, fx forced to 1, against a week 6 backtest panel.
+    """The end-to-end check: this outright sleeve, linear rule, fx forced to 1, against a crude backtest panel.
 
     `backtest` is ``data/panel/<ccy>_backtest.parquet`` (session, pnl). Returns
     (sessions compared, max |difference| in bp), on every session from the

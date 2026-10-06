@@ -9,7 +9,7 @@ not different parameters, so each is its own extractor:
 - `ForwardCurveExtractor`: a fitted spot OIS curve at fixed maturities (the
   Bank of England's). The rate between meetings is the forward over that
   window, exact from two spot rates (`curves/forward.py`). With
-  ``market.curve.method: nss`` (a week 9 robustness variant) the day's nodes
+  ``market.curve.method: nss`` (a robustness variant) the day's nodes
   are first replaced by a Nelson-Siegel-Svensson fit (`curves/nss.py`); P&L is
   still marked on the published nodes (`marked`).
 

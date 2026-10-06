@@ -5,10 +5,10 @@ comes from the rows run here, and every sentence is a template filled from
 them. Numbers are from the build of 2026-09-29 (reports/robustness.md).
 
 **What is run.** Every row of ``robustness.choices`` (`strategy/robustness.py`,
-13 rows over 8 choices) is the week 9 headline book (`report/portfolio.py`
+13 rows over 8 choices) is the headline book (`report/portfolio.py`
 `headline`: the configured construction, shrunk, every sleeve, no drawdown
 control, at the chosen ELB treatment and the configured costs) on the row's
-signal, and each sleeve alone as week 8 runs it (`report/costs.py` `simulate`:
+signal, and each sleeve alone as `report/costs.py` runs it (`simulate`:
 vol-scaled, the book's rule). A row's sleeves are the baseline's legs with the
 row's components, ELB state and carry gate (`report/costs.py` `inputs(like=)`),
 so the unit P&L, sigma, the covariance (the baseline's `Risk`, reused) and the
@@ -88,8 +88,8 @@ BASE = robustness.BASELINE.key          # rows are told apart by key, so a copie
 
 @dataclass
 class Grid:
-    """Every row run: `rows` in order, and by row key the book's `Setup` and headline `Book`, the sleeves' week 8
-    `Run`s, and the sessions each row has an eligible signal on (``book`` on the book calendar, each sleeve on its
+    """Every row run: `rows` in order, and by row key the book's `Setup` and headline `Book`, the sleeves'
+    stand-alone `Run`s, and the sessions each row has an eligible signal on (``book`` on the book calendar, each sleeve on its
     own). `common` is their intersection over the rows; `ic_common` the sessions every row has a z outside its ELB
     state on (the IC's). `moves` is {key: {ccy: `robustness.moves`, on the currency's outright's common sample}},
     `sides` {key: {sleeve: (share of sessions whose side changes, the same over its common sample)}}, `onto`
@@ -130,7 +130,7 @@ def _sleeve_eligible(i, treatment):
 
 
 def _row_inputs(world, row, base, legs, signal):
-    """A row's book config, currency blocks, view, and each sleeve's week 8 `Inputs` on the baseline's legs."""
+    """A row's book config, currency blocks, view, and each sleeve's stand-alone `Inputs` on the baseline's legs."""
     book = robustness.book_of(row, world.book)
     cfgs = {c: robustness.block(c, world.cfg(c), over) for c, over in row.currencies.items()}
     placed = {c: robustness.onto(s, world.panel(c, "signal")) for c, (_, s) in signal.items()}
@@ -383,7 +383,7 @@ def head_words(g):
     """The book every cell is: the headline, in words."""
     b = g.book
     spec = g.setups[BASE].spec
-    return (f"{books.WORDS[b['portfolio']['headline']]} (the headline, proposed), shrunk covariance, "
+    return (f"{books.WORDS[b['portfolio']['headline']]} (the headline), shrunk covariance, "
             f"{b['book']['vol_target']:.0%} ex-ante vol, the gross DV01 cap, {spec.words(sizing=False)}, at the "
             "configured costs, no drawdown control")
 
@@ -474,7 +474,7 @@ def _choice_verdicts(g, s):
 
 
 def _reading(g, s):
-    """What the result is and is not sensitive to, in a paragraph (proposed for the note: V13)."""
+    """What the result is and is not sensitive to, in a paragraph (V13)."""
     alt = [r for r in g.rows if r.key != BASE]
     se = s["net"][BASE]["book"][1]
     vals = [_net(s, r.key) for r in g.rows]
@@ -532,7 +532,7 @@ def _sleeve_words(g, s):
         top = max((r for r in g.rows if r.key != BASE), key=lambda r: abs(_delta(s, r.key, n)))
         parts.append(f"{n} {lo:+.2f} to {hi:+.2f} ({_sign(vals.values())}; chosen {vals[BASE]:+.2f}, moved most by "
                      f"{top.words()}, {_delta(s, top.key, n):+.2f}, {_moved(s, top.key, n):.1f} paired SEs)")
-    return ("- **Each sleeve alone** (week 8's vol-scaled sleeve, net, over its own common sample): " + "; ".join(parts)
+    return ("- **Each sleeve alone** (the vol-scaled sleeve of reports/costs.md, net, over its own common sample): " + "; ".join(parts)
             + ". A row that changes one currency's block leaves the sleeves that do not trade it exactly at their "
             "chosen cells.")
 
@@ -577,7 +577,7 @@ def _rstar_rows(g):
 
 
 def _rstar_words(g, s):
-    """The plan's note on r*, checked: what a constant r* does to the quoted gap, to the z and to the trade."""
+    """The note on r*, checked: what a constant r* does to the quoted gap, to the z and to the trade."""
     constant, moving = _rstar_rows(g)
     if not constant and not moving:
         return None
@@ -591,7 +591,7 @@ def _rstar_words(g, s):
         worst = min(rows, key=lambda r: m[r.key]["corr_z"])
         lines.append(
             f"- **The note on r\\*, in {ccy}: a constant r\\* moves the quoted gap, and the z absorbs "
-            f"{'almost all of it' if almost else 'less of it than the plan says'}.** "
+            f"{'almost all of it' if almost else 'less of it than is usually assumed'}.** "
             f"{_cap(_and(r.label for r in rows))} "
             f"{'are constant offsets' if len(rows) > 1 else 'is a constant offset'} of "
             f"the chosen {choices_chosen(g, rows[0])}. Each pp of r* moves the gap at the backtest horizon by "
@@ -609,8 +609,8 @@ def _rstar_words(g, s):
             + _and(f"{m[r.key]['corr_z']:.2f}" for r in rows)
             + (_traded_rstar_words(g, rows, ccy, out) if out else
                ", and the z changes sign on " + _and(pct1(m[r.key]['sign_changes']) for r in rows) + " of sessions. ")
-            + ("That is the plan's 'absorbs a constant r* offset almost entirely'." if almost else
-               f"The plan's 'the z-score absorbs a constant r* offset almost entirely' holds away from the floor and "
+            + ("That is the usual claim that it 'absorbs a constant r* offset almost entirely'." if almost else
+               f"The usual claim that 'the z-score absorbs a constant r* offset almost entirely' holds away from the floor and "
                f"not near it: it fails most at {worst.label} (corr {m[worst.key]['corr_z']:.2f}), where the goal is "
                + (f"floored on {pct1(m[worst.key]['floored_row_traded'])} of the counted sessions against "
                   f"{pct1(first['floored_base_traded'])}." if out else
@@ -934,7 +934,7 @@ def markdown(g, s):
         f"Generated by `scripts/build_robustness.py` from `data/panel/` and the cache, book sessions "
         f"{days[0]:%Y-%m-%d} .. {days[-1]:%Y-%m-%d}. Do not edit by hand. The rows are `config/strategy.yml: "
         "robustness`; the grid is `strategy/robustness.py`, the book `strategy/portfolio.py` (reports/portfolio.md), "
-        "the sleeves week 8's (reports/costs.md). Every choice is a row in notes/DECISIONS.md, section V.",
+        "the sleeves as in reports/costs.md. Every choice is a row in notes/DECISIONS.md, section V.",
         "",
         "## The answer",
         "",
@@ -966,11 +966,11 @@ def markdown(g, s):
         "sigma the sleeves are sized on and the book's covariance. What moves is the component, its z, the ELB state "
         "(the model's: it moves with r*, the coefficients and the conditioning) and the carry gate.",
         "",
-        f"**The cells.** The book is the headline: {head_words(g)}. The sleeves are each alone, week 8's vol-scaled "
+        f"**The cells.** The book is the headline: {head_words(g)}. The sleeves are each alone, the vol-scaled "
         "sleeve at the book's rule. A session has an eligible signal where the ELB treatment counts it and a z stands "
         "behind the position held into it or the one put on at its close; the common sample is the sessions on which "
         "every row has one (for the book: any sleeve with one, as the book counts its sessions). Sharpe and its SE "
-        "are week 8's: mean over sd of daily net P&L, annualised by the calendar's sessions a year, SE "
+        "are those of reports/costs.md: mean over sd of daily net P&L, annualised by the calendar's sessions a year, SE "
         "sqrt((1 + SR^2/2)/years), iid, for a Sharpe the least the uncertainty can be. The paired SE of a row's move "
         "is sd(x_row - x_chosen) / sd(x_chosen) / sqrt(years): two cells over the same sessions share most of their "
         "positions, so their difference is less noisy than either. It is iid too, and for a difference that is not a "

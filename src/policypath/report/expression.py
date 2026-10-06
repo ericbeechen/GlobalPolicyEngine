@@ -7,13 +7,13 @@ and session); the report, the figure, ``reports/results/expression.json`` (the
 note's numbers) and ``reports/results/signals.csv`` (one row per signal
 episode) are views of it.
 
-The week's question is the plan's: can a correct signal still be a losing
+The question: can a correct signal still be a losing
 trade? Four definitions carry the answer.
 
 - A **signal** is a session with |z| >= ``positions.enter`` (1). An
   **episode** is a run of them under the book's hysteresis pair: it starts
   where |z| reaches ``enter`` and ends where z x side falls to ``exit`` (0), the
-  rule week 8 trades.
+  rule the costs report trades.
 - **The next quarter** of a session is what a unit position on its side,
   decided at its close, earns over the ``carry.horizon_days`` (91) after it
   executes: the sleeve's own P&L, re-selecting its instrument as the sleeve
@@ -62,7 +62,7 @@ from policypath.strategy import carry, expression, instruments
 PANEL = "book_expression.parquet"
 UNIT = 10_000          # book currency per bp: the ticket the current table sizes, a round number
 MIN_GROUP = 20         # sessions: a group smaller than this is not drawn
-PATH_MARKED = ("curve_forward",)   # instruments marked at the path's own rate: they reproduce the week 6 backtest
+PATH_MARKED = ("curve_forward",)   # instruments marked at the path's own rate: they reproduce the crude backtest
 PARTS = [*carry.PARTS, "total"]
 GROUPS = {"earns": "earns carry and roll", "bleeds_pays": "bleeds, pays", "no_pay": "bleeds, does not pay"}
 SIDE = {1.0: "receive", -1.0: "pay"}
@@ -635,7 +635,7 @@ def answer(b, stats, filt, without):
             f"{'' if agree else ', the other way from the sessions'}. Skipping them would have "
             f"{'added' if effect > 0 else 'cost'} {abs(effect):.0f}bp, {bp(top['effect_bp'], 0)}bp of it from "
             f"{int(top['skipped'])} {top['sleeve']} entries. {skipped} entries are too few to decide on: the carry "
-            "filter stays a diagnostic (`positions.carry_filter: false`), and week 8 measures it under the "
+            "filter stays a diagnostic (`positions.carry_filter: false`), and reports/costs.md measures it under the "
             "hysteresis rule with costs.")
     lines.append(_expected(stats, over, n_over, b.splits))
     return lines
@@ -825,7 +825,7 @@ def markdown(b, stats, filt, corr, without):
         "refuses to write this report if any check fails.",
     ]
     for name, ccy, n, diff in b.reproduced:
-        lines.append(f"- End to end: {name} under the linear rule, fx forced to 1, against the week 6 backtest "
+        lines.append(f"- End to end: {name} under the linear rule, fx forced to 1, against the crude backtest "
                      f"(`data/panel/{ccy}_backtest.parquet`): {n:,} sessions from its first z, largest difference "
                      f"{diff:.1e}bp. The held forward is the path's own meeting rate.")
     conv = convexity(b.units)

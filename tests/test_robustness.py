@@ -1,6 +1,6 @@
 """The robustness grid: a row changes the signal and nothing else, and its cells are over the sessions every row counts.
 
-On the synthetic two-currency world (`test_portfolio.book_world`: week 8's ELB
+On the synthetic two-currency world (`test_portfolio.book_world`: the costs ELB
 spells, a book that trades early) the grid carries six rows: one that changes
 nothing; one that moves the sterling signal as a re-fitted curve would (NSS-like:
 the market path moves by under a basis point); one whose dollar z window is

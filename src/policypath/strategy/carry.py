@@ -1,6 +1,6 @@
 """Carry, roll and the rate move: every formula that splits a leg's P&L, the checks on the split, and the breakeven.
 
-Draft for the author to own: every formula and sign is written out below so
+Every formula and sign is written out below so
 it can be re-derived without the code.
 
 **Units and signs.** A unit position is +1 of book-currency DV01 (USD per bp),
@@ -40,7 +40,7 @@ their carry is 0 and the whole move is roll plus rate.
    point value, contracts = q / DV01 per contract, point value = DV01 x 100 per
    1.00 of price, prices as settled. Forward: a receiver struck at K = F_p (worth
    0 at p) is worth N x alpha x (K - F_t) x DF_t(E_k+1) at t, N set by the
-   leg's DV01 at p (alpha x DF_p x 1bp), at S_t. That is the spec's FRA-style
+   leg's DV01 at p (alpha x DF_p x 1bp), at S_t. That is the FRA-style
    value, linear in the continuously compounded forward F; the exact OIS
    receiver's DV01 in F is alpha x DF(E_k), larger by e^(alpha F), about 0.5%
    (a six-week window at 4.4%), which neither side of the check sees. Par: a

@@ -1,6 +1,6 @@
 """The portfolio report end to end on the synthetic two-currency world: the build's checks, its outputs, its words.
 
-The world of `test_expression.py` with week 8's ELB spells (`test_report_costs.py`),
+The world of `test_expression.py` with the ELB spells of `test_report_costs.py`,
 a book that decides after 60 sessions of unit P&L, and a drawdown control
 tight enough to fire. Checks: the build passes its own invariants and writes
 every output; every Sharpe in the books table carries its SE; "anecdotal" is
@@ -43,7 +43,7 @@ def test_the_build_writes_every_output(written):
                  "## What carries it", "## The book calendar", "## Checks"]:
         assert head in md
     assert "Do not edit by hand" in md and not re.search(r"\bnan\b", md)
-    assert "the headline, proposed" in md and "Schafer and Strimmer's target D" in md
+    assert "(the headline)" in md and "Schafer and Strimmer's target D" in md
     numbers = json.loads(paths["json"].read_text())
     assert numbers["spec"]["construction"] == built.setup.book["portfolio"]["headline"]
     assert len(numbers["books"]) == len(built.books) and "inverse_vol_shrunk" in numbers["books"]

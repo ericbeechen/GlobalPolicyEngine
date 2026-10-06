@@ -1,6 +1,6 @@
 """The rule's two coefficients estimated on expanding windows: the robustness check on imposing them (R1).
 
-Author-adjacent: the imposed rule is the model, and this is what the data would
+The imposed rule is the model, and this is what the data would
 have said instead, in real time. It keeps the imposed rule's form and inertia
 and estimates only a (inflation gap) and b (unemployment gap).
 

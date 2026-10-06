@@ -1,6 +1,6 @@
-# Week 6 inventory: every currency-conditional outside `config/`
+# Inventory: every currency-conditional outside `config/`
 
-Day 3 of week 6, listed before anything was moved. Each row says where the value
+Listed before anything was moved into config. Each row says where the value
 lived, what it is, and where it went. "Kept" rows are backends: a module the
 config *names* (a data source, an extractor, a currency's own validation report).
 Naming a backend is how a currency differs without the module branching on it.
@@ -47,7 +47,7 @@ over `src/` and `scripts/`, then read module by module.
 | `curves/futures.py` Act/360 | what SR3 settles to, by CME's rule (`contract_shapes`) |
 | `report/nowcast.py`, `report/labour.py` | each currency's nowcast report, named by `macro.report` |
 | `report/conditioning.py` | the check against the Bank's own MPR conditioning paths, named by `validation.conditioning` |
-| `report/onepager.py` | the week 4 one-pager, USD prose throughout. Superseded by the brief; `build_model.py --onepager` now refuses a currency whose config does not set `report.onepager: true` |
+| `report/onepager.py` | the original one-pager, USD prose throughout. Superseded by the brief; `build_model.py --onepager` now refuses a currency whose config does not set `report.onepager: true` |
 | `report/vintages.py` `STATS_FROM`, `SINCE` | report windows, the same for every currency |
 
 ## Found on the way (not currency leaks, fixed or logged)

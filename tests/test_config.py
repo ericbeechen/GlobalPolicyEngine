@@ -151,7 +151,7 @@ def leg_refs(block):
 
 @pytest.mark.parametrize("ccy, what, source, series", [(c, *r) for c in ENABLED for r in leg_refs(BLOCKS[c])])
 def test_every_series_an_expression_or_credit_leg_reads_must_be_cached(ccy, what, source, series):
-    """A par curve, an FX rate or a credit leg nothing caches would fail only when weeks 7 or 12 first read it.
+    """A par curve, an FX rate or a credit leg nothing caches would fail only when the expression layer or the credit bridge first read it.
 
     The error must name the leg itself: a series another block also reads (DGS10 in the curve and the
     credit control, ZQ in the market) would otherwise be caught by that block's reference alone.
@@ -288,7 +288,7 @@ def test_an_estimate_is_cached_like_a_daily_series_and_needs_a_lag(ccy):
     assert any("sources.estimates" in p and "publication lag" in p for p in config.validate(ccy, b))
 
 
-# Week 9's model-side variants, as the overrides the robustness grid applies (notes/DECISIONS.md, V1-V7).
+# The model-side variants, as the overrides the robustness grid applies (notes/DECISIONS.md, V1-V7).
 VARIANTS = {
     "hlw": {"rule": {"rstar": {"source": "nyfed", "series": "HLW_RSTAR", "label": "HLW", "real": True,
                                "before_first": 2.0, "before_first_label": "Taylor's 2%"}}},

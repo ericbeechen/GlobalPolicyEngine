@@ -25,7 +25,7 @@ parser.add_argument("--ccy", default=config.enabled()[0], help="default: the fir
 parser.add_argument("--author", default=None, help="name for the one-pager's byline")
 parser.add_argument("--preview", default=None, help="also render the one-pager to this PNG")
 parser.add_argument("--onepager", action="store_true",
-                    help="also write the week 4 one-page note (config report.onepager); the weekly brief is "
+                    help="also write the original one-page note (config report.onepager); the weekly brief is "
                          "scripts/build_brief.py")
 args = parser.parse_args()
 cfg = config.currency(args.ccy)

@@ -24,7 +24,7 @@ The market persistently prices the policy path below the Fed's own rule (applied
 
 ## Why this question
 
-The market's implied path is measured against a path created from one of the rules the Fed publishes in its Monetary Policy Report. The reference is the Fed's own published rule, so there are no free parameters to tune and it is auditable. The Bank of England publishes no such rule, so for GBP the same rule is applied to UK inputs.
+The reference path is the Fed's own published rule (in its Monetary Policy Report), so there are no free parameters to tune and it's auditable. The Bank of England publishes no such rule, and for GBP, the same rule was applied to UK inputs.
 
 There is significant value in testing a rule of this nature. If the market ignored a rule the Fed itself publishes, that would say something about how much the rule guides policy. The answer runs the other way: the gap closes because the Fed moves toward the market.
 
@@ -54,7 +54,7 @@ This process of substituting in known days creates an additional challenge. When
 
 ## Checking the path against SR1
 
-To check the result, it is compared with SR1 (CME One-Month SOFR futures), an independent market on a different overnight rate that settles on SOFR exactly as ZQ settles on EFFR. For each session `curves/basis.py` averages the ZQ-implied EFFR path over each SR1 contract month and solves for the constant spread that reprices the SR1 settle: the SOFR - EFFR basis the two markets imply together. That is then compared with the basis later realized. Over 2,116 sessions it misses by +0.52bp on average, 1.86bp in absolute terms, and is within 3bp on 80% of them. Two independent markets agree to within about 2bp, so the ZQ path is not an artefact of the solver.
+To check the result, I compare it with SR1 (CME One-Month SOFR futures), an independent market on a different overnight rate that settles on SOFR exactly as ZQ settles on EFFR. For each session I average the ZQ-implied EFFR path over each SR1 contract month (`curves/basis.py`) and solve for the constant spread that reprices the SR1 settle: the SOFR - EFFR basis the two markets imply together. I then compare it with the basis later realized. Over 2,116 sessions it misses by +0.52bp on average, 1.86bp in absolute terms, and is within 3bp on 80% of them. Two independent markets agree to within about 2bp, so the ZQ path is not an artefact of the solver.
 
 The same code runs on SR3 by setting `sofr.crosscheck` in `config/currencies.yml`; SR3 stays what the SOFR discount curve is built from, since SR1 lists only about 13 months out.
 
@@ -65,9 +65,9 @@ The same code runs on SR3 by setting `sofr.crosscheck` in `config/currencies.yml
 
 ## GBP: the path from the Bank of England's OIS curve
 
-There is no ZQ outside the US. For GBP, the Bank of England publishes a fitted OIS (overnight index swap) spot curve, continuously compounded, at monthly maturities out to five years. Its log discount factors are interpolated, and the expected rate between two meetings is the forward over that window. Today until the first meeting is pinned to the rate in force: the last SONIA fixing, moved by any Bank Rate change since. `market.path(date, ccy)` returns the same object for both currencies, from the backend the config names.
+There is no ZQ outside the US. For GBP, the Bank of England publishes a fitted OIS (overnight index swap) spot curve, continuously compounded, at monthly maturities out to five years. I interpolate its log discount factors, and the expected rate between two meetings is the forward over that window. Today until the first meeting is pinned to the rate in force: the last SONIA fixing, moved by any Bank Rate change since. `market.path(date, ccy)` returns the same object for both currencies, from the backend the config names.
 
-This is validated against the MPR (Monetary Policy Report) conditioning path. The GBP path is a step function that moves on each meeting's effective date. The Bank of England averages its smooth instantaneous forward curve, which prices a move before the meeting. In a quarter with a hike priced the Bank's average ends higher, and with a cut, lower: the differences correlate -0.59 with the move priced inside the quarter. Across 29 reports covering 87 quarters, the mean absolute difference is 1.00bp, the mean signed difference -0.46bp, and the worst 7.2bp. This leaves a known definitional difference, not an error.
+This is validated against the MPR (Monetary Policy Report) conditioning path. My GBP path is a step function that moves on each meeting's effective date. The Bank of England averages its smooth instantaneous forward curve, which prices prior to the meeting. In a quarter with a hike priced the Bank's average ends higher, and with a cut, lower: the differences correlate -0.59 with the move priced inside the quarter. Across 29 reports covering 87 quarters, the mean absolute difference is 1.00bp, the mean signed difference -0.46bp, and the worst 7.2bp. This leaves a known definitional difference, not an error.
 
 ## The rule and r*
 
@@ -77,13 +77,13 @@ R* = r* + π + 0.5(π - 2) + 2(u* - u)
 
 R_k = 0.922 R_(k-1) + 0.078 max(ELB, R*), with R_0 the rate in force.
 
-The MPR's inertial rule uses 0.85 per quarter, the weight on the last period's rate: 0.922 per meeting (sqrt(0.85)). Today's inputs are held flat across the path, so the model asks: if nothing changes, where does the rule take policy? The rule's notional rate is floored at the lower bound in a named step, and the unfloored value is kept, so the 977 USD sessions where the rule asks for a negative rate stay visible.
+The MPR's inertial rule uses 0.85 per quarter, the weight on the last period's rate: 0.922 per meeting (sqrt(0.85)). I held today's inputs as flat across the path and asked: where does the rule take policy? The rule's notional rate is floored at the lower bound in a named step, and the unfloored value is kept, so the 977 USD sessions where the rule asks for a negative rate stay visible.
 
-Each input is what was published on the day. π is the 12-month core PCE, bridged from CPI for months PCE hasn't printed yet; the bridge has an RMSE of 0.075pp against PCE's first print over 185 months. u* is CBO's estimate as vintaged on that day, from ALFRED. `tests/test_no_lookahead.py` reruns the whole chain cut off on day D, then appends deliberately corrupted data after D and checks that nothing on or before D moves.
+Each input is what was published on the day. π is the 12-month core PCE, bridged from CPI for months PCE hasn't printed yet. I tested the accuracy of this bridge and the test returned an RMSE of 0.075pp against PCE's first print over 185 months. u* is CBO's estimate as vintaged on that day, from ALFRED. `tests/test_no_lookahead.py` reruns the whole chain cut off on day D, then appends deliberately corrupted data after D and checks that nothing on or before D moves.
 
-For GBP the inputs are headline CPI (12-month), LFS unemployment as first printed, and constants for u* (4.5%) and r* (-1.6%). It is headline CPI and not core because headline is what the MPC targets.
+For GBP the inputs are headline CPI (12-month, the MPC's target), LFS unemployment as first printed, and constants for u* (4.5%) and r* (-1.6%). Importantly, this is headline CPI and not core, as this is what the MPC targets.
 
-USD r* comes from the SEP. Each SEP is a dated document that is never revised, so it is real time without any vintage machinery. This isn't the same for GBP, which uses a constant -1.6%, the average real Bank Rate. Both are tested in the robustness grid, using HLW (Holston-Laubach-Williams r*) in real time for USD (book net Sharpe ratio -0.52) and constants ±1pp for GBP (-0.58 and -0.63).
+USD r* comes from the SEP. Each SEP is a dated document that is never revised, so it is real time without any vintage machinery. This isn't the same for GBP, which uses a constant -1.6%, the average real Bank Rate. Both values are tested later in Robustness, using HLW (Holston-Laubach-Williams r*) in real time for USD (book net Sharpe ratio -0.52) and constants ±1pp for GBP (-0.58 and -0.63).
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="reports/figures/model_vs_market_USD_dark.png">
@@ -119,11 +119,11 @@ The USD gap has no forecasting value and instead points the wrong way: the USD o
 
 The t is Newey-West to lag h, but z is persistent, so the products of z and the rate change stay autocorrelated past h, and t overstates the precision. The non-overlapping check gives GBP +0.32 to +0.43, clear of zero, and USD -0.18 to -0.06.
 
-The interpretation is that the market leads the Fed. A negative IC means that when the market sits below the rule, the rule falls toward the market over the following weeks, because the Fed's rate moves; the market doesn't rise toward the rule. The dots move toward the market too (+0.68 per bp of gap over 63 sessions, t +4.7, against +0.09, t +0.5, the other way). The gap carries no usable information at the book level; the GBP outright is the one exception, and it is not claimed as a tradable signal (below).
+The interpretation is that the market leads the Fed. A negative IC means that when the market sits below the rule, the rule falls toward the market over the following weeks, because the Fed's rate moves; the market doesn't rise toward the rule. The dots move toward the market too (+0.68 per bp of gap over 63 sessions, t +4.7, against +0.09, t +0.5, the other way). The gap carries no usable information at the book level; the GBP outright is the one exception. As shown later, I do not claim this as a tradable signal.
 
 ## From a gap to a trade: carry and roll
 
-`strategy/` turns each signal into positions in instruments you could hold. A unit is +1 USD of DV01 on the sleeve's first leg; positive means receive. z > 0 always means the market prices more tightening than its reference, so the sleeve receives. The USD outright holds the ZQ month that the fourth meeting's regime settles in, with its DV01 derived from the contract spec, never typed in code. The GBP outright holds the OIS forward over that regime. The curve and cross sleeves hold par Treasuries and gilts, struck at each close. Every leg's P&L splits into carry, roll and the rate's move. Three checks guard it: the split must add up on every session; an independent full revaluation from each instrument's own price must land inside a bound set by convexity; and synthetic convergence tests pin the direction. The build refuses to write the report if any of the three fails.
+`strategy/` turns each signal into positions in instruments that can actually be held. A unit is +1 USD of DV01 on the sleeve's first leg; positive means receive. z > 0 always means the market prices more tightening than its reference, so the sleeve receives. The USD outright holds the ZQ month that the fourth meeting's regime settles in, with its DV01 derived from the contract spec, never typed in code. The GBP outright holds the OIS forward over that regime. The curve and cross sleeves hold par Treasuries and gilts, struck at each close. Every leg's P&L splits into carry, roll and the rate's move. Three checks guard it: the split must add up on every session; an independent full revaluation from each instrument's own price must land inside a bound set by convexity; and synthetic convergence tests pin the direction. The build refuses to write the report if any of the three fails.
 
 **A correct signal can still be a losing trade** (`reports/expression.md`). Of the 3,938 signal sessions whose next quarter went the signal's way on the rate, 19% still lost money once carry and roll were counted. Carry and roll ran against 53% of the signals, and those signals didn't earn less. "Right but bleeding" best applies to the GBP outright and the USD 2s10s. Others, such as the USD outright and the GBP 2s10s, are wrong and bleeding. The GBP - USD 2y collected carry but was wrong on the rate.
 
@@ -138,11 +138,11 @@ Every sleeve runs under a hysteresis rule: it enters at |z| >= 1 and exits when 
 
 Turnover explains the costs exactly: 19.8 turns a year × 284k per bp of mean gross DV01 × 0.44bp one way = 2.47% of capital a year, the cost charged. Maintenance is 46% of the cost. Rolls alone are 33%, and they are forced: each outright trades the fourth meeting ahead, so every time a meeting passes the position moves to a new contract. The par legs are also re-struck every quarter (13%).
 
-Gross is already -0.72% a year, so no cost treatment makes the book pay. Even charging rolls at half price, which saves 0.4% (-3.19% to -2.78%), does not change the outcome. There is no breakeven for the portfolio. To net zero, the rate calls must pay the costs less carry and roll: they earned +1.36% a year against +4.55% needed, 3.3 times short. Only the GBP outright clears: its position has a correlation of +0.036 with the daily rate move, against a needed +0.022.
+Gross is already -0.72% a year, so no cost treatment makes the book pay. Even charging rolls at half price, which saves 0.40% (-3.19% to -2.78%), does not change the outcome. There is no breakeven for the portfolio. To net zero, the rate calls must pay the costs less carry and roll: they earned +1.36% a year against +4.55% needed, 3.3 times short. Only the GBP outright clears: its position has a correlation of +0.036 with the daily rate move, against a needed +0.022.
 
 ## The book
 
-`strategy/portfolio.py` sizes the five sleeves together. The covariance is an EWMA of the sleeves' unit P&L (lambda 0.97), with a Newey-West lag term for London closing before New York, shrunk toward its diagonal. The headline construction is inverse-vol, marked *proposed* for the author. It targets 5% ex-ante vol on USD 100m, with gross DV01 capped at 0.4% of capital per bp. Risk parity (ERC) and mean-variance run beside it. Books that share most of their positions are compared by the paired SE of the difference, not by either Sharpe's own SE.
+`strategy/portfolio.py` sizes the five sleeves together. The covariance is an EWMA of the sleeves' unit P&L (lambda 0.97), with a Newey-West lag term for London closing before New York, shrunk toward its diagonal. The headline construction is inverse-vol. It targets 5% ex-ante vol on USD 100m, with gross DV01 capped at 0.4% of capital per bp. Risk parity (ERC) and mean-variance run beside it. Books that share most of their positions are compared by the paired SE of the difference, not by either Sharpe's own SE.
 
 The book's Sharpe ratio is -0.14 gross and -0.60 net (SE 0.32): -3.19% of capital a year (`reports/portfolio.md`). The worst drawdown, 57.5% from April 2014 to September 2021, is more reflective of a grind than of a break: the worst 21-session loss is only 10.8%. The losses are concentrated in the USD outright, which accounts for -25.9% cumulative. ERC (-0.62) and mean-variance (-0.75) differ from the headline by less than two paired SEs.
 
@@ -157,7 +157,7 @@ The book's Sharpe ratio is -0.14 gross and -0.60 net (SE 0.32): -3.19% of capita
 
 The GBP outright is the only sleeve that earns, and it earns in one window: a net Sharpe ratio of +1.76 (SE 0.87) while hiking, on 4 trades; excluding 2022-2023 it nets +0.04. Its success depends on this window, a hindsight r* constant, and is sensitive to the coefficients (+0.67 to +0.13).
 
-63% of the variance of the daily gross P&L is the exposure to the front end, so the book is closer to a duration timer than it is to a relative value trade. The risk is the level's; the loss is the rest's.
+63% of the variance of the daily gross P&L is the exposure to the front end, so the book is closer to a duration timer than it is to a relative value trade. In fact, for the gross P&L, the level exposure earned 0.05% of capital per year, where the rest lost 0.77%. The level sleeves earn +0.22% per year gross and -1.20% net; costs (1.43%) alone turn the level negative. The risk is the level's; the loss is the rest's.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="reports/figures/book_equity_dark.png">
@@ -182,7 +182,13 @@ No single choice turns the loss into a gain: across the 13 rows the net Sharpe r
 
 The results (`reports/credit_USD.md`). Contemporaneously, a repricing of the policy path explains 0.3% of the weekly variation in Baa - Aaa. Predictively, a unit of z at the fourth meeting comes before Baa - Aaa narrowing 2.2bp over the next quarter, NW t -2.09. That passes the registered rule, but only just. It fails under Hansen-Hodrick weights (-1.72) or Bartlett at lag 126, and without 7 of the 15 years. A time-rotation placebo puts it at the edge of chance, and the report says so. The conditional test (early against late hiking) has the hypothesised sign in one cycle and not the other, well under its minimum detectable difference.
 
+## Conclusion
+
+The market prices the policy path below the Fed's published rule, in USD in every year from 2014 to 2026. Standardized, the gap doesn't forecast rate changes. In USD it points the wrong way, consistent with the Fed moving toward the market rather than the reverse. The GBP outright forecasts, but its gain is concentrated in 2022-23 and depends on a hindsight r* and the coefficients, so it isn't claimed. The book loses before costs. Costs, half of them maintenance the construction forces, make it worse. No single choice in the robustness grid, and not the carry filter, turns it positive. What would change this is mostly about the GBP outright and a sign-flipped USD trade, which leads straight into the list that follows.
+
 ## What would change my view
+
+Any of these would change my view:
 
 - The GBP outright holding up outside 2022-2023
 - Quote-based ZQ costs, or calendar-spread roll pricing, that turn GBP net clearly positive
@@ -214,16 +220,16 @@ Working end to end for USD and GBP:
 - A model path on each of the 3,929 sessions since then: the Fed's balanced-approach rule from the Monetary Policy Report, in its inertial form, fed by that day's nowcast, with r* from the FOMC's longer-run dot and an explicit floor at the lower bound. The gap between the two paths, per meeting and z-scored on its trailing two years.
 - GBP through the same interface (below): the Bank of England's fitted OIS curve on every London business day from 2009-08-03 (4,336 sessions, no failures), a real-time UK nowcast from the ONS's own revisions triangles from 2010-08-26, and the same rule. The GBP path lands on the Bank's own MPR conditioning paths to 1.00bp on average over 29 reports.
 - Every currency-specific value in `config/currencies.yml`, validated against a schema when it loads, and a test that fails if a shared module names a currency in code. Adding a currency is a config block, a meetings file, and a source module only if its data comes from a new provider.
-- A regression harness (`scripts/regress.py`) that freezes every stage's output and checks it bit for bit. Both currencies' full samples are identical to week 5 after the week 6 refactor, and again after weeks 7-12. The look-ahead tests run per currency.
+- A regression harness (`scripts/regress.py`) that freezes every stage's output and checks it bit for bit. Both currencies' full samples stayed identical through the move of every currency-specific value into config, and through everything built on top since. The look-ahead tests run per currency.
 - Five sleeves that trade the gap (below): the USD and GBP outrights at the fourth meeting, USD and GBP 2s10s on an orthogonalised slope, and the GBP - USD 2y differential. Each has real instruments (ZQ contracts, OIS forwards, par Treasuries and gilts), carry and roll with three independent checks on the P&L, and a breakeven that says, at the close, whether a signal pays for its bleed.
 - Costs, turnover and a hysteresis rule for every sleeve, with a stated treatment of the lower bound. Then one book, all five sleeves sized together under a shrunk covariance and a 5% vol target, and a robustness grid that moves one choice at a time off the chosen specification.
 - A credit bridge for USD: three tests of the gap against Baa - Aaa and four other spreads, with the predictive test's sign registered before the first run.
 - A weekly one-page brief, generated from cache: both currencies' paths, the gaps, the GBP - USD differential, each sleeve's trade with its carry and roll, and what changed since last week and why.
 - Attribution and a one-page tear sheet, from one command: the book's P&L by component, by level factor, as carry against rate and by regime; the lower bound's treatment against its two alternatives; the IC at a week, a month and a quarter; and every number again without 2022 (`metrics.ex_2022`). 63% of the variance of the daily gross P&L is the exposure to the front end, so the book is closer to a duration timer than it is to a relative value trade; without 2022 the net Sharpe ratio falls to -0.98.
-- Every choice so far, with its date and reason, in [notes/DECISIONS.md](notes/DECISIONS.md). The ones left to the author are marked *proposed* and listed in [notes/author_review.md](notes/author_review.md).
+- Every choice, with its date and reason, in [notes/DECISIONS.md](notes/DECISIONS.md).
 - `uv run pytest -q` runs the full suite on committed fixtures, and passes on both the Mac and Windows. The committed fixture reference, frozen on the Mac, is checked to `regress.PLATFORM_ULPS` rather than bit for bit, so the last-bit floating-point differences between machines pass; see notes/DECISIONS.md (A18).
 
-Not built yet: the generated limitations section and final hygiene pass (week 13).
+Not built yet: a generated limitations section. The limitations above are written by hand.
 
 ## Install
 
@@ -354,7 +360,7 @@ uv run python scripts/regress.py check
 - **Bank of England and ONS** data need no key: `sources/boe.py` (IADB series, the OIS curve archive, the nominal gilt curve for the gilt legs) and `sources/ons.py` (revisions triangles, the release calendar). The MPC calendar is scraped by `sources/pull_mpc.py` into the committed `config/meetings/mpc.csv`. `tests/data/boe/conditioning_paths.csv` is ground truth taken once from the Bank's Projections Databank.
 - **`data/reference/`** is gitignored too: the full-sample outputs `scripts/regress.py freeze` wrote, one folder per currency, with a `meta.json` saying what code and which sessions they cover.
 - **`reports/`** is generated: `build_panel.py` writes `coverage_USD.md`, `sofr_check_USD.md` and the figures above; `catalogue_vintages.py` writes `vintages_USD.md`; `build_nowcast.py` writes `nowcast_USD.md` and its figures; `build_model.py` writes `model_USD.md`, the model figures and the one-pager; `build_expression.py`, `build_strategy.py`, `build_portfolio.py`, `build_robustness.py` and `build_credit.py` write `expression.md`, `costs.md`, `portfolio.md`, `robustness.md` and `credit_USD.md`, their figures, and the numbers behind them as JSON in `reports/results/`, which later stages (the robustness grid's baseline check, the note) read instead of re-deriving.
-- **`tests/data/`** is committed precisely so the suite runs for anyone who clones the repo without that archive. Everything in it is small enough to read in a diff. That includes a handful of single-day ZQ, SR1 and SR3 settlement strips from CME, taken from the licensed archive; everything added since week 7 is synthetic. To rebuild the full sample you need your own Databento licence for GLBX.MDP3. Regenerate with `uv run --env-file .env python tests/data/build_fixtures.py` (needs the archive and the network; `--market-only` leaves the ALFRED fixtures as they are).
+- **`tests/data/`** is committed precisely so the suite runs for anyone who clones the repo without that archive. Everything in it is small enough to read in a diff. That includes a handful of single-day ZQ, SR1 and SR3 settlement strips from CME, taken from the licensed archive; everything added for the strategy layer (expression, carry, costs, the book, credit) is synthetic. Rebuilding the full sample needs a Databento licence for GLBX.MDP3. Regenerate with `uv run --env-file .env python tests/data/build_fixtures.py` (needs the archive and the network; `--market-only` leaves the ALFRED fixtures as they are).
 - **`tests/data/fedwatch/`** holds hand-typed captures of the CME FedWatch tool. FedWatch publishes no history and it is not recoverable after the fact, so this gets filled in going forward rather than backfilled. Each capture stores the futures strip *and* the probabilities from the same screen, so comparing them isolates bootstrap-vs-bootstrap difference from data timing. Rows are laid out exactly as the tool displays them so a capture can be checked against the screenshot cell by cell, and every file opens with a one-line provenance note on line 1 (the readers skip it by position).
 
 ## Conventions

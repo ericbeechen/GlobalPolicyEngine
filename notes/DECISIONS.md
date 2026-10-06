@@ -1,10 +1,10 @@
 # Decisions
 
-One row per choice: what was decided, when, why, and where it lives. This is the appendix of the research note and the answer to "why is it like that?". Rows marked **Proposed** are the author's to confirm; they are listed in `notes/author_review.md`.
+One row per choice: what was decided, when, why, and where it lives. This is the appendix of the research note and the answer to "why is it like that?".
 
 A new decision gets a row in the same commit as the change. A change that moves a frozen output (`scripts/regress.py check`) is a decision too: write its row, saying which numbers moved, before refreezing.
 
-Dates are when the choice was made. Weeks 1-5 ran 2026-09-22 to 2026-09-27. Results rows quote the run on data through 2026-09-29 (a few earlier ones say "to 2026-09-21"). The committed reports are from the run through 2026-10-01, which moves some figures slightly (the book's net Sharpe from -0.62 to -0.60) and changes no reading. `reports/numbers.md` lists every number the note quotes, linked to the report line that prints it.
+Dates are when the choice was made. Results rows quote the run on data through 2026-09-29 (a few earlier ones say "to 2026-09-21"). The committed reports are from the run through 2026-10-01, which moves some figures slightly (the book's net Sharpe from -0.62 to -0.60) and changes no reading. `reports/numbers.md` lists every number the note quotes, linked to the report line that prints it.
 
 This file was condensed on 2026-10-04. The unabridged version, with every intermediate count and review note, is in git history before that date.
 
@@ -64,7 +64,7 @@ This file was condensed on 2026-10-04. The unabridged version, with every interm
 - **G4** (2026-09-27). The cross-country signal is GBP - USD, gap minus gap, z-scored the same way.
 - **B1** (2026-09-27). The crude backtest trades the fourth meeting, chosen before any P&L was run; other horizons are a sensitivity, not a menu.
 - **B2** (2026-09-27). Receive when z > 0, DV01 fixed, one session's lag; P&L is credited to the meeting held, so the roll between meetings is not booked as P&L.
-- **B3** (2026-09-27). No transaction costs yet (superseded by week 8).
+- **B3** (2026-09-27). No transaction costs in the crude backtest (superseded by K1-K13).
 
 ## Publication lags and approximations
 
@@ -88,7 +88,7 @@ This file was condensed on 2026-10-04. The unabridged version, with every interm
 | L16 | The Bank's gilt spot curve | Noon next London day | The 0.5y point is often missing; interpolating it moves par yields by under 0.4bp. A fitted curve. |
 | L17 | HLW r*, NY Fed real-time vintages | Quarter end + 65 days, or the release day if later | 65 days is the shortest lag with no vintage seen early. No vintages 2020Q3-2022Q3: the 2020Q2 one stands through the gap. |
 
-## Week 6: engineering (2026-09-28)
+## Engineering (2026-09-28)
 
 - **E1**. Snapshot, then refactor: `scripts/regress.py` freezes every stage and checks it bit for bit. Fixtures tier committed in `tests/data/reference/`; full tier in `data/reference/`. *Why:* without it a moved number cannot be told from an improvement. It catches a 1e-12 change in a coefficient, and it caught one real bug.
 - **E2**. Every enabled currency block is validated against `config.SCHEMA` on load, listing every problem by path. *Why:* a third currency should be an hour of config, not an afternoon of KeyErrors.
@@ -106,12 +106,10 @@ This file was condensed on 2026-10-04. The unabridged version, with every interm
 
 ## Engineering: live market data (2026-09-30)
 
-- **E14**. Futures settles after the batch archive's last day come from Databento's historical API, with the same dataset, schema and symbols, into the same vintage log. On when `DATABENTO_API_KEY` is set; `--archive-only` turns it off. A live day is refetched until Databento calls it `available`. **Proposed:** a day Databento calls degraded is refetched on every update (about a cent a day). *Why:* the archive ended 2026-09-21, leaving USD seven sessions behind GBP. The API returns the batch records exactly, and no frozen number moves. `sources/rates.py`
-- **E15**. Every API request is priced first (`metadata.get_cost`) and refused past `rates.LIVE_BUDGET_USD`, **proposed** at $1. *Why:* a day of ZQ, SR1 and SR3 is about $0.01; the budget is the author's to set.
+- **E14**. Futures settles after the batch archive's last day come from Databento's historical API, with the same dataset, schema and symbols, into the same vintage log. On when `DATABENTO_API_KEY` is set; `--archive-only` turns it off. A live day is refetched until Databento calls it `available`. A day Databento calls degraded is refetched on every update (about a cent a day). *Why:* the archive ended 2026-09-21, leaving USD seven sessions behind GBP. The API returns the batch records exactly, and no frozen number moves. `sources/rates.py`
+- **E15**. Every API request is priced first (`metadata.get_cost`) and refused past `rates.LIVE_BUDGET_USD`, set at $1. *Why:* a day of ZQ, SR1 and SR3 is about $0.01, so only a mistake reaches the budget.
 
-## Expression and carry (week 7, 2026-09-28)
-
-Drafted by the coding agent from the week 7-13 plan, for the author to confirm or rewrite.
+## Expression and carry (2026-09-28)
 
 - **C1**. Outright instruments: USD, the ZQ month that settles on the fourth meeting's regime; GBP, the OIS forward over [E4, E5) off the Bank's curve, read with the path's own helper. `strategy/instruments.py`
 - **C2**. ZQ DV01 comes from the contract spec, never typed ($41.67 a contract); CME's published values are data, and a test fails if the number appears in code. *Why:* a typed number goes stale silently.
@@ -122,71 +120,71 @@ Drafted by the coding agent from the week 7-13 plan, for the author to confirm o
 - **C7**. Carry: a par leg receives its coupon and pays the overnight rate; futures and forwards are unfunded. GBP legs convert at DEXUSUK, and the build refuses a spot outside [1.0, 2.5]. *Why:* funding at overnight stands in for repo; the range catches an inverted quote.
 - **C8**. Convexity is not in the linear P&L; the full revaluation measures it (about 2.6-2.7bp a year per unit DV01 against a receiver of 2s10s).
 - **C9**. Three checks guard the P&L: the carry + roll + rate identity; an independent full revaluation inside a Taylor bound (no session outside it); and convergence tests per sleeve. The build refuses to write the report if one fails. *Why:* the identity alone cannot prove the signs.
-- **C10**. The plan's carry example had its sign backwards. "Right and bleeding" is receiving on an inverted curve or paying on an upward-sloping one. Twelve worked cases pin each sign. `tests/test_carry.py`
+- **C10**. "Right and bleeding" is receiving on an inverted curve or paying on an upward-sloping one. The sign is easy to get backwards, so twelve worked cases pin each one. `tests/test_carry.py`
 - **C11**. The breakeven's edge is the de-meaned gap (|z| × sd), not the raw bp gap, and the expected quarter is E_h = φ × edge + (1 - φ) × CR_h. *Why:* the raw gap carries constant offsets (r*, u*, the spread) that z removes.
 - **C12**. Carry and roll ahead (CR_h) is over 91 days for the instrument held, curve frozen, signed for the side.
 - **C13**. The closure φ_h is an expanding-window, no-intercept slope, clipped to [0, 1], from 250 pairs. A signal does not pay for its bleed when E_h < 0. *Why:* real time; a full-sample φ would let 2022 decide whether a 2015 signal paid.
 - **C14**. The traded slope is orthogonalised against the level over a trailing 730 days; the raw slope is a robustness row. *Why:* unorthogonalised, the slope's z correlates 0.85 (USD) and 0.94 (GBP) with the level's.
 - **C15**. Both 2s10s are government curves (Treasury CMT, gilt par from the Bank's curve); the cross sleeve is 2y against 2y. *Why:* the OIS curve reaches 25 years only from 2016, and a cross built from the outright legs would make the covariance singular.
-- **C16**. Week 7 trades the linear rule (s = z) with no costs; the expression layer takes any series of positions.
+- **C16**. The expression report trades the linear rule (s = z) with no costs; the expression layer takes any series of positions.
 - **C17**. The breakeven horizon is a quarter, 91 days, for carry, closure and outcome alike. *Why:* two meetings, about how long a trade is held.
-- **C18**. A signal is a session with |z| ≥ 1, scored on its next quarter. Of 3,938 signal sessions right on the rate, 19% lost once carry and roll were counted; 53% bled. **Proposed** reading: whether bleeding is a reason to stand aside turns on 2022 (bleeding signals earned more over the full sample, less without 2022), so the carry filter stays a diagnostic. `report/expression.py`
+- **C18**. A signal is a session with |z| ≥ 1, scored on its next quarter. Of 3,938 signal sessions right on the rate, 19% lost once carry and roll were counted; 53% bled. The reading: whether bleeding is a reason to stand aside turns on 2022 (bleeding signals earned more over the full sample, less without 2022), so the carry filter stays a diagnostic. `report/expression.py`
 - **C19**. The brief's limitations footer reads only the tags of the blocks the brief shows. *Why:* room for the trades table; the full list goes to the generated limitations.
 - **C20**. The brief's trades table: per sleeve, z, side, instrument, edge, CR_h, E_h and the verdict. Checked on 769 Friday briefs: all fit one page.
 
-## Costs (week 8, 2026-09-29)
+## Costs (2026-09-29)
 
-Drafted by the coding agent from the week 7-13 plan, for the author to confirm or rewrite. Numbers are from `reports/costs.md`: hysteresis (1, 0), flat at the ELB, vol-scaled, configured costs.
+Numbers are from `reports/costs.md`: hysteresis (1, 0), flat at the ELB, vol-scaled, configured costs.
 
 - **K1**. Costs per leg, one way = half the round trip. ZQ: two back-month ticks plus the fee, 1.048bp a round trip, computed from the contract spec. Treasuries 0.5bp, OIS forward and gilts 1bp, all assumed. *Why:* USD is observable with the tick as the floor; GBP is assumed, which is what the sensitivity curve is for.
-- **K2**. No bid-offer is measured: the archive holds settlements, not quotes, so ZQ's cost is its tick. A quote-based estimate is a data purchase for the author.
+- **K2**. No bid-offer is measured: the archive holds settlements, not quotes, so ZQ's cost is its tick. A quote-based estimate would need a data purchase.
 - **K3**. Charged: every change in DV01; a roll to a new instrument as two outright one-ways; a quarterly re-strike of each par leg. *Why:* the conservative end, since a calendar spread trades tighter.
 - **K4**. The breakeven cost is closed-form, c* = 2 × gross P&L / DV01 traded, or "none" where gross ≤ 0.
-- **K5** (2026-09-28). The hysteresis pair (enter 1.0, exit 0.0) was fixed in config before the grid ran, and is not chosen from it. *Why:* the plan says show the grid, do not tune. The best cell is not adopted.
-- **K6**. **Proposed.** The ELB state is the policy rate on its floor with the rule below it, where the model has no view. Three treatments: flat (the book's), exclude, and hold.
-- **K7**. **Proposed.** Sleeves are vol-scaled for evaluation (each alone at the book's risk); unit sizing is secondary. *Why:* unit-DV01 statistics weight the high-vol years, and the sizing decides the sign of the sum.
+- **K5** (2026-09-28). The hysteresis pair (enter 1.0, exit 0.0) was fixed in config before the grid ran, and is not chosen from it. *Why:* the grid is there to be shown, not tuned on. The best cell is not adopted.
+- **K6**. The ELB state is the policy rate on its floor with the rule below it, where the model has no view. Three treatments: flat (the book's), exclude, and hold.
+- **K7**. Sleeves are vol-scaled for evaluation (each alone at the book's risk); unit sizing is secondary. *Why:* unit-DV01 statistics weight the high-vol years, and the sizing decides the sign of the sum.
 - **K8**. A 10% no-trade band on the vol multiplier. *Why:* rescaling fell from 22% to 12% of DV01 traded.
 - **K9**. Sharpe is daily mean over sd × √(observed sessions a year); its SE is √((1 + SR²/2) / years).
 - **K10**. The carry filter stays a diagnostic (`positions.carry_filter: false`). *Why:* turning it on after seeing the result would be tuning.
 - **K11**. The brief's trades table shows each sleeve's round trip.
 - **K12**. The stale "no transaction costs yet" tag is replaced by the asymmetry: USD costs are tick-based, GBP costs assumed.
-- **K13**. **Proposed: the post-cost result.** Vol-scaled, the equal-risk sum is -0.09 gross and -0.53 net: there is nothing for costs to halve. One sleeve of five clears its costs, the GBP outright (+0.62 net, breakeven 3.4bp against an assumed 1bp), and 2022-23 make all of it. The USD outright loses before costs. 56% of what the sleeves trade is maintenance. Nothing was done in response: no cost loosened, no signal changed, no grid cell adopted.
+- **K13**. **The post-cost result.** Vol-scaled, the equal-risk sum is -0.09 gross and -0.53 net: there is nothing for costs to halve. One sleeve of five clears its costs, the GBP outright (+0.62 net, breakeven 3.4bp against an assumed 1bp), and 2022-23 make all of it. The USD outright loses before costs. 56% of what the sleeves trade is maintenance. Nothing was done in response: no cost loosened, no signal changed, no grid cell adopted.
 
-## Model variants and robustness (week 9, 2026-09-28)
+## Model variants and robustness (2026-09-28)
 
-Drafted by the coding agent from the week 7-13 plan, for the author to confirm or rewrite. V1-V11's numbers are from runs to 2026-09-21; the current comparison is `reports/robustness.md`.
+V1-V11's numbers are from runs to 2026-09-21; the current comparison is `reports/robustness.md`.
 
 - **V1**. A model-side variant is a config override that reaches every stage, and the merged block must pass the schema. *Why:* before this an r* or curve override could be silently dropped, making a robustness row the baseline twice.
 - **V2**. HLW r* (USD only), from the NY Fed's real-time vintages, with Taylor's 2% before the first. corr(z) with the baseline 0.96.
 - **V3**. Constant r*: USD 1.1 (the SEP r*'s mean), GBP -2.6 and -0.6 (±1pp). The z absorbs most of a constant r*, not all: the floor binds on some sessions and not others.
-- **V4**. **Proposed.** Estimated coefficients: a partial-adjustment fit, real time, shrunk toward the imposed (0.5, 2.0) with the prior worth two years. *Why:* this is the evidence for R1: the estimate wanders far from the imposed values and moves with episodes more than it settles on a reaction function. `model/estimate.py`
+- **V4**. Estimated coefficients: a partial-adjustment fit, real time, shrunk toward the imposed (0.5, 2.0) with the prior worth two years. *Why:* this is the evidence for R1: the estimate wanders far from the imposed values and moves with episodes more than it settles on a reaction function. `model/estimate.py`
 - **V5**. z windows of 365, 548 and 1095 days around the chosen 730, with `min_periods` scaled.
 - **V6**. GBP Nelson-Siegel-Svensson curve fitting on a grid; marks stay on the Bank's curve. corr(z) 0.999.
 - **V7**. Converge-to-target conditioning: inflation and the gap halve their distance to target every four quarters.
 - **V8**. The OBR u* series is deferred; GBP u* stays 4.5%. *Why:* it means transcribing about 30 forecasts by hand, and the r* ±1pp rows already bound a u* ±0.5pp error.
-- **V9**. **Proposed; departs from spec §5.1.** The estimated rule also drops a quarter ending on the floor after a cut that quarter. *Why:* the March 2020 emergency cuts imply a goal of -8.4%, which a floored rule can never have, and that one row moved the estimate more than any other.
+- **V9**. The estimated rule also drops a quarter ending on the floor after a cut that quarter. *Why:* the March 2020 emergency cuts imply a goal of -8.4%, which a floored rule can never have, and that one row moved the estimate more than any other.
 - **V10**. Under converge conditioning, the ELB state is where the converge path is flat on the floor. *Why:* otherwise the flat treatment would flatten a view.
 - **V11** (2026-09-29). The robustness grid: 13 rows over 8 choices, one at a time, declared in `config/strategy.yml`. A row changes only the signal; marks, instruments, carry, costs and covariance are the baseline's, checked on every row. The chosen value of every choice was fixed before the grid ran.
 - **V12** (2026-09-29). The cells: the headline book's net Sharpe over a common sample, each sleeve alone, and IC(21). Every move carries a paired SE. *Why:* rows share sessions and most positions, so a cell's own SE is the wrong yardstick for a difference.
-- **V13** (2026-09-29). **Proposed: the robustness reading.** Every row loses money net, and none moves the book by as much as one SE. Four rows move it by one to two paired SEs, all upward, about what chance gives. The GBP outright earns in every row and the USD outright loses in every row. The GBP outright depends on the imposed coefficients. Nothing is re-chosen in response.
-- **V14** (2026-09-29). **Proposed: the note on r\*.** A constant GBP r* moves the quoted gap 27.7bp per pp away from the floor, and the z absorbs it only where no goal has been floored in the trailing window, a small part of the traded sample. For the book the constant is nearly free; for the GBP outright it is not quite. The r* tag "moves the bp gap, not the z" overstates this; rewording it is the author's.
+- **V13** (2026-09-29). **The robustness reading.** Every row loses money net, and none moves the book by as much as one SE. Four rows move it by one to two paired SEs, all upward, about what chance gives. The GBP outright earns in every row and the USD outright loses in every row. The GBP outright depends on the imposed coefficients. Nothing is re-chosen in response.
+- **V14** (2026-09-29). **The note on r\*.** A constant GBP r* moves the quoted gap 27.7bp per pp away from the floor, and the z absorbs it only where no goal has been floored in the trailing window, a small part of the traded sample. For the book the constant is nearly free; for the GBP outright it is not quite. The r* tag, once "moves the bp gap, not the z", overstated this; it now reads "moves the bp gap and mostly leaves the z unchanged, except near the floor".
 
 ## The Fed's projected path as the reference (2026-09-30)
 
 - **V15**. A variant, `rule.projected`, swaps the rule's path for the Fed's own SEP median path (FEDTARMD, ALFRED vintages). It is not a grid row: it would move the common sample to 2016. *Why:* a diagnostic found the rule closes the gap toward the market, mostly through the policy rate, so the Fed's own projection was the natural reference to test. No frozen number moves.
-- **V16**. **Proposed:** the projected path is linear in time from the rate in force through each year-end projection. *Why:* the SEP says nothing about meetings in between; linear is simplest.
+- **V16**. The projected path is linear in time from the rate in force through each year-end projection. *Why:* the SEP says nothing about meetings in between; linear is simplest.
 - **V17**. The GBP - USD differential keeps every session both currencies have, NaN where a gap is missing. Nothing moves.
-- **V18**. **Proposed reading: the dots do not rescue the USD outright, and confirm that the USD market leads the Fed.** Against the dots the USD outright nets worse (-0.82 against -0.61) and its IC(21) falls to -0.27. The dots move toward the market (+0.68 per bp, t +4.7), not the reverse (+0.09, t +0.5). Trading the gap the other way would be a sign chosen after the result; it needs registering first.
+- **V18**. **The reading: the dots do not rescue the USD outright, and confirm that the USD market leads the Fed.** Against the dots the USD outright nets worse (-0.82 against -0.61) and its IC(21) falls to -0.27. The dots move toward the market (+0.68 per bp, t +4.7), not the reverse (+0.09, t +0.5). Trading the gap the other way would be a sign chosen after the result; it needs registering first.
 
-## Portfolio (week 9, 2026-09-29)
+## Portfolio (2026-09-29)
 
-Drafted by the coding agent from the week 7-13 plan, for the author to confirm or rewrite. Numbers are the headline book (inverse-vol, shrunk, every sleeve, no drawdown control) at configured costs.
+Numbers are the headline book (inverse-vol, shrunk, every sleeve, no drawdown control) at configured costs.
 
 - **P1**. The book calendar is USD's sessions; a sleeve's P&L is credited to the next book session. *Why:* one calendar gives one covariance and one set of decisions.
 - **P2**. The covariance is a zero-mean EWMA (λ 0.97) of the sleeves' unit P&L, strictly before the close, on complete rows.
-- **P3**. **Departs from spec §5.2.** The one-lag term carries the Bartlett weight (Newey-West at one lag). *Why:* the spec's unweighted sum was not positive definite on 905 sessions. With the weight it is positive definite on all.
+- **P3**. The one-lag term carries the Bartlett weight (Newey-West at one lag). *Why:* the unweighted sum, S0 + S1 + S1', was not positive definite on 905 sessions. With the weight it is positive definite on all.
 - **P4**. Shrinkage toward the diagonal with a Ledoit-Wolf-type intensity (averages 0.20). It halves the median condition number and matters only for mean-variance.
-- **P5**. Each sleeve is sized on the sd from the covariance's diagonal, floored as in week 8.
+- **P5**. Each sleeve is sized on the sd from the covariance's diagonal, floored as in K7.
 - **P6**. Constructions size each sleeve's hysteresis side: inverse-vol, ERC, and mean-variance with μ = side × min(|z|, 3) × sd.
 - **P7**. Gross DV01 is capped at 0.4% of capital per bp. *Why:* a stress limit from arithmetic: one 25bp step against every leg loses 10%. Uncapped, vol targeting sized up to $1.5m per bp in 2014.
 - **P8**. The vol target (5% ex ante) is the whole book's, whatever number of sleeves has a side.
@@ -195,42 +193,42 @@ Drafted by the coding agent from the week 7-13 plan, for the author to confirm o
 - **P11**. The drawdown control (halve at 10%, restore under 5%) is reported beside the book, not used in it. *Why:* it fired once and never released; one episode cannot support a rule.
 - **P12**. A relative-value-only book (no outrights) stands in for duration neutralisation. It loses before costs.
 - **P13**. The book decides from 250 complete sessions (2012-03-01) and is counted from Jan 2014, when the flat ELB treatment first allows a position.
-- **P14**. **Proposed.** The headline book is inverse-vol, shrunk, every sleeve, no drawdown control. *Why:* explainable in two sentences, its weights do not depend on a noisy covariance, and it was set before any book ran. ERC cannot be told from it; mean-variance is worse.
-- **P15**. **Proposed: the book's result.** The headline loses before costs and after: gross -0.15, net -0.62 (0.32), worst drawdown 57.5%. What earns is one window, Dec 2021 to Aug 2023 (+20.5% of capital inside it, -59.2% outside). The GBP outright and 2022 are one source of return, not two. Nothing was tuned in response.
+- **P14**. The headline book is inverse-vol, shrunk, every sleeve, no drawdown control. *Why:* explainable in two sentences, its weights do not depend on a noisy covariance, and it was set before any book ran. ERC cannot be told from it; mean-variance is worse.
+- **P15**. **The book's result.** The headline loses before costs and after: gross -0.15, net -0.62 (0.32), worst drawdown 57.5%. What earns is one window, Dec 2021 to Aug 2023 (+20.5% of capital inside it, -59.2% outside). The GBP outright and 2022 are one source of return, not two. Nothing was tuned in response.
 - **P16**. Two books are compared on the paired SE of their Sharpe difference (Jobson-Korkie with Memmel's correction). *Why:* books that share most positions make a single book's SE overstate the noise of a difference 3 to 15 times.
-- **P17**. **Proposed (a diagnostic).** The covariance is scored as a forecast of the unit P&L it sizes (after Paleologo, ch. 5). Realized runs above ex-ante vol mostly from vol dynamics the EWMA does not track; no candidate beats the configured covariance by two DM t. Nothing changed.
+- **P17**. **A diagnostic.** The covariance is scored as a forecast of the unit P&L it sizes (after Paleologo, ch. 5). Realized runs above ex-ante vol mostly from vol dynamics the EWMA does not track; no candidate beats the configured covariance by two DM t. Nothing changed.
 
-## Attribution and evaluation (week 10, 2026-09-29)
+## Attribution and evaluation (2026-09-29)
 
-Drafted by the coding agent from the week 7-13 plan, for the author to confirm or rewrite. Numbers are the headline book net of costs, from `reports/metrics.md`.
+Numbers are the headline book net of costs, from `reports/metrics.md`.
 
 - **A1**. Performance beyond Sharpe: daily and per-trade hit rates, trades, worst drawdown, turns and time in market. A trade carries the costs of its entry and exit.
 - **A2**. `metrics.ex_2022` and `metrics.ex_2022_23` leave the window's P&L out without re-running the positions. *Why:* one well-telegraphed cycle can carry a rates backtest, and "what did the rest earn" is the question.
-- **A3**. P&L by component group (level, slope, cross-country), split into carry, roll and rate exactly as week 7 marks it.
-- **A4**. **Proposed: level or relative value.** Each sleeve's P&L is split into its exposure to the outrights and the rest. The level is 63% of the variance of the book's daily gross P&L, so the book is closer to a duration timer than to relative value; but the loss is mostly the relative value's.
+- **A3**. P&L by component group (level, slope, cross-country), split into carry, roll and rate exactly as the expression layer marks it (C9).
+- **A4**. **Level or relative value.** Each sleeve's P&L is split into its exposure to the outrights and the rest. The level is 63% of the variance of the book's daily gross P&L, so the book is closer to a duration timer than to relative value; but the loss is mostly the relative value's.
 - **A5**. Carry against rate: the book pays more in carry and roll than its rate calls earn. A carry benchmark (the same book trading the sign of carry) correlates -0.16 with it: not a carry trade.
 - **A6**. Regime conditioning, real time. Every regime Sharpe is within about one SE of the others: descriptive, not a test.
-- **A7**. **Proposed: the ELB treatment is flat, with the alternatives shown.** Exclude is not a strategy; hold loses 17% of capital through six years of GBP floor. All three are within a paired SE or so.
+- **A7**. **The ELB treatment is flat, with the alternatives shown.** Exclude is not a strategy; hold loses 17% of capital through six years of GBP floor. All three are within a paired SE or so.
 - **A8**. The first z's after lift-off are standardised against a window mostly of ELB sessions. Reported as a limitation, not corrected.
 - **A9**. IC at 5, 21 and 63 sessions outside the ELB, with a non-overlapping check. Only the GBP outright has a signal; the USD outright has the wrong sign. The t overstates precision because z is persistent.
 - **A10**. The tear sheet is one generated page; it raises rather than spill past a page.
-- **A11**. On the Windows machine the Phase 0 series were pulled with `update_data.py --only`, and the currency-branch test was fixed to compare POSIX paths. Regress references differed in the last bits; nothing was refrozen (see A18).
+- **A11**. On the Windows machine the series added for the strategy layer (L12-L17) were pulled with `update_data.py --only`, and the currency-branch test was fixed to compare POSIX paths. Regress references differed in the last bits; nothing was refrozen (see A18).
 - **A12**. Where the costs go: cost = turns × mean gross DV01 × one-way cost, checkable by hand (19.8 × 284k × 0.44bp = 2.47% of capital a year; 46% maintenance). *Why:* an outside review suspected a double count. The USD outright's 2018, rebuilt contract by contract (58,462 contracts), costs $1,276,426, the cost charged to the dollar. Rolls at half price would save about 0.4% a year and gross would still be below zero.
-- **A13**. **Proposed: carry against rate, by sleeve.** Right and bleeding: GBP outright, USD 2s10s. Wrong and bleeding: USD outright, GBP 2s10s. Wrong and collecting carry: GBP - USD 2y. The USD outright's loss is its rate calls, not its carry.
+- **A13**. **Carry against rate, by sleeve.** Right and bleeding: GBP outright, USD 2s10s. Wrong and bleeding: USD outright, GBP 2s10s. Wrong and collecting carry: GBP - USD 2y. The USD outright's loss is its rate calls, not its carry.
 - **A14**. What the rate calls would have had to earn: the book's rate change was about a third of what a net of zero needs. Only the GBP outright's correlation clears the needed one.
 - **A15**. The carry filter skips 16 of 104 entries; the book nets -0.52 against -0.62 (+0.10, paired SE 0.05), still losing. It stays off. *Why:* most carry is paid while positions are held, not at entry.
-- **A16**. **Proposed: the level, as a measurement.** USD is below the rule in all 13 years (-25 to -86bp at the fourth meeting); GBP in 8 of 11, above from 2024. *Why:* a discount to the dots is a known pattern, so this is a replication with a rule; what the level is (term premium, the rule's error) is not identified.
+- **A16**. **The level, as a measurement.** USD is below the rule in all 13 years (-25 to -86bp at the fourth meeting); GBP in 8 of 11, above from 2024. *Why:* a discount to the dots is a known pattern, so this is a replication with a rule; what the level is (term premium, the rule's error) is not identified.
 - **A17**. Wording: the tear sheet adds IC and the drawdown's shape; the brief's cross-country row shows only z, since its bp level is mostly the two r* choices.
-- **A18** (2026-09-30). One fixture reference for both machines: checked to `regress.PLATFORM_ULPS` (4096 ulps of each column's largest value) instead of bit for bit; the full tier stays bit for bit. *Why:* the author asked for the Mac and Windows in sync. Compilers and BLAS libraries round differently, and a per-platform reference would let the two drift.
+- **A18** (2026-09-30). One fixture reference for both machines: checked to `regress.PLATFORM_ULPS` (4096 ulps of each column's largest value) instead of bit for bit; the full tier stays bit for bit. *Why:* the Mac and Windows machines should agree on one reference. Compilers and BLAS libraries round differently, and a per-platform reference would let the two drift.
 
-## Credit bridge (week 12, 2026-09-28)
+## Credit bridge (2026-09-28)
 
-Drafted by the coding agent from the week 7-13 plan, for the author to confirm or rewrite. D1-D3 were written before `credit.py` was run on the data; everything after them was written from the run.
+D1-D3 were written before `credit.py` was run on the data; everything after them was written from the run.
 
 - **D1**. **Pre-registered before test 2 ran.** Expected sign: negative. A gap below zero (tightening underpriced) predicts a widening of Baa - Aaa. Headline cell: Baa - Aaa on the fourth-meeting z, h = 63, every session, Newey-West lag 63. Supportive only if the slope is negative with NW t ≤ -1.96 and the non-overlapping mean slope is negative too. Every other cell is a sensitivity, not a second chance. *Why:* writing the sign first stops it being chosen after the fact. (After the run, D18: the second condition adds little.)
 - **D2**. **Fixed before the check ran.** Staleness shows if a spread's weekly AR(1), or its correlation with last week's 10y change, is outside ±1.96/√n; then the 10y change is a control.
 - **D3**. **Stated before test 3 ran.** The slope of weekly Δ(Baa - Aaa) on the level's change is negative in early hiking and positive in late hiking.
-- **D4**. Spreads: primary Moody's Baa - Aaa (maturity-matched); Baa - 30y and Baa - 10y alongside; ICE IG and HY OAS from 2023 as a cross-check. Spread changes stand in for excess returns. **Departure 4 (plan):** the ICE series are only on FRED for three years.
+- **D4**. Spreads: primary Moody's Baa - Aaa (maturity-matched); Baa - 30y and Baa - 10y alongside; ICE IG and HY OAS from 2023 as a cross-check. Spread changes stand in for excess returns. The ICE series are only on FRED for three years.
 - **D5**. Tests 1 and 3 use weekly changes to each Wednesday; test 2 uses the signal's sessions.
 - **D6**. The level's weekly change holds the meeting that was fourth at the start of the week. *Why:* re-choosing would book a passing meeting as a repricing.
 - **D7**. Newey-West Bartlett standard errors; test 2's cross-check fits every h-th session over all start offsets.
@@ -238,10 +236,10 @@ Drafted by the coding agent from the week 7-13 plan, for the author to confirm o
 - **D9**. ELB sessions are in test 2's headline, as registered, and out as a row.
 - **D10**. The 2020 crash is a sensitivity window. Without it the headline fails D1's rule.
 - **D11**. Baa - Aaa does not trip the staleness check; the Treasury-benchmarked spreads do, so they carry the control.
-- **D12**. **Test 1: a null** (proposed reading). The policy path's repricing explains 0.3% of weekly Δ(Baa - Aaa).
-- **D13**. **Test 2: the registered sign, narrowly, and not robust** (proposed reading). -2.20bp per unit of z over the next quarter, NW t -2.09: it passes D1's rule. It fails without the crash, without ELB sessions, at h = 21, without 7 of 15 years, and under either other kernel; a placebo puts its one-sided p at 0.07. Weak evidence at the edge of chance; not a lead to trade.
-- **D14**. **Test 3: no demonstrated sign flip** (proposed reading). The sign differs in one of the two cycles and not the other.
-- **D15**. **Power is too low for a sign-flip test** (proposed wording). The minimum detectable difference is about five times the estimate; the sentence says "differs / does not differ in each of two cycles" and nothing stronger.
+- **D12**. **Test 1: a null.** The policy path's repricing explains 0.3% of weekly Δ(Baa - Aaa).
+- **D13**. **Test 2: the registered sign, narrowly, and not robust.** -2.20bp per unit of z over the next quarter, NW t -2.09: it passes D1's rule. It fails without the crash, without ELB sessions, at h = 21, without 7 of 15 years, and under either other kernel; a placebo puts its one-sided p at 0.07. Weak evidence at the edge of chance; not a lead to trade.
+- **D14**. **Test 3: no demonstrated sign flip.** The sign differs in one of the two cycles and not the other.
+- **D15**. **Power is too low for a sign-flip test.** The minimum detectable difference is about five times the estimate; the sentence says "differs / does not differ in each of two cycles" and nothing stronger.
 - **D16**. Method constants live in `credit.py`; currency data lives in its `credit` config block.
 - **D17**. **Added after the run, not registered:** test 2 without each calendar year. The slope stays negative in all 15 but fails the rule without 7; it leans most on 2014 (overlapping the oil collapse) and 2020.
 - **D18**. **Added after the run, not registered:** four more checks. Bartlett at lag 126 (t -1.81) and Hansen-Hodrick (t -1.72) both miss the line; clipping z or dropping floored-sd sessions makes it stronger. D1's cell and verdict stand.

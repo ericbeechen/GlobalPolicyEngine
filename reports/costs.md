@@ -201,7 +201,7 @@ Unit-sized, the sum's chosen cell is +0.20 (0.29) net, the grid from +0.17 to +0
 
 ## Rules and ELB treatments, before and after costs
 
-Gross and net Sharpe (SE), at the configured costs, and the sessions with a position of those counted, from the first counted month. Flat: no position in the ELB state, its flat sessions left out. Exclude: the hold run with the positions decided in the state left out, their P&L and the cost of putting them on. Hold: positions through the state, every session counted. Linear is s = z (week 6's sizing).
+Gross and net Sharpe (SE), at the configured costs, and the sessions with a position of those counted, from the first counted month. Flat: no position in the ELB state, its flat sessions left out. Exclude: the hold run with the positions decided in the state left out, their P&L and the cost of putting them on. Hold: positions through the state, every session counted. Linear is s = z (the crude backtest's sizing).
 
 ### Vol-scaled
 
@@ -274,7 +274,7 @@ Each sleeve alone at the book's risk, so a year is comparable across sleeves; th
 
 ## The carry filter (a diagnostic)
 
-Skip an entry whose expected quarter does not pay for its bleed (`positions.carry_filter`, off in the book), hysteresis (1, 0), flat at the ELB, vol-scaled. Week 7 found its effect at entry rests on a few episodes; this is its effect net of costs.
+Skip an entry whose expected quarter does not pay for its bleed (`positions.carry_filter`, off in the book), hysteresis (1, 0), flat at the ELB, vol-scaled. At entry its effect rests on a few episodes (reports/expression.md); this is its effect net of costs.
 
 | sleeve | off: net | off: entries a year | on: net | on: entries a year | difference |
 | --- | --- | --- | --- | --- | --- |

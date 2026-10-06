@@ -1,4 +1,4 @@
-"""Performance statistics, one definition each, shared by every report from week 8 on.
+"""Performance statistics, one definition each, shared by every report from the costs report on.
 
 **Sharpe** (`sharpe`): the mean over the sd of daily P&L over the evaluation
 sessions, flat days included, times the square root of the calendar's
@@ -13,7 +13,7 @@ sessions a year. Daily P&L of a position held for weeks is not iid, and the
 sample is a few cycles, so this is the least the uncertainty can be: every
 Sharpe the reports quote carries it.
 
-**The information coefficient** (`forward`, `ic`, week 9's robustness grid):
+**The information coefficient** (`forward`, `ic`, the robustness grid's):
 a signal-level number, free of sizing, costs and the book. ``fwd_t(h) =
 sum_(j=1..h) x_(t+lag+j)``: what a unit position decided at t's close earns
 over the h sessions it is then held, x the rate-change component of unit P&L
@@ -21,7 +21,7 @@ over the h sessions it is then held, x the rate-change component of unit P&L
 z_t and fwd_t (Spearman's rho), and its t divides by a Newey-West standard
 error with Bartlett weights to lag h, because consecutive forward windows
 share h - 1 sessions. That lag covers the overlap and nothing past it: a
-persistent z keeps the rank products autocorrelated beyond h (on the week 9
+persistent z keeps the rank products autocorrelated beyond h (on the robustness
 grid 0.12 at lag 21 for the GBP outright, 0.33 for the USD outright), so the
 t overstates the precision. `ic_offsets` is spec section 6's cross-check: the
 IC on every h-th session only, whose forward windows do not overlap, once for
@@ -31,7 +31,7 @@ each of the h start offsets, summarised by their mean and range.
 Bartlett weights 1 - k / (L + 1), the IC's and the robustness grid's paired
 SE's (`strategy/robustness.py`).
 
-**The rest of the performance numbers** (week 10, `evaluate`), all over a
+**The rest of the performance numbers** (`evaluate`), all over a
 result's counted sessions (``kept``) and net of costs unless named gross:
 
 - the **hit rate**, daily (`hit_rate`: the share of sessions with a position
@@ -48,7 +48,7 @@ result's counted sessions (``kept``) and net of costs unless named gross:
 - **time in market** (`time_in_market`): the share of sessions with a position.
 
 **A result** (`Result`, `result`) is anything with a daily frame and its
-calendar's sessions a year: a week 8 sleeve run and a week 9 book
+calendar's sessions a year: a stand-alone sleeve run and a book
 (`report.costs.Run`, `report.portfolio.Book`) both are. Its frame needs gross,
 cost and kept; traded and gross_dv01 give turnover and time in market, and a
 signed ``held`` (the position held into each session) the trades.
@@ -147,7 +147,7 @@ def ic_offsets(z, fwd, h):
     return float(v.mean()), float(v.min()), float(v.max()), min(n for _, _, n in got)
 
 
-# ---- week 10: the rest of the performance numbers ----------------------------------
+# ---- the rest of the performance numbers ------------------------------------------
 
 @dataclass
 class Result:
@@ -157,7 +157,7 @@ class Result:
 
 
 def result(x):
-    """`x` as a `Result`: a week 9 book (its run), a week 8 run, or a `Result` already."""
+    """`x` as a `Result`: a book (its run), a stand-alone sleeve run, or a `Result` already."""
     x = getattr(x, "run", x)
     return x if isinstance(x, Result) else Result(x.daily, x.periods)
 

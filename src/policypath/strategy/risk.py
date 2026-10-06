@@ -1,4 +1,4 @@
-"""How much a sleeve's P&L moves: the EWMA volatility the sizing reads, and its floor. Shared by weeks 8 and 9.
+"""How much a sleeve's P&L moves: the EWMA volatility the sizing reads, and its floor. Shared by the stand-alone sleeves and the book.
 
 **EWMA sigma** (`ewma_sigma`). The zero-mean exponentially weighted sd of a
 daily P&L series, from observations strictly before each session:
@@ -23,7 +23,7 @@ would give; it binds on 7% of the outright sleeves' sessions and on none of
 the others'. The median is of the sigmas known on or before the session, so
 the floor is as real-time as sigma.
 
-**The sleeves' covariance** (`ewma_cov`, week 9's book). The same weights
+**The sleeves' covariance** (`ewma_cov`, the book's). The same weights
 across sleeves, zero mean, from the rows strictly before each session on
 which every sleeve has an observation: ``S0 = sum w x x'``. NaN until
 `min_periods` complete rows.

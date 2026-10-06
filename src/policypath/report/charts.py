@@ -1,11 +1,11 @@
-"""The charts the one-pages and reports embed: the week 4 path and gap, and week 10's attribution charts.
+"""The charts the one-pages and reports embed: the path and gap, and the attribution charts.
 
 Generated, never hand-edited. Written in light and dark like the README figures,
 with the same themes (`figures.THEMES`): slot 1 is the market, slot 2 the model.
 The drawing functions take their axes, so the one-pager and the tear sheet
 embed the same charts as the reports.
 
-Week 10 (`report/attribution.py`, `report/tearsheet.py`): the book's net
+Attribution (`report/attribution.py`, `report/tearsheet.py`): the book's net
 equity by component group (`equity_by_component`), its net Sharpe against the
 round trip assumed (`cost_curve`), the IC by sleeve and horizon (`ic_bars`)
 and the net Sharpe by regime (`regime_bars`). Categorical colours follow the
@@ -144,7 +144,7 @@ def equity(result, summary, k, path, theme="light"):
     ax.plot(eq.index, eq.to_numpy(), color=t["series"][0], lw=2)
     ax.annotate(f"{eq.iloc[-1]:+.0f}bp", xy=(eq.index[-1], eq.iloc[-1]), xytext=(6, 0),
                 textcoords="offset points", va="center", fontsize=9, color=t["secondary"])
-    ax.text(0.01, 0.98, "No transaction costs: these overstate what was achievable.\nCosts arrive in week 8.",
+    ax.text(0.01, 0.98, "No transaction costs: these overstate what was achievable.\nCosts are in reports/costs.md.",
             transform=ax.transAxes, ha="left", va="top", fontsize=9, color=t["ink"], fontweight="bold")
     ax.set_ylabel("bp x z, cumulative")
     _dates(ax)
@@ -170,7 +170,7 @@ def write_all(today, effr, signal, result, summary, k, out_dir, ccy, labels, mom
     return written
 
 
-# ---- week 10: attribution -----------------------------------------------------------
+# ---- attribution -------------------------------------------------------------------
 
 def _end_label(ax, x, text, t, dy=0):
     ax.annotate(text, xy=(x.index[-1], x.iloc[-1]), xytext=(6, dy), textcoords="offset points", va="center",

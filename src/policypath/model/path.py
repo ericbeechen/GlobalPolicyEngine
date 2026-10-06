@@ -12,7 +12,7 @@ inside the sample (the ECB's MRO, then its deposit rate). The market settles on
 the overnight rate, so the model path is moved onto it by the operating spread
 between the two, held flat like the macro inputs.
 
-Two robustness variants (week 9) are optional keys of the rule block, and
+Two robustness variants are optional keys of the rule block, and
 without them the path is built exactly as before. ``conditioning: {converge:
 {half_life_quarters: h}}`` lets inflation close on its target and the
 unemployment gap on zero, each halving its distance every h quarters, so the

@@ -5,7 +5,7 @@ in one session, and treats a missing z as flat; the carry gate blocks entries
 and never exits; under flat the state zeroes the position and the hysteresis
 starts flat on leaving it, the close into the state and the re-open out of it
 are charged, and hold trades nothing at the boundary; each treatment's
-sessions are the ones the spec names; vol-scaled sizing reads only the lagged
+sessions are the ones `positions.samples` names; vol-scaled sizing reads only the lagged
 sigma and re-scales only outside the no-trade band.
 """
 

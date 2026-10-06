@@ -13,7 +13,7 @@ and Windows (x64, MSVC, OpenBLAS) round the same code differently in the last
 bits: clang fuses a multiply and an add that MSVC rounds twice, even inside
 numpy's own loops (`np.interp`), and the two LAPACKs solve `lstsq` in different
 orders. On the fixtures that is at most 1.2e-13 of a column's largest value
-(week 5's `residual_bp`, itself rounding noise), and 1.2e-14 elsewhere. A
+(the crude backtest's `residual_bp`, itself rounding noise), and 1.2e-14 elsewhere. A
 reference committed on one and checked on the other is therefore compared to
 `PLATFORM_ULPS` ulps of each float column's largest magnitude (at most 9e-13 of
 it): 4 times the noise, and a fifth of the smallest move a 1e-12 change in the

@@ -1,7 +1,7 @@
-"""The book: every sleeve sized together, on one calendar, from one covariance, under one vol target. Week 9.
+"""The book: every sleeve sized together, on one calendar, from one covariance, under one vol target.
 
 The arithmetic of one book, close by close; `report/portfolio.py` runs it on
-week 8's sleeves (their rules, ELB treatment, legs, marks and costs unchanged)
+the stand-alone sleeves (their rules, ELB treatment, legs, marks and costs unchanged)
 and reports it. Numbers are from the build of 2026-09-29 (reports/portfolio.md).
 
 **The book calendar** (`to_book`, `credits`, `asof`) is the sessions of
@@ -11,31 +11,31 @@ next book session on or after it: a sterling session on a US holiday (80 since
 (73) gets nothing from the sterling sleeves, a stale session for them.
 Positions are decided only at book closes; a sleeve on another calendar picks
 a decision up at its next own session and executes it ``lag`` of its sessions
-later, as week 8's sleeves do. A sleeve session before the first book session
+later, as the stand-alone sleeves do. A sleeve session before the first book session
 is dropped: there is no book session to credit it to.
 
-**What is sized** is each sleeve's side, g, the week 8 hysteresis side under
+**What is sized** is each sleeve's side, g, the hysteresis side under
 the ELB treatment, as of the book close. Only the sleeves with a side are
 sized (`targets`), by one of three constructions (`CONSTRUCTIONS`):
 
-- ``inverse_vol`` (the headline, proposed): w = g / sd. Each sleeve at the
+- ``inverse_vol`` (the headline): w = g / sd. Each sleeve at the
   same risk alone; the correlations reach it only through the vol target.
 - ``erc``: every sleeve's share of the ex-ante variance equal, the signs fixed
   by g (`erc`). With one sleeve it is inverse-vol.
 - ``mean_variance``: w = Sigma^-1 mu, mu = g x min(|z|, ``portfolio.z_cap``)
-  x sd, the plan's "z as the expected return" (`mean_variance`). It is the
+  x sd, "z as the expected return" (`mean_variance`). It is the
   one that can put a sleeve on the other side from its own signal: it does on
   8% of its active sleeve-sessions (14% unshrunk).
 
 **The covariance** each reads is `risk.ewma_cov` of the sleeves' unit P&L on
 the book calendar (+1 book DV01 on the first leg), shrunk, with each sd
-floored as week 8's (`floored`: at 0.5 x its trailing two-year median) and
+floored as for the stand-alone sleeves (`floored`: at 0.5 x its trailing two-year median) and
 the matrix rescaled to the floored sds, its correlations kept: D R D. So the
 floor shrinks a quiet sleeve in every construction, not only inverse-vol.
 
 **Size** (`targets`). The weights are scaled so the ex-ante vol,
 sqrt(w' Sigma w x 252), is ``book.vol_target`` x capital, 5% of $100m (252 as
-week 8's vol-scaled sleeves). The target is the whole book's, so the sleeves
+for the vol-scaled sleeves). The target is the whole book's, so the sleeves
 with a side carry all of it however few they are: 1.6 on average in 2014, 4.5
 in 2022. Then the gross DV01 cap: every leg's |q| summed, at most
 ``risk.max_gross_dv01_per_capital`` x capital, 0.004 per bp ($400k per bp), so
@@ -47,7 +47,7 @@ alone would have run up to $1.5m per bp gross.
 
 **The band** (`band`): a sleeve trades to its target on a new side (from 0,
 to 0, or across it) and otherwise only when the target is more than
-``risk.no_trade_band`` (10%) from the position decided before, week 8's rule
+``risk.no_trade_band`` (10%) from the position decided before, the sleeves' rule
 on each leg's DV01. The cap outranks the band: where the positions kept
 inside their bands would break it, every sleeve trades to its target.
 
@@ -175,7 +175,7 @@ def erc(g, cov, v0=None, tol=ERC_TOL, **_):
 
 
 def mean_variance(g, cov, sd, z, z_cap, **_):
-    """w = cov^-1 mu, mu = g x min(|z|, z_cap) x sd: the z-scored signal as the expected return (the plan's).
+    """w = cov^-1 mu, mu = g x min(|z|, z_cap) x sd: the z-scored signal as the expected return.
 
     With cov = D R D (D the sds), w = D^-1 R^-1 (mu / sd) = D^-1 R^-1 (g min(|z|,
     z_cap)): with no correlation it is inverse-vol weighted by the capped |z|,
@@ -266,7 +266,7 @@ def band(target, width, legs, limit=None):
 
     A sleeve trades to its target on a new side (from 0, to 0, or across it)
     and otherwise only when the target is more than `width` from the position
-    decided before (``risk.no_trade_band``, each leg's DV01, as week 8's).
+    decided before (``risk.no_trade_band``, each leg's DV01, as for the stand-alone sleeves).
     Where keeping positions inside their band would leave the gross DV01 over
     `limit`, every sleeve trades to its target: the cap holds on every close.
     """

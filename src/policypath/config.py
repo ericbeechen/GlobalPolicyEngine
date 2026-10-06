@@ -14,7 +14,7 @@ currency blocks (each sleeve's currencies are enabled and have the expression
 the sleeve trades; a cross pair has one horizon; a leg outside the book
 currency has an FX rate). That check lives in `strategy`, not in the currency
 load, so the currency blocks still load without a book. Its ``robustness``
-rows (week 9's grid) are checked the same way: each row's override, merged
+rows (the robustness grid) are checked the same way: each row's override, merged
 into the block it changes, must pass that block's own schema, and may reach
 only the signal (`ROBUSTNESS_CURRENCY_PATHS`, `ROBUSTNESS_BOOK_PATHS`).
 """
@@ -347,7 +347,7 @@ RSTAR_SCHEMA = {
 # a variant that reads one outside the nowcast (``rule.projected``).
 OPTIONAL_SCHEMA = {"sources.estimates": _lags, "sources.vintages": _named_lists}
 
-# Week 9's model-side robustness variants: optional keys a variant's override adds
+# The model-side robustness variants: optional keys a variant's override adds
 # (a block without them is the baseline). Each is checked where a block has it, and
 # a key under `VARIANT_SCHEMA` then needs the paths under it.
 

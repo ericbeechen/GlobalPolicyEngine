@@ -1,4 +1,4 @@
-"""The costs report's runs end to end: no look-ahead, the week 7 seam, the sum's calendar, the grid's words.
+"""The costs report's runs end to end: no look-ahead, the expression seam, the sum's calendar, the grid's words.
 
 The synthetic two-currency world of `test_expression.py`, with a model panel
 per currency that puts it in the ELB state for a while before D (GBP
@@ -92,7 +92,7 @@ def test_nothing_credited_through_d_sees_later_z_marks_or_elb_state(clean, tmp_p
     assert inp["USD outright"].state.loc["2022-09-01":"2022-10-14"].all()
 
 
-def test_a_runs_gross_pnl_is_the_week_7_seam(clean):
+def test_a_runs_gross_pnl_is_the_expression_seam(clean):
     w, sleeves, inp = clean
     for name, s in sleeves.items():
         run = report.simulate(inp[name], report.chosen(w.book, "unit", rule="linear", treatment="hold"), w.book)

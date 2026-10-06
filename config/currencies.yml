@@ -55,7 +55,7 @@ USD:
     futures:
       databento: [ZQ, SR1, SR3]
     # Quarterly estimates: calendar days from the end of a vintage's quarter to its
-    # release. HLW r*, one real-time vintage a quarter (sources/nyfed.py): the week 9
+    # release. HLW r*, one real-time vintage a quarter (sources/nyfed.py): the
     # robustness r*, never the model's own. 65 is the latest on-schedule HLW release
     # (2019Q2 on 2019-09-03); HLW follows Canada's GDP, not LW's US one.
     estimates:
@@ -189,7 +189,7 @@ USD:
       costs:
         quality: "USD costs are tick-based, not measured: ZQ at two back-month ticks a round trip plus an assumed $1 a side (1.05bp), the exchange's minimum increment, since the archive has settles and no quotes; the Treasury legs' 0.5bp is assumed"
 
-  # Week 7: what each expression trades in this currency (strategy/instruments.py names the types).
+  # The expression layer: what each expression trades in this currency (strategy/instruments.py names the types).
   expression:
     outright:
       instrument: futures_month      # the ZQ month the k-th meeting's rate settles in
@@ -219,7 +219,7 @@ USD:
       fee_per_side: 1.0                     # USD a contract, exchange and clearing, assumed
       exchange: CME
       quoted: {dv01: 41.67, tick: {front: 10.4175, other: 20.835}}   # CME's published values, USD: the check on the derived ones
-  costs:                             # Week 8 (strategy/costs.py): round trip per leg and unit of DV01 traded
+  costs:                             # strategy/costs.py: round trip per leg and unit of DV01 traded
     outright: {ticks_round_trip: 2, observed: true}      # two back-month ticks (1bp) + fee_per_side twice: 1.048bp, derived
     curve: {round_trip_bp: 0.5, observed: false, roll_every_months: 3}   # assumed; a held leg is re-struck quarterly
     tags:
@@ -227,7 +227,7 @@ USD:
         modelling: "a ZQ position rolls to the next month each time the fourth meeting moves on, charged as two outright one-ways, not as a (tighter) calendar spread"
       curve:
         modelling: "a Treasury leg's P&L is a constant-maturity bond re-struck daily; the cost charged is a desk's roll every three months while held"
-  # Week 12: the credit bridge (credit.py). A spread is the sum of its legs: long and
+  # The credit bridge (credit.py). A spread is the sum of its legs: long and
   # plus added, short and minus taken off (config.SPREAD_SIGNS).
   credit:
     primary: quality                 # the spread the bridge leads with
@@ -267,7 +267,7 @@ USD:
              calendar: Fed,
              # How the brief names the month an unemployment print is for: UNRATE is one month.
              unemployment_period: "for {month:%B}"}
-    onepager: true                       # the week 4 note (report/onepager.py): USD prose throughout
+    onepager: true                       # the original one-page note (report/onepager.py): USD prose throughout
     annotate_from: "2021-12-01"          # the path figure annotates the first monthly path on or after this
     # Days the gap should explain: report/model.py reads each on the first session on or after it.
     moments:
@@ -374,7 +374,7 @@ GBP:
     gap:
       unemployment: MGSX            # three months ending the labelled month
       # No vintaged UK natural rate is machine-readable back to 2010 (OBR publishes one
-      # per forecast, in its tables). Deferred in week 9 (notes/DECISIONS.md, V8): u*
+      # per forecast, in its tables). Deferred (notes/DECISIONS.md, V8): u*
       # 0.5pp off moves the rule as r* 1pp off does, and the r* rows measure that.
       # A constant, like r*: the gap's z removes its trailing mean, so a constant moves
       # the bp level more than the trade.
@@ -404,7 +404,7 @@ GBP:
       natural_rate:
         quality: "u* is a constant 4.5%, not a real-time estimate"
       rstar:
-        quality: "r* is a constant (-1.6%, the 2009-26 average real Bank Rate): a hindsight number that moves the bp gap, not the z"
+        quality: "r* is a constant (-1.6%, the 2009-26 average real Bank Rate): a hindsight number that moves the bp gap and mostly leaves the z unchanged, except near the floor"
 
   # The same rule as USD, imposed, with the Bank's own numbers where they differ.
   rule:
@@ -447,7 +447,7 @@ GBP:
       costs:
         quality: "GBP costs are assumed, not observed: the OIS forward and the gilt legs are valued off the Bank's fitted curves, so no traded price gives a spread (1bp a round trip each)"
 
-  # Week 7: what each expression trades in this currency (strategy/instruments.py names the types).
+  # The expression layer: what each expression trades in this currency (strategy/instruments.py names the types).
   expression:
     outright:
       instrument: curve_forward      # a meeting-dated OIS forward off market.curve
@@ -472,7 +472,7 @@ GBP:
         modelling: "a par leg is funded at the overnight rate, standing in for repo"
       convexity:
         modelling: "legs are DV01-linear, so the P&L leaves out convexity: under 3bp a year per unit DV01 on a 2s10s receive, 7bp at most (2022)"
-  costs:                             # Week 8 (strategy/costs.py): round trip per leg and unit of DV01 traded, bp
+  costs:                             # strategy/costs.py: round trip per leg and unit of DV01 traded, bp
     outright: {round_trip_bp: 1.0, observed: false}      # assumed: valued off a fitted curve, no traded price
     curve: {round_trip_bp: 1.0, observed: false, roll_every_months: 3}   # assumed; a held leg is re-struck quarterly
     tags:

@@ -4,7 +4,7 @@ Everything here is decided at a session's close from what was known there.
 `strategy/expression.py` (`run`) executes it ``lag`` sessions later and
 credits the P&L; `strategy/costs.py` charges what it trades.
 
-**Rules.** ``linear``: s = z (week 6's sizing). ``hysteresis(z, enter,
+**Rules.** ``linear``: s = z (the crude backtest's sizing). ``hysteresis(z, enter,
 exit)``: from flat, take side sign(z) where |z| >= ``enter``; a held side is
 closed where z x side <= ``exit`` and, the same session, the other side is
 taken if |z| >= ``enter``; a missing z closes the position (NaN is flat, never
@@ -25,7 +25,7 @@ hysteresis.
 rule's notional below it, so the model path is flat at the floor and has no
 view. It is the model's state, not the data's: it moves with r* and the
 coefficients. A cross sleeve is in it when either currency is. Treatments
-(``evaluation.elb.chosen``, ``flat`` proposed, K6):
+(``evaluation.elb.chosen``, ``flat`` the book's, K6):
 
 - ``flat``: no position in the state. z is masked there, so the hysteresis
   starts flat again on leaving it; the close into the state and the re-open out

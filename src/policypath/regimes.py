@@ -1,7 +1,6 @@
 """Where a currency is in its policy cycle on each session, in real time: the ELB state and the cycle's regime.
 
-Shared by the ELB treatment (week 8), the regime tables (week 10) and the
-credit bridge (week 12), so all three condition on one definition.
+Shared by the ELB treatment, the regime tables and the credit bridge, so all three condition on one definition.
 
 **The ELB state** (`elb_state`): the policy rate on its floor *and* the rule's
 notional below it. With both on the floor the model path is flat at the floor

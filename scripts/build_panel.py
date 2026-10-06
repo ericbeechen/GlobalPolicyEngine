@@ -7,6 +7,7 @@ the coverage headline, solver failures included. Where the config has a
 
     uv run python scripts/build_panel.py
     uv run python scripts/build_panel.py --ccy GBP
+    uv run python scripts/build_panel.py --end 2026-10-01   # rebuild a past cut from a newer cache
 """
 
 import argparse
@@ -21,11 +22,12 @@ ROOT = Path(__file__).resolve().parents[1]
 
 parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
 parser.add_argument("--ccy", default=config.enabled()[0], help="default: the first enabled currency")
+parser.add_argument("--end", default=None, help="last session (default: the cache's last)")
 args = parser.parse_args()
 cfg = config.currency(args.ccy)
 spec = cfg["path"]
 
-sessions, meetings = panel.build(args.ccy, start=spec["start"])
+sessions, meetings = panel.build(args.ccy, start=spec["start"], end=args.end)
 bday = BDAYS[cfg["calendar"]]
 out = ROOT / "data" / "panel"
 out.mkdir(parents=True, exist_ok=True)

@@ -1,4 +1,4 @@
-"""The week 10 statistics in `backtest/metrics.py`, on hand-checkable series.
+"""The performance statistics in `backtest/metrics.py`, on hand-checkable series.
 
 Trades: a trade's costs are the closes it is on after, and the close that takes
 it off; on a flip that close's cost goes to the new trade. Drawdown: from a
@@ -50,7 +50,7 @@ def _result(n=600, seed=3):
     return metrics.Result(daily, 252.0)
 
 
-def test_evaluate_is_week_8s_sharpe_on_the_counted_sessions():
+def test_evaluate_is_the_costs_reports_sharpe_on_the_counted_sessions():
     r = _result()
     d = r.daily[r.daily["kept"]]
     s = metrics.evaluate(r, capital=100.0)

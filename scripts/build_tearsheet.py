@@ -2,7 +2,7 @@
 
 Reads data/panel/ (run build_panel.py, build_nowcast.py and build_model.py for
 every currency the book trades first) and the cache, as build_portfolio.py
-does, and runs the strategy chain in memory: the sleeves, week 9's headline
+does, and runs the strategy chain in memory: the sleeves, the headline
 book, the carry benchmark and the book under each ELB treatment. Writes
 reports/tearsheet_<last book session>.pdf, reports/metrics.md,
 reports/results/metrics.json and reports/figures/attribution_{light,dark}.png,
