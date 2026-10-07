@@ -14,6 +14,7 @@ the IC's horizons are a magnitude, so they take the blue ramp, short to long
 light to dark.
 """
 
+from itertools import pairwise
 from pathlib import Path
 import matplotlib
 
@@ -32,8 +33,14 @@ def _dates(ax):
     ax.tick_params(axis="both", length=0)
 
 
-def paths_now(ax, today, effr, t, labels, lead_days=150, tail_days=40):
-    """Market and model step paths as of one session, after the realized overnight rate."""
+def paths_now(ax, today, effr, t, labels, lead_days=150, tail_days=40, gaps=(4, 8), legend=True, ends=None,
+              size=9):
+    """Market and model step paths as of one session, after the realized overnight rate.
+
+    `gaps` are the meetings whose gap is labelled on the chart (none for the brief,
+    which brackets them with `gap_marks`); `ends` overrides the two direct labels at
+    the paths' ends, which are pushed apart where they would overlap.
+    """
     w = labels
     day = today["session"]
     m = today["meetings"]
@@ -49,11 +56,9 @@ def paths_now(ax, today, effr, t, labels, lead_days=150, tail_days=40):
     ax.step(dates, market, where="post", color=t["series"][0], lw=2)
     ax.step(dates, model, where="post", color=t["series"][1], lw=2)
     ax.axvline(day, color=t["axis"], lw=1)
-    for label, series, color in [(f"Market ({w['market']})", market, t["series"][0]),
-                                 (w["rule"], model, t["series"][1])]:
-        ax.annotate(label, xy=(end, series[-1]), xytext=(6, 0), textcoords="offset points",
-                    va="center", fontsize=9, color=t["secondary"])
-    for k in (4, 8):
+    ends = ends or (f"Market ({w['market']})", w["rule"])
+    _end_labels(ax, end, [market[-1], model[-1]], ends, t, size)
+    for k in gaps:
         row = m[m["k"] == k].iloc[0]
         x = row["effective_date"] + (m["effective_date"].iloc[k] - row["effective_date"]) / 2 \
             if k < len(m) else row["effective_date"] + pd.Timedelta(days=tail_days / 2)
@@ -68,11 +73,88 @@ def paths_now(ax, today, effr, t, labels, lead_days=150, tail_days=40):
     ax.xaxis.set_major_locator(mdates.MonthLocator(bymonth=[1, 4, 7, 10]))
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%b %Y"))
     ax.tick_params(axis="both", length=0)
-    ax.legend(handles=[Line2D([], [], color=t["ink"], lw=2, label=f"Realized {w['rate']}"),
-                       Line2D([], [], color=t["series"][0], lw=2, label=f"Market: {w['market']}-implied path"),
-                       Line2D([], [], color=t["series"][1], lw=2,
-                              label="Model: balanced-approach rule, inertial, macro held flat")],
-              loc="upper left", fontsize=9, labelcolor=t["secondary"])
+    if legend:
+        ax.legend(handles=[Line2D([], [], color=t["ink"], lw=2, label=f"Realized {w['rate']}"),
+                           Line2D([], [], color=t["series"][0], lw=2, label=f"Market: {w['market']}-implied path"),
+                           Line2D([], [], color=t["series"][1], lw=2,
+                                  label="Model: balanced-approach rule, inertial, macro held flat")],
+                  loc="upper left", fontsize=9, labelcolor=t["secondary"])
+
+
+def _end_labels(ax, x, ys, labels, t, size):
+    """Direct labels just right of `x` at each of `ys`, nudged apart in points where two would overlap."""
+    ax.get_ylim()                                         # settle the autoscale before measuring
+    px = ax.transData.transform([(0, y) for y in ys])[:, 1] * 72 / ax.figure.dpi      # points
+    need = size * 1.25
+    order = np.argsort(px)
+    dy = np.zeros(len(ys))
+    for lo, hi in pairwise(order):
+        short = need - (px[hi] + dy[hi] - px[lo] - dy[lo])
+        if short > 0:
+            dy[lo] -= short / 2
+            dy[hi] += short / 2
+    for label, y, d in zip(labels, ys, dy):
+        ax.annotate(label, xy=(x, y), xytext=(6, d), textcoords="offset points", va="center", fontsize=size,
+                    color=t["secondary"])
+
+
+def gap_marks(ax, today, t, ks=(4, 8), tail_days=40, size=7.5):
+    """A bracket between the two paths at each of the `ks` meetings, labelled with the gap there.
+
+    The label goes beside the bracket where the paths leave room for it across
+    its width, else just under the lower path or over the upper one, whichever
+    is nearer and clear of both. It never runs past the paths' end, where the
+    direct labels are. Set the axes' limits first: the placement is measured.
+    """
+    m = today["meetings"].reset_index(drop=True)
+    end = m["effective_date"].iloc[-1] + pd.Timedelta(days=tail_days)
+    edges = mdates.date2num([today["session"], *m["effective_date"], end])   # step i holds on [edges[i], edges[i+1])
+    steps = np.array([[today["rate_now"], *m["market"]], [today["model_now"], *m["model"]]])
+    fig = ax.figure
+    renderer = fig.canvas.get_renderer()
+    to_px, to_data = ax.transData.transform, ax.transData.inverted().transform
+    y0, y1 = ax.get_ylim()
+    pad = 3 * fig.dpi / 72
+
+    def span(xa, xb):
+        """Each path's lowest and highest pixel in [xa, xb] (its steps and the risers between them), by path."""
+        on = (edges[1:] > xa) & (edges[:-1] < xb)
+        px = to_px([(0, v) for v in steps[:, on].ravel()])[:, 1].reshape(2, -1)
+        return px.min(axis=1), px.max(axis=1)
+
+    for k in ks:
+        i = int(m.index[m["k"] == k][0]) + 1
+        x = (edges[i] + edges[i + 1]) / 2
+        a, b = steps[0, i], steps[1, i]
+        ax.annotate("", xy=(x, a), xytext=(x, b), arrowprops={"arrowstyle": "|-|,widthA=0.25,widthB=0.25",
+                    "color": t["secondary"], "lw": 0.8, "shrinkA": 0, "shrinkB": 0})
+        label = ax.text(x, (a + b) / 2, f"{m.loc[i - 1, 'gap_bp']:+.0f}bp", fontsize=size, color=t["secondary"])
+        box = label.get_window_extent(renderer)
+        w, h = box.width, box.height
+        xp = to_px([(x, 0)])[0, 0]
+        top, bottom = to_px([(0, max(a, b))])[0, 1], to_px([(0, min(a, b))])[0, 1]
+        upper = 0 if a >= b else 1
+        right_end = to_px([(edges[-1], 0)])[0, 0] - pad
+        spots = []
+        for ha, xa in [("left", xp + pad), ("right", xp - pad - w)]:      # beside: the band between the paths
+            if xa + w > right_end:
+                continue
+            lo, hi = span(*to_data([(xa, 0), (xa + w, 0)])[:, 0])
+            floor, ceiling = hi[1 - upper], lo[upper]                    # the lower path's top, the upper's bottom
+            if ceiling - floor >= h + pad:
+                spots.append((0, ha, xa if ha == "left" else xa + w, (floor + ceiling) / 2, "center"))
+        if not spots:                                                      # under or over, centred on the bracket
+            xc = min(xp, right_end - w / 2)
+            lo, hi = span(*to_data([(xc - w / 2, 0), (xc + w / 2, 0)])[:, 0])
+            under, over = lo.min() - pad, hi.max() + pad
+            spots += [(bottom - under, "center", xc, under, "top"), (over - top, "center", xc, over, "bottom")]
+            fits = [s for s in spots if s[4] == "top" and s[3] - h >= to_px([(0, y0)])[0, 1]
+                    or s[4] == "bottom" and s[3] + h <= to_px([(0, y1)])[0, 1]]
+            spots = sorted(fits or spots, key=lambda s: s[0])
+        _, ha, xa, ya, va = spots[0]
+        label.set_position(to_data([(xa, ya)])[0])
+        label.set_ha(ha)
+        label.set_va(va)
 
 
 def gap_history(ax, signal, k, t, moments=()):

@@ -89,7 +89,7 @@ The t is Newey-West, Bartlett weights to lag h. A persistent z keeps the product
 | Re-strikes, the par legs | 0.31% of capital a year, 13% of cost | metrics.json costs[book].cost.restrike | Quarterly, from marking a constant-maturity bond. |
 | USD outright's rolls | 0.58% a year | [metrics.md:11](metrics.md:11) |  |
 | Calendar-spread sensitivity | Rolls at half price save 0.4% a year: net -3.19% → -2.78%; gross stays -0.72% | metrics.json costs[book].cost.roll / 2 | Rolls are charged as two outright one-ways, the conservative end. Gross is before costs, so no cost treatment moves it. |
-| Hand check (static) | USD outright 2018, contract by contract: 58,462 contracts, $1,276,426, the cost charged to the dollar | [DECISIONS.md:216](../notes/DECISIONS.md:216) | Done 2026-09-29, before the 2026-09-30 regeneration. It's not in any report. |
+| Hand check (static) | USD outright 2018, contract by contract: 58,462 contracts, $1,276,426, the cost charged to the dollar | [DECISIONS.md:217](../notes/DECISIONS.md:217) | Done 2026-09-29, before the 2026-09-30 regeneration. It's not in any report. |
 
 ## Breakeven
 
