@@ -1,10 +1,10 @@
-"""The tear sheet, one command from the panels and the cache to a dated one-page PDF in reports/.
+"""The tear sheet, one command from the panels and the cache to a dated one-page PDF in reports/tearsheets/.
 
 Reads data/panel/ (run build_panel.py, build_nowcast.py and build_model.py for
 every currency the book trades first) and the cache, as build_portfolio.py
 does, and runs the strategy chain in memory: the sleeves, the headline
 book, the carry benchmark and the book under each ELB treatment. Writes
-reports/tearsheet_<last book session>.pdf, reports/metrics.md,
+reports/tearsheets/tearsheet_<last book session>.pdf, reports/metrics.md,
 reports/results/metrics.json and reports/figures/attribution_{light,dark}.png,
 and prints the headline. `--preview` also renders the page to a PNG.
 
@@ -37,6 +37,6 @@ print(f"\nlevel factor: {lv['variance_share']:.0%} of gross P&L variance ({'domi
 print("ELB: " + ", ".join(f"{t} {sr(e['net_sr'], e['net_se'])}" for t, e in n["elb"].items()))
 print(f"carry benchmark: corr {n['carry']['corr']:+.2f} ({n['carry']['words']})")
 paths = attribution.write(built, ROOT)
-paths["tearsheet"] = tearsheet.write(built, ROOT / "reports", preview=args.preview)
+paths["tearsheet"] = tearsheet.write(built, ROOT / "reports" / "tearsheets", preview=args.preview)
 print("\nwrote " + ", ".join(str(p.relative_to(ROOT)) for p in paths.values()) +
       f" ({time.perf_counter() - start:.1f}s)")

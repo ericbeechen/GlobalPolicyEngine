@@ -125,7 +125,7 @@ def _small(ax, t):
 
 
 def write(b, out_dir, preview=None, generated=None):
-    """reports/tearsheet_<last book session>.pdf. Returns the path."""
+    """reports/tearsheets/tearsheet_<last book session>.pdf. Returns the path."""
     t = _style("light")
     n = b.numbers
     st = b.portfolio.setup

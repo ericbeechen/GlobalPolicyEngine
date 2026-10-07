@@ -311,7 +311,7 @@ uv run python scripts/build_expression.py
 uv run python scripts/build_credit.py
 ```
 
-The weekly brief, for every currency in `config/brief.yml`, one page to `reports/brief_<date>.pdf`. `--date` gives the brief that could have been sent on a past day:
+The weekly brief, for every currency in `config/brief.yml`, one page to `reports/briefs/brief_<date>.pdf`. `--date` gives the brief that could have been sent on a past day:
 
 ```bash
 uv run python scripts/build_brief.py
@@ -330,7 +330,7 @@ uv run python scripts/build_portfolio.py
 uv run python scripts/build_robustness.py
 ```
 
-The tear sheet, one page to `reports/tearsheet_<last session>.pdf`, with the attribution behind it in `reports/metrics.md` and `reports/results/metrics.json`. It runs the book in memory from the panels and the cache (about 10s), so it needs none of the reports above:
+The tear sheet, one page to `reports/tearsheets/tearsheet_<last session>.pdf`, with the attribution behind it in `reports/metrics.md` and `reports/results/metrics.json`. It runs the book in memory from the panels and the cache (about 10s), so it needs none of the reports above:
 
 ```bash
 uv run python scripts/build_tearsheet.py

@@ -1,7 +1,7 @@
-"""The weekly brief, one command from cache to a dated one-page PDF in reports/.
+"""The weekly brief, one command from cache to a dated one-page PDF in reports/briefs/.
 
 Reads data/panel/ (run build_panel.py, build_nowcast.py and build_model.py for
-each currency in config/brief.yml, then build_expression.py, first). Writes reports/brief_<date>.pdf and
+each currency in config/brief.yml, then build_expression.py, first). Writes reports/briefs/brief_<date>.pdf and
 prints what it says. `--date` defaults to today; a past date gives the brief
 that could have been sent then.
 
@@ -24,7 +24,7 @@ date = pd.Timestamp(args.date) if args.date else pd.Timestamp.today().normalize(
 
 settings = brief.settings()
 horizons = settings["horizons"]
-path, said = brief.write(date, ROOT / "reports", brief=settings, preview=args.preview)
+path, said = brief.write(date, ROOT / "reports" / "briefs", brief=settings, preview=args.preview)
 for ccy, snap in said["reads"].items():
     m = snap["meetings"].set_index("k")
     print(f"{ccy} {snap['session']:%Y-%m-%d}: gap " + ", ".join(f"k{h} {m.loc[h, 'gap_bp']:+.0f}bp (z {m.loc[h, 'z']:+.1f})"

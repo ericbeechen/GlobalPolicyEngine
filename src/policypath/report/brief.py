@@ -352,7 +352,7 @@ def trades(frame, date, enter, round_trips=None):
 
 
 def write(date, out_dir, root=panel.PANEL_DIR, brief=None, preview=None, generated=None):
-    """reports/brief_<date>.pdf. Returns (path, the numbers it printed).
+    """reports/briefs/brief_<date>.pdf. Returns (path, the numbers it printed).
 
     The page is laid out with text measured unhinted, as the PDF sets it: hinted,
     small text measures a few percent narrow and runs past the margin.
@@ -501,6 +501,7 @@ def _write(date, out_dir, root, brief, preview, generated):
     _rich(col, parts, size=6.2, color=t["secondary"])
 
     out_dir = Path(out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
     path = out_dir / f"brief_{date:%Y-%m-%d}.pdf"
     fig.savefig(path)
     if preview is not None:
