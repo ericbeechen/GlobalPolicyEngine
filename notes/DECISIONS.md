@@ -68,25 +68,25 @@ This file was condensed on 2026-10-04. The unabridged version, with every interm
 
 ## Publication lags and approximations
 
-| # | Series | Lag | Note |
-| --- | --- | --- | --- |
-| L1 | FOMC and MPC scheduled dates | Known on every date | Neither calendar records when a date was published. |
-| L2 | EFFR, SOFR | Next Fed business day | Checked against ALFRED's first-seen dates. |
-| L3 | Target range, SEP median | Same day | |
-| L4 | CME settles | Final by end of next business day | Sunday for a Friday session. |
-| L5 | SONIA; Bank Rate; the Bank's curve | Next London day; same day; noon next day | |
-| L6 | ONS CPI before Feb 2016, LFS before Apr 2016 | Dated the 26th | Before the ONS release calendar: up to ~10 days late, never early. |
-| L7 | Core PCE | Latest 1-2 months bridged from CPI | Real-time RMSE 0.075pp m/m. |
-| L8 | NROU | Vintages from 2011-02-02 | So the USD model path starts 2011-03-04. |
-| L9 | PAYE RTI | Vintages from Dec 2019 | Not used before then. |
-| L10 | FRED current-vintage revisions | Stamped the day retrieved | The earliest date we can vouch for. |
-| L11 | USD r* | FRED rounds to 0.1 | Within 5bp. |
-| L12 | Treasury CMT par yields | Next Fed business day | No print when the bond market is shut but the Fed or CME is open; a leg carries its last print. A fitted curve, not traded bonds. |
-| L13 | Moody's Baa, Aaa (BAA10Y, AAA10Y) | Next Fed business day | Seasoned bonds: spread changes stand in for excess returns, and stale quotes can lag. |
-| L14 | ICE BofA IG and HY OAS | Next Fed business day | FRED keeps three years (from 2023-09-29). A cross-check only. |
-| L15 | DEXUSUK | Same day | The noon New York rate, a market price; not the London close. |
-| L16 | The Bank's gilt spot curve | Noon next London day | The 0.5y point is often missing; interpolating it moves par yields by under 0.4bp. A fitted curve. |
-| L17 | HLW r*, NY Fed real-time vintages | Quarter end + 65 days, or the release day if later | 65 days is the shortest lag with no vintage seen early. No vintages 2020Q3-2022Q3: the 2020Q2 one stands through the gap. |
+| #   | Series                                       | Lag                                                | Note                                                                                                                              |
+| --- | -------------------------------------------- | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| L1  | FOMC and MPC scheduled dates                 | Known on every date                                | Neither calendar records when a date was published.                                                                               |
+| L2  | EFFR, SOFR                                   | Next Fed business day                              | Checked against ALFRED's first-seen dates.                                                                                        |
+| L3  | Target range, SEP median                     | Same day                                           |                                                                                                                                   |
+| L4  | CME settles                                  | Final by end of next business day                  | Sunday for a Friday session.                                                                                                      |
+| L5  | SONIA; Bank Rate; the Bank's curve           | Next London day; same day; noon next day           |                                                                                                                                   |
+| L6  | ONS CPI before Feb 2016, LFS before Apr 2016 | Dated the 26th                                     | Before the ONS release calendar: up to ~10 days late, never early.                                                                |
+| L7  | Core PCE                                     | Latest 1-2 months bridged from CPI                 | Real-time RMSE 0.075pp m/m.                                                                                                       |
+| L8  | NROU                                         | Vintages from 2011-02-02                           | So the USD model path starts 2011-03-04.                                                                                          |
+| L9  | PAYE RTI                                     | Vintages from Dec 2019                             | Not used before then.                                                                                                             |
+| L10 | FRED current-vintage revisions               | Stamped the day retrieved                          | The earliest date we can vouch for.                                                                                               |
+| L11 | USD r*                                       | FRED rounds to 0.1                                 | Within 5bp.                                                                                                                       |
+| L12 | Treasury CMT par yields                      | Next Fed business day                              | No print when the bond market is shut but the Fed or CME is open; a leg carries its last print. A fitted curve, not traded bonds. |
+| L13 | Moody's Baa, Aaa (BAA10Y, AAA10Y)            | Next Fed business day                              | Seasoned bonds: spread changes stand in for excess returns, and stale quotes can lag.                                             |
+| L14 | ICE BofA IG and HY OAS                       | Next Fed business day                              | FRED keeps three years (from 2023-09-29). A cross-check only.                                                                     |
+| L15 | DEXUSUK                                      | Same day                                           | The noon New York rate, a market price; not the London close.                                                                     |
+| L16 | The Bank's gilt spot curve                   | Noon next London day                               | The 0.5y point is often missing; interpolating it moves par yields by under 0.4bp. A fitted curve.                                |
+| L17 | HLW r*, NY Fed real-time vintages            | Quarter end + 65 days, or the release day if later | 65 days is the shortest lag with no vintage seen early. No vintages 2020Q3-2022Q3: the 2020Q2 one stands through the gap.         |
 
 ## Engineering (2026-09-28)
 
@@ -245,3 +245,9 @@ D1-D3 were written before `credit.py` was run on the data; everything after them
 - **D17**. **Added after the run, not registered:** test 2 without each calendar year. The slope stays negative in all 15 but fails the rule without 7; it leans most on 2014 (overlapping the oil collapse) and 2020.
 - **D18**. **Added after the run, not registered:** four more checks. Bartlett at lag 126 (t -1.81) and Hansen-Hodrick (t -1.72) both miss the line; clipping z or dropping floored-sd sessions makes it stronger. D1's cell and verdict stand.
 - **D19**. **Added after the run, not registered:** a time-rotation placebo. The registered t reaches ±1.96 in 23% of shifts against a nominal 5%. The reading changes to "at the edge of chance"; the verdict stands as registered.
+
+
+## Forward tests (registered 2026-10-__, before any out-of-sample session is scored)
+
+- H1. Sign-flipped USD outright. Same signal, instrument, hysteresis (enter |z| >= 1, exit 0), ELB treatment, costs and sizing as the USD outright, with the side reversed (z > 0 pays). Scored on sessions after this commit; read at 12 and 24 months on IC(21) of the flipped side and on net P&L. Supportive only if both are positive at 24 months and the non-overlapping IC is positive too. Power: at IC 0.12, a t of 2 needs ~280 non-overlapping months, so this can reject a large effect, not confirm a small one; the read will say so.
+- H2. GBP outright, unchanged, out of sample. The specification as of this commit; same reads. Power: at IC 0.38, a t of 2 needs ~28 non-overlapping months.
