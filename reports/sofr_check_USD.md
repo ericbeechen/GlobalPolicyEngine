@@ -7,7 +7,7 @@ For every session, the ZQ-implied EFFR path is averaged over each SR1 contract m
 settle is solved for: the SOFR - EFFR basis the two markets imply together. Below,
 for the first month lying wholly ahead of each session.
 
-- Sessions: 2116 (2018-05-07 .. 2026-10-01); months since fully printed: 2095
+- Sessions: 2122 (2018-05-07 .. 2026-10-09); months since fully printed: 2095
 - Implied minus later-realized basis: mean +0.52bp, mean absolute 1.86bp, within 3bp on 80%
 - Day-to-day change in the implied basis: sd 0.57bp; 11 sessions moved more than 3bp
 
@@ -23,7 +23,7 @@ for the first month lying wholly ahead of each session.
 | 2023 | 251 | -1.28 | -1.82 | -2.12 | 1.05 | 0.45 |
 | 2024 | 252 | 0.58 | -0.03 | -0.05 | 1.17 | 0.39 |
 | 2025 | 251 | 2.76 | 3.40 | 2.99 | 3.16 | 0.50 |
-| 2026 | 189 | 1.66 | -0.04 | 0.63 | 1.98 | 0.43 |
+| 2026 | 195 | 1.66 | -0.04 | 0.61 | 1.98 | 0.43 |
 
 ## Days the implied basis moved more than 3bp (11)
 
