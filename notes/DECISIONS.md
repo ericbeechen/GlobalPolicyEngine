@@ -247,7 +247,7 @@ D1-D3 were written before `credit.py` was run on the data; everything after them
 - **D19**. **Added after the run, not registered:** a time-rotation placebo. The registered t reaches ±1.96 in 23% of shifts against a nominal 5%. The reading changes to "at the edge of chance"; the verdict stands as registered.
 
 
-## Forward tests (registered 2026-10-__, before any out-of-sample session is scored)
+## Forward tests (registered 2026-10-12, before any out-of-sample session is scored)
 
 - H1. Sign-flipped USD outright. Same signal, instrument, hysteresis (enter |z| >= 1, exit 0), ELB treatment, costs and sizing as the USD outright, with the side reversed (z > 0 pays). Scored on sessions after this commit; read at 12 and 24 months on IC(21) of the flipped side and on net P&L. Supportive only if both are positive at 24 months and the non-overlapping IC is positive too. Power: at IC 0.12, a t of 2 needs ~280 non-overlapping months, so this can reject a large effect, not confirm a small one; the read will say so.
-- H2. GBP outright, unchanged, out of sample. The specification as of this commit; same reads. Power: at IC 0.38, a t of 2 needs ~28 non-overlapping months.
+- H2. GBP outright, unchanged, out of sample. The specification as of this commit; same reads. Power: at IC 0.37, a t of 2 needs ~29 non-overlapping months.
