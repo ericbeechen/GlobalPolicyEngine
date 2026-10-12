@@ -30,6 +30,9 @@ dev = [
     # used by src/policypath/sources/pull_fomc.py, which does not run in the test suite
     "beautifulsoup4>=4.12",
 ]
+note = [
+    "lxml>=6.1.3",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
