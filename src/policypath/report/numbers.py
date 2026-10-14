@@ -117,7 +117,8 @@ def sample(r):
     return [
         Row("Book sample", f"{book['first']} to {book['last']}, {book['sessions']:,} sessions, {book['years']:.1f} years",
             r.cite(METRICS, f"counted from {first}"),
-            f"The book runs from {m['days'][0]}; sessions count from {first}."),
+            f"The book runs from {m['days'][0]}; sessions count from {first}, the first session it could hold a "
+            f"position ({r.cite('notes/DECISIONS.md', '**P13**')})."),
         Row("Trades, book", f"{trades['book']}", r.cite(METRICS, "| book |", section="Performance"),
             "A run of one side, from the close that opens it. By sleeve: "
             + ", ".join(f"{s} {t}" for s, t in trades.items() if s != "book") + "."),
@@ -177,13 +178,14 @@ def construction(r):
         Row("ZQ: coverage", f"{us_cov[1]} of Fed business days; {miss[1]} missing",
             f"{link(cov, n_uc)}, {link(cov, n_m)}", "Missing days are listed in the coverage report."),
         Row("ZQ: front-contract pinning (static)", "Error in the implied step: mean 5.8bp → 0.5bp, worst 34bp → 1.6bp",
-            f"{r.cite('README.md', '5.8bp mean')}, {r.cite('notes/DECISIONS.md', '5.8bp mean')}",
+            r.cite("notes/DECISIONS.md", "5.8bp mean"),
             "A one-off study, measured against the actual decision on 46 announcement days since 2021."),
         Row("ZQ: SR1 cross-check", f"Implied minus later-realized SOFR - EFFR basis: mean {s2[1]}, "
             f"mean absolute {s2[2]}, within 3bp on {s2[3]}", f"{link(sofr, n_s1)}, {link(sofr, n_s2)}",
             f"{int(s1[1]):,} sessions, {s1[2]} to {s1[3]}"),
-        Row("ZQ: FedWatch (static)", "No historical comparison: FedWatch publishes no history",
-            r.cite("README.md", "FedWatch publishes no history"), "Captures go forward only."),
+        Row("ZQ: FedWatch (static)", "Not compared historically: FedWatch keeps a year per meeting, and CME's paid "
+            "API history from 2015", r.cite("README.md", "FedWatch keeps a year"),
+            "FedWatch prices off the same futures, so it would check the solver, not the data."),
         Row("BoE OIS: sessions with a market path", f"{int(gb[1]):,}, {gb[2]} solver failures",
             link(cu, n_gb), f"{span_gb[1]} to {span_gb[2]} ({link(cu, n_sg)})"),
         Row("MPR conditioning-path check", f"Mean absolute difference {m2[2]}; mean signed {m2[1]}; worst {m2[3]}",

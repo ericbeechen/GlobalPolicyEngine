@@ -56,7 +56,7 @@ SCRIPT_BACKENDS = {
 
 def code_hits(path):
     """(line, token) for every forbidden name in `path`'s code: its docstrings and comments are skipped."""
-    text = path.read_text()
+    text = path.read_text(encoding="utf-8")
     docstrings = set()
     for node in ast.walk(ast.parse(text)):
         if isinstance(node, (ast.Module, ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)) and node.body:

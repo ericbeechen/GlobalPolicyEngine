@@ -348,7 +348,7 @@ ROUNDED_DV01 = re.compile(r"41\.6(7|66)")
 
 def code_tokens(path):
     """Every number and string in `path`'s code, docstrings and comments skipped."""
-    text = path.read_text()
+    text = path.read_text(encoding="utf-8")
     docstrings = set()
     for node in ast.walk(ast.parse(text)):
         if isinstance(node, (ast.Module, ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)) and node.body:

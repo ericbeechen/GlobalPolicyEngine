@@ -8,7 +8,7 @@ Every value below is formatted from the JSON or a generated report and found aga
 
 | Item | Value | Source | Sample / definition |
 |---|---|---|---|
-| Book sample | 2014-01-13 to 2026-10-09, 2,984 sessions, 11.8 years | [metrics.md:3](metrics.md:3) | The book runs from 2011-03-04; sessions count from 2014-01-13. |
+| Book sample | 2014-01-13 to 2026-10-09, 2,984 sessions, 11.8 years | [metrics.md:3](metrics.md:3) | The book runs from 2011-03-04; sessions count from 2014-01-13, the first session it could hold a position ([DECISIONS.md:196](../notes/DECISIONS.md:196)). |
 | Trades, book | 104 | [metrics.md:27](metrics.md:27) | A run of one side, from the close that opens it. By sleeve: USD outright 19, GBP outright 16, USD 2s10s 34, GBP 2s10s 23, GBP - USD 2y 12. |
 | Entries, book (the carry filter's count) | 104 | [metrics.md:107](metrics.md:107) | An entry is decided at a close and becomes a trade from the next session. Every entry is a trade. |
 
@@ -26,9 +26,9 @@ Every value below is formatted from the JSON or a generated report and found aga
 |---|---|---|---|
 | ZQ: sessions with a market path | 4,124, 0 solver failures | [coverage_USD.md:6](coverage_USD.md:6) | 2010-06-07 to 2026-10-09 ([coverage_USD.md:3](coverage_USD.md:3)) |
 | ZQ: coverage | 99.68% of Fed business days; 13 missing | [coverage_USD.md:7](coverage_USD.md:7), [coverage_USD.md:13](coverage_USD.md:13) | Missing days are listed in the coverage report. |
-| ZQ: front-contract pinning (static) | Error in the implied step: mean 5.8bp → 0.5bp, worst 34bp → 1.6bp | [README.md:53](../README.md:53), [DECISIONS.md:21](../notes/DECISIONS.md:21) | A one-off study, measured against the actual decision on 46 announcement days since 2021. |
+| ZQ: front-contract pinning (static) | Error in the implied step: mean 5.8bp → 0.5bp, worst 34bp → 1.6bp | [DECISIONS.md:21](../notes/DECISIONS.md:21) | A one-off study, measured against the actual decision on 46 announcement days since 2021. |
 | ZQ: SR1 cross-check | Implied minus later-realized SOFR - EFFR basis: mean +0.52bp, mean absolute 1.86bp, within 3bp on 80% | [sofr_check_USD.md:10](sofr_check_USD.md:10), [sofr_check_USD.md:11](sofr_check_USD.md:11) | 2,122 sessions, 2018-05-07 to 2026-10-09 |
-| ZQ: FedWatch (static) | No historical comparison: FedWatch publishes no history | [README.md:364](../README.md:364) | Captures go forward only. |
+| ZQ: FedWatch (static) | Not compared historically: FedWatch keeps a year per meeting, and CME's paid API history from 2015 | [README.md:241](../README.md:241) | FedWatch prices off the same futures, so it would check the solver, not the data. |
 | BoE OIS: sessions with a market path | 4,342, 0 solver failures | [coverage_GBP.md:6](coverage_GBP.md:6) | 2009-08-03 to 2026-10-08 ([coverage_GBP.md:3](coverage_GBP.md:3)) |
 | MPR conditioning-path check | Mean absolute difference 1.00bp; mean signed -0.46bp; worst 7.22bp | [mpr_check_GBP.md:5](mpr_check_GBP.md:5), [mpr_check_GBP.md:6](mpr_check_GBP.md:6) | 29 reports, August 2019 to July 2026, 87 quarters inside the eight-meeting path |
 | MPR: why the differences have a sign | They correlate -0.59 with the move priced inside the quarter | [mpr_check_GBP.md:9](mpr_check_GBP.md:9) | The Bank averages a smooth spline; the path is a step. |
@@ -36,7 +36,7 @@ Every value below is formatted from the JSON or a generated report and found aga
 | GBP model path | 4,072 sessions, 1,930 on the floor | [model_GBP.md:5](model_GBP.md:5), [model_GBP.md:6](model_GBP.md:6) |  |
 | Why the USD sample starts when it does | Nowcast from 2011-03-04; CBO natural-rate (NROU) vintages from 2011-02-02 | [nowcast_USD.md:3](nowcast_USD.md:3), [vintages_USD.md:20](vintages_USD.md:20) | The first day every input has an ALFRED vintage. |
 | CPI-to-PCE bridge | RMSE 0.075pp m/m, MAE 0.057pp | [nowcast_USD.md:8](nowcast_USD.md:8), [nowcast_USD.md:17](nowcast_USD.md:17) | Real time, against PCE's first print, 185 months, 60-month fit window |
-| No-lookahead test (static) | The whole chain on inputs truncated at D; everything after D poisoned | [README.md:82](../README.md:82) | Runs per currency. |
+| No-lookahead test (static) | The whole chain on inputs truncated at D; everything after D poisoned | [README.md:225](../README.md:225) | Runs per currency. |
 | z | Gap at meeting 4 against its two-year trailing window, a year of history first | [model_USD.md:8](model_USD.md:8) | First z: USD 2012-02-29, GBP 2011-08-24 ([model_GBP.md:8](model_GBP.md:8)) |
 
 ## The level
