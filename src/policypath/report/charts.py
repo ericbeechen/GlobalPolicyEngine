@@ -204,7 +204,8 @@ def ship(today, effr, signal, k, labels, path=None, theme="light", axes=None, mo
     w = labels
     paths_now(top, today, effr, t, w)
     day = today["session"]
-    _title(top, f"The {w['policy']} path: market against {w['rule'][0].lower() + w['rule'][1:]}, {day:%d %B %Y}",
+    rule = "the" + w["rule"][3:] if w["rule"].startswith("The ") else w["rule"]  # keep proper nouns ("Fed's")
+    _title(top, f"The {w['policy']} path: market against {rule}, {day:%d %B %Y}",
            f"Next {len(today['meetings'])} {w['meetings']} meetings. The rule uses only data public on the day, "
            "and holds today's inflation, unemployment gap and r* flat.", t)
     gap_history(bottom, signal, k, t, moments)

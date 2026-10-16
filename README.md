@@ -18,6 +18,7 @@ The figures behind each sentence move a little with every build, so this page do
 | What | Where |
 | --- | --- |
 | Every number the write-up quotes, each linked to the report line that prints it | [reports/numbers.md](reports/numbers.md) |
+| The pipeline, every session, who closes the gap and the decision log, in one page to open in a browser | [reports/explorer.html](reports/explorer.html) |
 | The write-up | [Does the market price the Fed's own rule?](Does%20the%20market%20price%20the%20Fed%E2%80%99s%20own%20rule_.pdf) (the .docx beside it) |
 | One page, for an email | `reports/tearsheets/tearsheet_<last session>.pdf` |
 | The weekly brief | `reports/briefs/`, one a week since September 2011 |
@@ -34,6 +35,7 @@ Each stage writes its own report to `reports/`, and the numbers behind it as JSO
 | `vintages_USD.md` | What each ALFRED series covers in real time, and where it is thin | `catalogue_vintages.py` |
 | `nowcast_USD.md`, `nowcast_GBP.md` | The real-time macro inputs, and the CPI-to-PCE bridge's error | `build_nowcast.py` |
 | `model_USD.md`, `model_GBP.md` | The rule's path against the market's, the gap and z, at named moments | `build_model.py` |
+| `closure.md` | Who closes the gap: when the market and the rule disagree, which one moves for the same meeting | `build_closure.py` |
 | `expression.md` | What each sleeve trades, the checks on its P&L, and what carry and roll cost | `build_expression.py` |
 | `credit_USD.md` | The credit bridge: the gap against Baa - Aaa and four other spreads | `build_credit.py` |
 | `costs.md` | Costs, turnover and the hysteresis grid, per sleeve | `build_strategy.py` |
@@ -41,6 +43,7 @@ Each stage writes its own report to `reports/`, and the numbers behind it as JSO
 | `robustness.md` | The book with one choice at a time moved off the chosen specification | `build_robustness.py` |
 | `metrics.md` | Attribution, the IC, the level by regime and year, and the tear sheet's numbers | `build_tearsheet.py` |
 | `numbers.md` | Every number the write-up quotes | `build_numbers.py` |
+| `explorer.html` | The pipeline, a session time machine, who closes the gap and the decision log, in one page | `build_explorer.py` |
 
 ## The method in brief
 
@@ -83,8 +86,9 @@ The package is `src/policypath/`:
 | `strategy/` | Sleeves and their instruments, carry and roll and the checks on them, positions and the hysteresis rule, costs, risk, the book, and the robustness grid |
 | `backtest/` | The P&L engine, and `metrics.py`: one definition each of the Sharpe ratio, its SE, the IC and the rest |
 | `credit.py` | The credit bridge |
-| `report/` | Every report, figure and brief, the tear sheet and the numbers sheet |
-| `config.py` | Reads `config/`: every currency-specific value (`currencies.yml`), the strategy (`strategy.yml`), the brief (`brief.yml`) and the meeting calendars (`meetings/`), validated against a schema when it loads |
+| `closure.py` | Who closes the gap: the market's, the rule's and the policy rate's moves for the traded meeting, against the de-meaned gap |
+| `report/` | Every report, figure and brief, the tear sheet, the numbers sheet, and the explorer (`explorer.py` and its page template, `explorer.html`) |
+| `config.py` | Reads `config/`: every currency-specific value (`currencies.yml`), the strategy (`strategy.yml`), the brief (`brief.yml`) and the meeting calendars (`meetings/`), validated against a schema when it loads. The explorer's map (`explorer.yml`) is read and checked by `report/explorer.py` |
 | `regress.py`, `run_all.py` | The regression harness, and `uv run all` |
 
 Outside the package: `scripts/` holds one entry point per build step (below), `tests/` the suite and its committed fixtures (`tests/data/`), and `notes/` the decisions, the credit section, the config inventory, and the EUR and AUD scoping spikes.
@@ -168,6 +172,12 @@ uv run python scripts/build_model.py --ccy GBP
 uv run python scripts/check_mpr.py
 ```
 
+With both currencies' models built, who closes the gap: when the market and the rule disagree at the traded meeting, how far each moves for that meeting over the next 5, 21 and 63 sessions, and the policy rate with them (`reports/closure.md`):
+
+```bash
+uv run python scripts/build_closure.py
+```
+
 With both currencies' panels, nowcasts and models built, the strategy layer reads only `data/panel/` and the cache. The expression and carry come first, since the brief's trades table reads them. Then the credit bridge:
 
 ```bash
@@ -200,10 +210,16 @@ The tear sheet, one page to `reports/tearsheets/tearsheet_<last session>.pdf`, w
 uv run python scripts/build_tearsheet.py
 ```
 
-The numbers sheet, last: every number the write-up quotes, read from the reports above and their JSON, each linked to the report line that prints it, in `reports/numbers.md`. It needs no data and stops if a report no longer prints a number its JSON holds. The test suite fails while the committed sheet is behind the reports, so rerun it after any build above:
+The numbers sheet: every number the write-up quotes, read from the reports above and their JSON, each linked to the report line that prints it, in `reports/numbers.md`. It needs no data and stops if a report no longer prints a number its JSON holds. The test suite fails while the committed sheet is behind the reports, so rerun it after any build above:
 
 ```bash
 uv run python scripts/build_numbers.py
+```
+
+The explorer, last: one page, `reports/explorer.html`, that opens from disk in any browser with nothing loaded from the network. It holds the pipeline (each stage's code, reports, numbers, decisions and tests, from `config/explorer.yml`), a time machine over every session of each currency, who closes the gap, and the decision log. It reads the numbers sheet, `closure.json` and the panels, and runs the book's setup in memory for each sleeve's side (a few seconds). It stops if the map names a path, a numbers-sheet item or a DECISIONS section that does not exist, or if a DECISIONS section is on no stage:
+
+```bash
+uv run python scripts/build_explorer.py
 ```
 
 Before changing anything that computes, freeze every stage's output over the full sample, then check after each change. A check stops at the last session the freeze covered, so an updated cache compares like for like. It exits non-zero on any difference, however small. The committed fixtures have their own reference, which the test suite checks:
@@ -227,6 +243,7 @@ What guards the numbers, and where each check's result is:
 - **No currency in shared code.** `tests/test_no_currency_branches.py` fails if a shared module names a currency.
 - **The regression harness.** `scripts/regress.py` freezes every stage's output and checks it bit for bit (above).
 - **The numbers sheet.** `scripts/build_numbers.py` stops if a report no longer prints a number its JSON holds, and the suite fails while the sheet is stale.
+- **The explorer's map.** `scripts/build_explorer.py` stops if `config/explorer.yml` names a path, a numbers-sheet item or a DECISIONS section that does not exist, or if a DECISIONS section is on no stage; `tests/test_explorer.py` checks the same against the committed files.
 - **One-off studies** that no build recomputes, such as pinning a short first regime to the last fixing, are recorded with their results in [notes/DECISIONS.md](notes/DECISIONS.md) (M3).
 
 ## Data

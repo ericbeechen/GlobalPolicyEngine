@@ -3,8 +3,8 @@
 First the cache, for every enabled currency (needs the FRED key in .env and,
 for the futures, the Databento archive), then a check that no currency's market
 data is behind another's. Then the panels, nowcasts and models per currency,
-the strategy layer, the brief, the tear sheet and last the numbers sheet. Stops
-at the first step that fails.
+who closes the gap, the strategy layer, the brief, the tear sheet, the numbers
+sheet and last the explorer. Stops at the first step that fails.
 
 The check: every currency's last full update must have finished on the same
 day. One that did not (GBP from three days ago beside USD from today) would
@@ -46,9 +46,9 @@ def steps(update):
     out = [["update_data", "--ccy", *ccys]] if update else []
     for ccy in ccys:
         out += [["build_panel", "--ccy", ccy], ["build_nowcast", "--ccy", ccy], ["build_model", "--ccy", ccy]]
-    out += [["catalogue_vintages"], ["check_mpr"],
+    out += [["catalogue_vintages"], ["check_mpr"], ["build_closure"],
             ["build_expression"], ["build_credit"], ["build_brief"], ["build_strategy"],
-            ["build_portfolio"], ["build_robustness"], ["build_tearsheet"], ["build_numbers"]]
+            ["build_portfolio"], ["build_robustness"], ["build_tearsheet"], ["build_numbers"], ["build_explorer"]]
     return out
 
 

@@ -22,6 +22,14 @@ def test_cache_only_pulls_nothing():
     assert all(s[0] != "update_data" for s in run_all.steps(update=False))
 
 
+def test_the_explorer_comes_last_after_what_it_reads():
+    names = [s[0] for s in run_all.steps(update=False)]
+    assert names[-1] == "build_explorer"
+    for before in ("build_model", "build_closure", "build_tearsheet", "build_numbers"):
+        assert max(i for i, n in enumerate(names) if n == before) < names.index("build_explorer")
+    assert names.index("build_closure") > max(i for i, n in enumerate(names) if n == "build_model")
+
+
 def manifest(tmp_path, updated):
     """A cache whose market series cover to 2026-09-25 and whose currencies last updated at `updated` {ccy: time}."""
     entries = {}

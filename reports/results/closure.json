@@ -1,0 +1,890 @@
+{
+ "USD": {
+  "k": 4,
+  "labels": {
+   "market": "ZQ",
+   "rule": "Fed's own rule",
+   "policy_rate": "Midpoint"
+  },
+  "horizons": {
+   "5": {
+    "h": 5,
+    "sessions": 2956,
+    "first": "2014-01-10",
+    "last": "2026-10-07",
+    "market": {
+     "slope": -0.016524,
+     "se": 0.014132,
+     "t": -1.169246,
+     "r2": 0.003015,
+     "n": 2956,
+     "nonoverlap": {
+      "mean": -0.016515,
+      "min": -0.018771,
+      "max": -0.011854,
+      "n": 591.2
+     }
+    },
+    "rule": {
+     "slope": 0.051671,
+     "se": 0.016738,
+     "t": 3.087146,
+     "r2": 0.034828,
+     "n": 2956,
+     "nonoverlap": {
+      "mean": 0.051673,
+      "min": 0.050168,
+      "max": 0.053779,
+      "n": 591.2
+     }
+    },
+    "rate": {
+     "slope": 0.072369,
+     "se": 0.019405,
+     "t": 3.729411,
+     "r2": 0.063219,
+     "n": 2956,
+     "nonoverlap": {
+      "mean": 0.072361,
+      "min": 0.070966,
+      "max": 0.075338,
+      "n": 591.2
+     }
+    },
+    "gap": {
+     "slope": -0.068195,
+     "se": 0.019413,
+     "t": -3.512861,
+     "r2": 0.031804,
+     "n": 2956,
+     "nonoverlap": {
+      "mean": -0.068188,
+      "min": -0.070587,
+      "max": -0.065634,
+      "n": 591.2
+     }
+    },
+    "closed": 0.068195,
+    "rule_share": 0.757697,
+    "who": "the rule",
+    "bins": [
+     {
+      "edge": -78.670005,
+      "market": 2.908814,
+      "rule": -4.456528,
+      "rate": -3.462838,
+      "gap": 7.365342,
+      "sessions": 296
+     },
+     {
+      "edge": -41.068368,
+      "market": 0.321109,
+      "rule": -3.096878,
+      "rate": -0.760135,
+      "gap": 3.417987,
+      "sessions": 296
+     },
+     {
+      "edge": -28.049402,
+      "market": -0.307334,
+      "rule": -1.073304,
+      "rate": -0.169492,
+      "gap": 0.76597,
+      "sessions": 295
+     },
+     {
+      "edge": -15.695147,
+      "market": 0.551454,
+      "rule": -2.437023,
+      "rate": 0.253378,
+      "gap": 2.988477,
+      "sessions": 296
+     },
+     {
+      "edge": -5.689499,
+      "market": 0.139844,
+      "rule": -0.963276,
+      "rate": 0.084746,
+      "gap": 1.10312,
+      "sessions": 295
+     },
+     {
+      "edge": 1.529686,
+      "market": 0.661904,
+      "rule": -1.159762,
+      "rate": 0.0,
+      "gap": 1.821666,
+      "sessions": 296
+     },
+     {
+      "edge": 7.925367,
+      "market": 0.436497,
+      "rule": -2.092143,
+      "rate": 1.779661,
+      "gap": 2.52864,
+      "sessions": 295
+     },
+     {
+      "edge": 15.051846,
+      "market": 2.372372,
+      "rule": -0.123326,
+      "rate": 1.435811,
+      "gap": 2.495698,
+      "sessions": 296
+     },
+     {
+      "edge": 22.404868,
+      "market": 1.64398,
+      "rule": 0.602701,
+      "rate": 0.762712,
+      "gap": 1.041279,
+      "sessions": 295
+     },
+     {
+      "edge": 42.851428,
+      "market": -1.265294,
+      "rule": 1.493925,
+      "rate": 6.418919,
+      "gap": -2.759219,
+      "sessions": 296
+     }
+    ]
+   },
+   "21": {
+    "h": 21,
+    "sessions": 2940,
+    "first": "2014-01-10",
+    "last": "2026-09-15",
+    "market": {
+     "slope": -0.051941,
+     "se": 0.050045,
+     "t": -1.037881,
+     "r2": 0.006904,
+     "n": 2940,
+     "nonoverlap": {
+      "mean": -0.051202,
+      "min": -0.096871,
+      "max": -0.01253,
+      "n": 140.0
+     }
+    },
+    "rule": {
+     "slope": 0.1865,
+     "se": 0.048103,
+     "t": 3.87706,
+     "r2": 0.121075,
+     "n": 2940,
+     "nonoverlap": {
+      "mean": 0.186547,
+      "min": 0.154614,
+      "max": 0.238601,
+      "n": 140.0
+     }
+    },
+    "rate": {
+     "slope": 0.232215,
+     "se": 0.054266,
+     "t": 4.279222,
+     "r2": 0.138798,
+     "n": 2940,
+     "nonoverlap": {
+      "mean": 0.233797,
+      "min": 0.186707,
+      "max": 0.279676,
+      "n": 140.0
+     }
+    },
+    "gap": {
+     "slope": -0.238441,
+     "se": 0.051269,
+     "t": -4.650807,
+     "r2": 0.112706,
+     "n": 2940,
+     "nonoverlap": {
+      "mean": -0.237749,
+      "min": -0.305527,
+      "max": -0.201987,
+      "n": 140.0
+     }
+    },
+    "closed": 0.238441,
+    "rule_share": 0.782164,
+    "who": "the rule",
+    "bins": [
+     {
+      "edge": -78.849855,
+      "market": 13.134168,
+      "rule": -15.529229,
+      "rate": -9.183673,
+      "gap": 28.663397,
+      "sessions": 294
+     },
+     {
+      "edge": -41.24731,
+      "market": -0.036893,
+      "rule": -10.616095,
+      "rate": -2.55102,
+      "gap": 10.579202,
+      "sessions": 294
+     },
+     {
+      "edge": -28.232091,
+      "market": -0.357749,
+      "rule": -10.883184,
+      "rate": -4.166667,
+      "gap": 10.525435,
+      "sessions": 294
+     },
+     {
+      "edge": -15.928948,
+      "market": -3.05982,
+      "rule": -9.750113,
+      "rate": -2.12585,
+      "gap": 6.690293,
+      "sessions": 294
+     },
+     {
+      "edge": -5.900329,
+      "market": 3.213919,
+      "rule": -5.166954,
+      "rate": 2.636054,
+      "gap": 8.380873,
+      "sessions": 294
+     },
+     {
+      "edge": 1.331358,
+      "market": 4.835418,
+      "rule": -5.606655,
+      "rate": 2.040816,
+      "gap": 10.442072,
+      "sessions": 294
+     },
+     {
+      "edge": 7.707463,
+      "market": 5.159996,
+      "rule": -6.73322,
+      "rate": 5.102041,
+      "gap": 11.893216,
+      "sessions": 294
+     },
+     {
+      "edge": 14.749784,
+      "market": 4.019107,
+      "rule": -1.122055,
+      "rate": 5.442177,
+      "gap": 5.141162,
+      "sessions": 294
+     },
+     {
+      "edge": 21.998394,
+      "market": 2.508181,
+      "rule": 3.205751,
+      "rate": 7.227891,
+      "gap": -0.69757,
+      "sessions": 294
+     },
+     {
+      "edge": 41.453648,
+      "market": 0.781059,
+      "rule": 5.529985,
+      "rate": 22.363946,
+      "gap": -4.748926,
+      "sessions": 294
+     }
+    ]
+   },
+   "63": {
+    "h": 63,
+    "sessions": 2898,
+    "first": "2014-01-10",
+    "last": "2026-07-16",
+    "market": {
+     "slope": -0.104551,
+     "se": 0.140036,
+     "t": -0.746603,
+     "r2": 0.009596,
+     "n": 2898,
+     "nonoverlap": {
+      "mean": -0.110679,
+      "min": -0.321722,
+      "max": 0.045369,
+      "n": 46.0
+     }
+    },
+    "rule": {
+     "slope": 0.501353,
+     "se": 0.099937,
+     "t": 5.016675,
+     "r2": 0.240436,
+     "n": 2898,
+     "nonoverlap": {
+      "mean": 0.492535,
+      "min": 0.356336,
+      "max": 0.69969,
+      "n": 46.0
+     }
+    },
+    "rate": {
+     "slope": 0.494321,
+     "se": 0.198208,
+     "t": 2.49395,
+     "r2": 0.131628,
+     "n": 2898,
+     "nonoverlap": {
+      "mean": 0.491417,
+      "min": 0.308859,
+      "max": 0.696214,
+      "n": 46.0
+     }
+    },
+    "gap": {
+     "slope": -0.605904,
+     "se": 0.096014,
+     "t": -6.310601,
+     "r2": 0.35994,
+     "n": 2898,
+     "nonoverlap": {
+      "mean": -0.603214,
+      "min": -0.76909,
+      "max": -0.428837,
+      "n": 46.0
+     }
+    },
+    "closed": 0.605904,
+    "rule_share": 0.827446,
+    "who": "the rule",
+    "bins": [
+     {
+      "edge": -79.195967,
+      "market": 34.794416,
+      "rule": -46.90083,
+      "rate": -11.12069,
+      "gap": 81.695247,
+      "sessions": 290
+     },
+     {
+      "edge": -41.628402,
+      "market": 5.330648,
+      "rule": -30.104806,
+      "rate": -4.396552,
+      "gap": 35.435454,
+      "sessions": 290
+     },
+     {
+      "edge": -28.634966,
+      "market": -1.859538,
+      "rule": -32.821381,
+      "rate": -7.241379,
+      "gap": 30.961844,
+      "sessions": 290
+     },
+     {
+      "edge": -16.496132,
+      "market": -18.08503,
+      "rule": -44.997294,
+      "rate": -19.550173,
+      "gap": 26.912264,
+      "sessions": 289
+     },
+     {
+      "edge": -6.437514,
+      "market": 4.557037,
+      "rule": -14.139181,
+      "rate": 8.362069,
+      "gap": 18.696218,
+      "sessions": 290
+     },
+     {
+      "edge": 0.808267,
+      "market": 8.41083,
+      "rule": -10.605793,
+      "rate": 9.827586,
+      "gap": 19.016623,
+      "sessions": 290
+     },
+     {
+      "edge": 7.138751,
+      "market": 11.868048,
+      "rule": -9.793391,
+      "rate": 18.598616,
+      "gap": 21.66144,
+      "sessions": 289
+     },
+     {
+      "edge": 13.937121,
+      "market": 8.833431,
+      "rule": -5.610249,
+      "rate": 16.551724,
+      "gap": 14.443679,
+      "sessions": 290
+     },
+     {
+      "edge": 21.101461,
+      "market": 7.908103,
+      "rule": 0.109094,
+      "rate": 15.172414,
+      "gap": 7.799008,
+      "sessions": 290
+     },
+     {
+      "edge": 40.459607,
+      "market": 12.262573,
+      "rule": 7.947099,
+      "rate": 51.637931,
+      "gap": 4.315474,
+      "sessions": 290
+     }
+    ]
+   }
+  },
+  "reading": {
+   "5": "Over 5 sessions 0.07 of the de-meaned gap closes, mostly by the rule: the rule moves +0.05 per bp (t +3.1) and the market -0.02 (t -1.2), so the rule does 76% of the closing. The Midpoint in force moves +0.07 per bp (t +3.7), toward the market's side.",
+   "21": "Over 21 sessions 0.24 of the de-meaned gap closes, mostly by the rule: the rule moves +0.19 per bp (t +3.9) and the market -0.05 (t -1.0), so the rule does 78% of the closing. The Midpoint in force moves +0.23 per bp (t +4.3), toward the market's side.",
+   "63": "Over 63 sessions 0.61 of the de-meaned gap closes, mostly by the rule: the rule moves +0.50 per bp (t +5.0) and the market -0.10 (t -0.7), so the rule does 83% of the closing. The Midpoint in force moves +0.49 per bp (t +2.5), toward the market's side."
+  }
+ },
+ "GBP": {
+  "k": 4,
+  "labels": {
+   "market": "OIS",
+   "rule": "The balanced-approach rule",
+   "policy_rate": "Bank Rate"
+  },
+  "horizons": {
+   "5": {
+    "h": 5,
+    "sessions": 2300,
+    "first": "2016-08-04",
+    "last": "2026-10-07",
+    "market": {
+     "slope": -0.026623,
+     "se": 0.008182,
+     "t": -3.253615,
+     "r2": 0.025313,
+     "n": 2300,
+     "nonoverlap": {
+      "mean": -0.02662,
+      "min": -0.031831,
+      "max": -0.023522,
+      "n": 460.0
+     }
+    },
+    "rule": {
+     "slope": 0.01982,
+     "se": 0.009298,
+     "t": 2.131672,
+     "r2": 0.012714,
+     "n": 2300,
+     "nonoverlap": {
+      "mean": 0.019821,
+      "min": 0.019303,
+      "max": 0.020319,
+      "n": 460.0
+     }
+    },
+    "rate": {
+     "slope": -0.022825,
+     "se": 0.006033,
+     "t": -3.783449,
+     "r2": 0.038083,
+     "n": 2300,
+     "nonoverlap": {
+      "mean": -0.022825,
+      "min": -0.023111,
+      "max": -0.022613,
+      "n": 460.0
+     }
+    },
+    "gap": {
+     "slope": -0.046442,
+     "se": 0.012828,
+     "t": -3.620355,
+     "r2": 0.035367,
+     "n": 2300,
+     "nonoverlap": {
+      "mean": -0.04644,
+      "min": -0.051473,
+      "max": -0.042825,
+      "n": 460.0
+     }
+    },
+    "closed": 0.046442,
+    "rule_share": 0.426758,
+    "who": "both",
+    "bins": [
+     {
+      "edge": -132.774623,
+      "market": 4.622506,
+      "rule": -4.612411,
+      "rate": 5.434783,
+      "gap": 9.234917,
+      "sessions": 230
+     },
+     {
+      "edge": -45.873074,
+      "market": 4.803458,
+      "rule": -0.946683,
+      "rate": 3.043478,
+      "gap": 5.75014,
+      "sessions": 230
+     },
+     {
+      "edge": -19.194041,
+      "market": 0.039619,
+      "rule": -1.215438,
+      "rate": -0.369565,
+      "gap": 1.255057,
+      "sessions": 230
+     },
+     {
+      "edge": -9.528415,
+      "market": -0.906525,
+      "rule": -1.476797,
+      "rate": -0.391304,
+      "gap": 0.570273,
+      "sessions": 230
+     },
+     {
+      "edge": -1.724709,
+      "market": 0.357382,
+      "rule": -0.438932,
+      "rate": -0.108696,
+      "gap": 0.796314,
+      "sessions": 230
+     },
+     {
+      "edge": 4.799064,
+      "market": -0.321976,
+      "rule": -0.929941,
+      "rate": 0.0,
+      "gap": 0.607966,
+      "sessions": 230
+     },
+     {
+      "edge": 11.075848,
+      "market": -0.081188,
+      "rule": 2.18923,
+      "rate": 0.217391,
+      "gap": -2.270418,
+      "sessions": 230
+     },
+     {
+      "edge": 42.756364,
+      "market": 0.10302,
+      "rule": -3.129452,
+      "rate": 1.413043,
+      "gap": 3.232471,
+      "sessions": 230
+     },
+     {
+      "edge": 83.579373,
+      "market": -1.053179,
+      "rule": 1.814204,
+      "rate": -0.543478,
+      "gap": -2.867383,
+      "sessions": 230
+     },
+     {
+      "edge": 131.204826,
+      "market": -0.70556,
+      "rule": 0.486016,
+      "rate": -1.086957,
+      "gap": -1.191576,
+      "sessions": 230
+     }
+    ]
+   },
+   "21": {
+    "h": 21,
+    "sessions": 2284,
+    "first": "2016-08-04",
+    "last": "2026-09-15",
+    "market": {
+     "slope": -0.102224,
+     "se": 0.032667,
+     "t": -3.12924,
+     "r2": 0.0861,
+     "n": 2284,
+     "nonoverlap": {
+      "mean": -0.102222,
+      "min": -0.119296,
+      "max": -0.08121,
+      "n": 108.761905
+     }
+    },
+    "rule": {
+     "slope": 0.083655,
+     "se": 0.029207,
+     "t": 2.864187,
+     "r2": 0.062737,
+     "n": 2284,
+     "nonoverlap": {
+      "mean": 0.083552,
+      "min": 0.068362,
+      "max": 0.096104,
+      "n": 108.761905
+     }
+    },
+    "rate": {
+     "slope": -0.093237,
+     "se": 0.015237,
+     "t": -6.119172,
+     "r2": 0.148826,
+     "n": 2284,
+     "nonoverlap": {
+      "mean": -0.093174,
+      "min": -0.103848,
+      "max": -0.077435,
+      "n": 108.761905
+     }
+    },
+    "gap": {
+     "slope": -0.185879,
+     "se": 0.041961,
+     "t": -4.429779,
+     "r2": 0.14811,
+     "n": 2284,
+     "nonoverlap": {
+      "mean": -0.185773,
+      "min": -0.207532,
+      "max": -0.168595,
+      "n": 108.761905
+     }
+    },
+    "closed": 0.185879,
+    "rule_share": 0.450053,
+    "who": "both",
+    "bins": [
+     {
+      "edge": -132.984722,
+      "market": 21.606718,
+      "rule": -21.231098,
+      "rate": 23.362445,
+      "gap": 42.837816,
+      "sessions": 229
+     },
+     {
+      "edge": -46.333958,
+      "market": 14.005712,
+      "rule": -1.420572,
+      "rate": 10.372807,
+      "gap": 15.426284,
+      "sessions": 228
+     },
+     {
+      "edge": -19.362854,
+      "market": 2.908478,
+      "rule": -6.560302,
+      "rate": -1.337719,
+      "gap": 9.46878,
+      "sessions": 228
+     },
+     {
+      "edge": -9.768927,
+      "market": -1.632031,
+      "rule": -4.162749,
+      "rate": -1.462882,
+      "gap": 2.530718,
+      "sessions": 229
+     },
+     {
+      "edge": -1.904461,
+      "market": 3.028545,
+      "rule": -1.746271,
+      "rate": 1.315789,
+      "gap": 4.774817,
+      "sessions": 228
+     },
+     {
+      "edge": 4.574723,
+      "market": -1.330161,
+      "rule": -1.932439,
+      "rate": 0.372807,
+      "gap": 0.602278,
+      "sessions": 228
+     },
+     {
+      "edge": 10.638457,
+      "market": -0.672094,
+      "rule": 4.532954,
+      "rate": 0.829694,
+      "gap": -5.205048,
+      "sessions": 229
+     },
+     {
+      "edge": 40.126558,
+      "market": -8.241349,
+      "rule": -11.467336,
+      "rate": 5.482456,
+      "gap": 3.225986,
+      "sessions": 228
+     },
+     {
+      "edge": 82.497194,
+      "market": -3.251645,
+      "rule": 6.558571,
+      "rate": -3.947368,
+      "gap": -9.810216,
+      "sessions": 228
+     },
+     {
+      "edge": 131.328725,
+      "market": -1.340124,
+      "rule": 3.66624,
+      "rate": -2.838428,
+      "gap": -5.006364,
+      "sessions": 229
+     }
+    ]
+   },
+   "63": {
+    "h": 63,
+    "sessions": 2242,
+    "first": "2016-08-04",
+    "last": "2026-07-16",
+    "market": {
+     "slope": -0.211516,
+     "se": 0.076493,
+     "t": -2.765181,
+     "r2": 0.186573,
+     "n": 2242,
+     "nonoverlap": {
+      "mean": -0.212163,
+      "min": -0.408957,
+      "max": -0.097505,
+      "n": 35.587302
+     }
+    },
+    "rule": {
+     "slope": 0.275026,
+     "se": 0.083441,
+     "t": 3.296047,
+     "r2": 0.211368,
+     "n": 2242,
+     "nonoverlap": {
+      "mean": 0.275571,
+      "min": 0.21891,
+      "max": 0.315148,
+      "n": 35.587302
+     }
+    },
+    "rate": {
+     "slope": -0.323053,
+     "se": 0.052983,
+     "t": -6.097257,
+     "r2": 0.357695,
+     "n": 2242,
+     "nonoverlap": {
+      "mean": -0.323729,
+      "min": -0.405353,
+      "max": -0.228377,
+      "n": 35.587302
+     }
+    },
+    "gap": {
+     "slope": -0.486543,
+     "se": 0.112095,
+     "t": -4.340466,
+     "r2": 0.41963,
+     "n": 2242,
+     "nonoverlap": {
+      "mean": -0.487733,
+      "min": -0.681404,
+      "max": -0.382316,
+      "n": 35.587302
+     }
+    },
+    "closed": 0.486543,
+    "rule_share": 0.565266,
+    "who": "both",
+    "bins": [
+     {
+      "edge": -133.80246,
+      "market": 55.102252,
+      "rule": -73.621869,
+      "rate": 79.666667,
+      "gap": 128.724121,
+      "sessions": 225
+     },
+     {
+      "edge": -47.850731,
+      "market": 15.488531,
+      "rule": -8.729058,
+      "rate": 35.267857,
+      "gap": 24.21759,
+      "sessions": 224
+     },
+     {
+      "edge": -19.791467,
+      "market": 2.968047,
+      "rule": -12.977284,
+      "rate": 2.120536,
+      "gap": 15.945331,
+      "sessions": 224
+     },
+     {
+      "edge": -10.425468,
+      "market": -1.128152,
+      "rule": -10.936016,
+      "rate": -4.241071,
+      "gap": 9.807864,
+      "sessions": 224
+     },
+     {
+      "edge": -2.364018,
+      "market": -0.883792,
+      "rule": -6.867827,
+      "rate": 0.446429,
+      "gap": 5.984035,
+      "sessions": 224
+     },
+     {
+      "edge": 3.963243,
+      "market": -4.494039,
+      "rule": -7.431961,
+      "rate": -2.924107,
+      "gap": 2.937922,
+      "sessions": 224
+     },
+     {
+      "edge": 9.539399,
+      "market": 1.905284,
+      "rule": 5.72958,
+      "rate": 0.446429,
+      "gap": -3.824297,
+      "sessions": 224
+     },
+     {
+      "edge": 33.413385,
+      "market": -8.334287,
+      "rule": -11.093303,
+      "rate": 6.383929,
+      "gap": 2.759017,
+      "sessions": 224
+     },
+     {
+      "edge": 80.953316,
+      "market": -10.342445,
+      "rule": 4.083796,
+      "rate": -7.924107,
+      "gap": -14.426241,
+      "sessions": 224
+     },
+     {
+      "edge": 131.828118,
+      "market": 0.025434,
+      "rule": 12.218845,
+      "rate": -11.111111,
+      "gap": -12.193411,
+      "sessions": 225
+     }
+    ]
+   }
+  },
+  "reading": {
+   "5": "Over 5 sessions 0.05 of the de-meaned gap closes, by both: the rule moves +0.02 per bp (t +2.1) and the market -0.03 (t -3.3), so the rule does 43% of the closing. The Bank Rate in force moves -0.02 per bp (t -3.8), toward the rule's side.",
+   "21": "Over 21 sessions 0.19 of the de-meaned gap closes, by both: the rule moves +0.08 per bp (t +2.9) and the market -0.10 (t -3.1), so the rule does 45% of the closing. The Bank Rate in force moves -0.09 per bp (t -6.1), toward the rule's side.",
+   "63": "Over 63 sessions 0.49 of the de-meaned gap closes, by both: the rule moves +0.28 per bp (t +3.3) and the market -0.21 (t -2.8), so the rule does 57% of the closing. The Bank Rate in force moves -0.32 per bp (t -6.1), toward the rule's side."
+  }
+ }
+}

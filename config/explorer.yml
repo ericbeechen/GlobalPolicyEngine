@@ -1,0 +1,234 @@
+# The explorer (report/explorer.py, scripts/build_explorer.py): the pipeline map at the top of
+# reports/explorer.html. Not currency behaviour: the build's stages, what each does, its code, the
+# script that builds it, the reports it writes, the numbers it shows, and the decisions and tests
+# behind it. The build stops if a path, a numbers-sheet item or column, or a DECISIONS section named
+# here does not exist, or if a DECISIONS section is on no stage.
+#
+# row: the map's row (a row's stages are spaced evenly, in this order). kind: measure | strategy | io.
+# feeds: the stages it feeds, an arrow each. writes: under reports/; {ccy} is one report per enabled
+# currency that has it. numbers: an item of reports/numbers.md, or a column of one of its tables (one
+# line per row, named by the row's first cell). see: a section of the page to open from the stage.
+
+title: "Does the market price the Fed's own rule?"
+
+stages:
+  - key: sources
+    row: 0
+    kind: io
+    title: Sources
+    subtitle: Databento, FRED, BoE, ONS, SEP
+    what: Every network call lives here. Everything downstream reads the cache, where each observation carries its publication date.
+    code: [src/policypath/sources]
+    built_by: [scripts/update_data.py]
+    writes: []
+    numbers:
+      - item: "ZQ: coverage"
+    decisions: [Scope, Publication lags and approximations, "Engineering: live market data"]
+    tests: [tests/test_cache.py, tests/test_archive.py, tests/test_update_data.py, tests/test_rates_live.py]
+    feeds: [market, nowcast]
+
+  - key: market
+    row: 1
+    kind: measure
+    title: Market path
+    subtitle: ZQ futures, BoE OIS curve
+    what: The path the market prices over the next eight meetings, solved on every session.
+    code: [src/policypath/curves/policy_path.py, src/policypath/curves/forward.py, src/policypath/market.py,
+           src/policypath/panel.py]
+    built_by: [scripts/build_panel.py, scripts/check_mpr.py]
+    writes: ["coverage_{ccy}.md", "sofr_check_{ccy}.md", "mpr_check_{ccy}.md"]
+    numbers:
+      - item: "ZQ: sessions with a market path"
+      - item: "BoE OIS: sessions with a market path"
+      - item: "ZQ: SR1 cross-check"
+      - item: "MPR conditioning-path check"
+      - item: "ZQ: front-contract pinning (static)"
+    decisions: [The market path]
+    tests: [tests/test_policy_path.py, tests/test_curves.py, tests/test_boe.py, tests/test_market.py, tests/test_basis.py]
+    see: machine
+    feeds: [gap]
+
+  - key: nowcast
+    row: 1
+    kind: measure
+    title: Real-time nowcast
+    subtitle: Inflation, jobs gap
+    what: The rule's inputs as they could have been read that evening, from each series' vintages.
+    code: [src/policypath/macro]
+    built_by: [scripts/catalogue_vintages.py, scripts/build_nowcast.py]
+    writes: ["vintages_{ccy}.md", "nowcast_{ccy}.md"]
+    numbers:
+      - item: "CPI-to-PCE bridge"
+      - item: "Why the USD sample starts when it does"
+      - item: "No-lookahead test (static)"
+    decisions: [The macro nowcast]
+    tests: [tests/test_nowcast.py, tests/test_vintage.py, tests/test_no_lookahead.py]
+    feeds: [rule]
+
+  - key: rule
+    row: 1
+    kind: measure
+    title: The rule
+    subtitle: Balanced approach, inertial
+    what: "R* = r* + π + 0.5(π − 2) + 2(u* − u), in its inertial form, floored at the ELB, with the day's inputs held flat."
+    code: [src/policypath/model/reaction.py, src/policypath/model/rstar.py, src/policypath/model/path.py]
+    built_by: [scripts/build_model.py]
+    writes: ["model_{ccy}.md"]
+    numbers:
+      - item: "USD model path"
+      - item: "GBP model path"
+      - item: "USD r*"
+      - item: "GBP r*"
+    decisions: [The model path]
+    tests: [tests/test_rule.py, tests/test_regimes.py]
+    see: machine
+    feeds: [gap]
+
+  - key: closure
+    row: 2
+    kind: measure
+    title: Who closes the gap
+    subtitle: The market or the rule
+    what: When the two disagree, which one moves over the next weeks, for the same meeting.
+    code: [src/policypath/closure.py, src/policypath/report/closure.py]
+    built_by: [scripts/build_closure.py]
+    writes: [closure.md]
+    numbers: []
+    decisions: [Who closes the gap]
+    tests: [tests/test_closure.py]
+    see: closure
+    feeds: []
+
+  - key: gap
+    row: 2
+    kind: measure
+    title: Gap and z
+    subtitle: Meeting 4 ahead
+    what: Market minus rule at the fourth meeting, about five months out, and its z against its trailing two years.
+    code: [src/policypath/signal/gap.py, src/policypath/signal/components.py, src/policypath/signal/cross.py,
+           src/policypath/regimes.py]
+    built_by: [scripts/build_model.py]
+    writes: ["model_{ccy}.md"]
+    numbers:
+      - item: "z"
+      - item: "USD below the rule at meeting 4"
+      - item: "GBP below the rule at meeting 4"
+      - column: "IC(21) (t)"
+    decisions: [The signal and the backtest]
+    tests: [tests/test_signal.py, tests/test_components.py]
+    see: machine
+    feeds: [closure, credit, sleeves]
+
+  - key: credit
+    row: 2
+    kind: measure
+    title: Credit bridge
+    subtitle: A side test
+    what: Does the gap say anything about Baa − Aaa? The expected sign was registered before the first run.
+    code: [src/policypath/credit.py, src/policypath/report/credit.py]
+    built_by: [scripts/build_credit.py]
+    writes: ["credit_{ccy}.md"]
+    numbers: []
+    decisions: [Credit bridge]
+    tests: [tests/test_credit.py, tests/test_report_credit.py]
+    feeds: []
+
+  - key: sleeves
+    row: 3
+    kind: strategy
+    title: Sleeves
+    subtitle: Five expressions
+    what: Five holdable expressions of the signal, each marked into carry, roll and the rate's move.
+    code: [src/policypath/strategy/instruments.py, src/policypath/strategy/carry.py,
+           src/policypath/strategy/expression.py]
+    built_by: [scripts/build_expression.py]
+    writes: [expression.md]
+    numbers:
+      - item: "Trades, book"
+    decisions: [Expression and carry]
+    tests: [tests/test_carry.py, tests/test_expression.py, tests/test_instruments.py, tests/test_report_expression.py]
+    feeds: [costs]
+
+  - key: costs
+    row: 3
+    kind: strategy
+    title: Costs
+    subtitle: Turns × DV01 × cost
+    what: Every change in DV01 is charged; the rolls and re-strikes come with the construction.
+    code: [src/policypath/strategy/costs.py, src/policypath/strategy/positions.py, src/policypath/report/costs.py]
+    built_by: [scripts/build_strategy.py]
+    writes: [costs.md]
+    numbers:
+      - item: "Reconciliation"
+      - item: "Maintenance share"
+      - item: "Calendar-spread sensitivity"
+    decisions: [Costs]
+    tests: [tests/test_costs.py, tests/test_positions.py, tests/test_report_costs.py]
+    feeds: [book]
+
+  - key: book
+    row: 3
+    kind: strategy
+    title: Book
+    subtitle: Inverse-vol, 5% vol
+    what: One book sizes the five sleeves together, with a shrunk covariance, a 5% vol target and a DV01 cap.
+    code: [src/policypath/strategy/portfolio.py, src/policypath/strategy/risk.py, src/policypath/report/portfolio.py]
+    built_by: [scripts/build_portfolio.py]
+    writes: [portfolio.md]
+    numbers:
+      - column: "Net SR"
+      - item: "Worst drawdown"
+      - item: "Book sample"
+    decisions: [Portfolio]
+    tests: [tests/test_portfolio.py, tests/test_risk.py, tests/test_report_portfolio.py]
+    see: machine
+    feeds: [robustness]
+
+  - key: robustness
+    row: 3
+    kind: strategy
+    title: Robustness
+    subtitle: One choice at a time
+    what: Each choice moved off the chosen specification on its own, over a common sample.
+    code: [src/policypath/strategy/robustness.py, src/policypath/report/robustness.py]
+    built_by: [scripts/build_robustness.py]
+    writes: [robustness.md]
+    numbers:
+      - item: "Every row loses net"
+      - item: "HLW real-time r* (USD)"
+    decisions: [Model variants and robustness, "The Fed's projected path as the reference"]
+    tests: [tests/test_robustness.py, tests/test_variants.py]
+    feeds: [evaluation]
+
+  - key: evaluation
+    row: 3
+    kind: strategy
+    title: Evaluation
+    subtitle: IC, attribution
+    what: Where the book's P&L comes from, the IC, the level by regime and year, and the one-page tear sheet.
+    code: [src/policypath/backtest/metrics.py, src/policypath/report/attribution.py, src/policypath/report/tearsheet.py]
+    built_by: [scripts/build_tearsheet.py]
+    writes: [metrics.md, tearsheets]
+    numbers:
+      - item: "Rate change earned against needed"
+      - item: "Carry and roll against rate, book"
+      - item: "Level share of risk"
+    decisions: [Attribution and evaluation, Forward tests]
+    tests: [tests/test_metrics.py, tests/test_attribution.py, tests/test_backtest.py]
+    feeds: [outputs]
+
+  - key: outputs
+    row: 4
+    kind: io
+    title: Outputs and checks
+    subtitle: Numbers sheet, brief, this page
+    what: Every number the write-up quotes, linked to the report line that prints it; the weekly brief; the checks that guard them; and this page.
+    code: [src/policypath/report/numbers.py, src/policypath/report/brief.py, src/policypath/regress.py,
+           src/policypath/report/explorer.py]
+    built_by: [scripts/build_numbers.py, scripts/build_brief.py, scripts/regress.py, scripts/build_explorer.py]
+    writes: [numbers.md, briefs]
+    numbers: []
+    decisions: [Engineering, "Engineering: the explorer"]
+    tests: [tests/test_report_numbers.py, tests/test_brief.py, tests/test_regression.py,
+            tests/test_no_currency_branches.py, tests/test_explorer.py]
+    feeds: []
