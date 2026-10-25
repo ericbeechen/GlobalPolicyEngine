@@ -127,15 +127,24 @@ def _current_file(page):
 
 
 def parse_triangle(data, sheet):
-    """An ONS revisions triangle (UNEM04, CLA03): releases by month down, reference periods across."""
+    """An ONS revisions triangle (UNEM04, CLA03): releases by month down, reference periods across.
+
+    The label column is wherever the "Relating to Period" header sits: column B
+    in UNEM04, column A in CLA03 since October 2026.
+    """
     ws = openpyxl.load_workbook(io.BytesIO(data), read_only=True, data_only=True)[sheet]
-    refs, rows = None, []
+    col, refs, rows = None, None, []
     for r in ws.iter_rows(values_only=True):
-        label = r[1] if len(r) > 1 else None
-        if isinstance(label, str) and label.startswith("Relating to Period"):
-            refs = [c for c in r[2:]]
-        elif refs is not None and hasattr(label, "year"):
-            rows.append((pd.Timestamp(label).to_period("M"), r[2:2 + len(refs)]))
+        if refs is None:
+            col = next((i for i, c in enumerate(r) if isinstance(c, str) and c.startswith("Relating to Period")), None)
+            if col is not None:
+                refs = list(r[col + 1:])
+            continue
+        label = r[col] if len(r) > col else None
+        if hasattr(label, "year"):
+            rows.append((pd.Timestamp(label).to_period("M"), r[col + 1:col + 1 + len(refs)]))
+    if refs is None:
+        raise RuntimeError(f"no 'Relating to Period' header row in sheet {sheet!r}")
     keep = [i for i, c in enumerate(refs) if hasattr(c, "year")]
     dates = pd.DatetimeIndex([refs[i] for i in keep])
     wide = pd.DataFrame([[v[i] if i < len(v) else None for i in keep] for _, v in rows],
@@ -179,6 +188,26 @@ def vintages_from_triangle(wide, days):
     return long[VINTAGE_COLUMNS].reset_index(drop=True)
 
 
+def restore_releases(wide, cached, days):
+    """`wide` with the release rows it no longer carries put back from the `cached` vintages.
+
+    The ONS sometimes drops a past release from a triangle (CLA03 lost nine in
+    October 2026: September-December 2021, February-May 2023, September 2023).
+    What that release published is still in the cache: the row is every value in
+    effect on its release day, read from the cached vintages.
+    """
+    present = set(published_in(wide.index, days))
+    rows = {}
+    for day in sorted(set(cached["realtime_start"]) - present):
+        live = cached[(cached["realtime_start"] <= day)
+                      & (cached["realtime_end"].isna() | (cached["realtime_end"] >= day))]
+        rows[pd.Timestamp(day).to_period("M")] = live.set_index("date")["value"]
+    if not rows:
+        return wide
+    back = pd.DataFrame(rows).T.set_axis(pd.PeriodIndex(list(rows), freq="M"))
+    return pd.concat([wide, back]).sort_index().rename_axis("release")
+
+
 def unrevised(uri, days):
     """A monthly series the ONS never revises, each month known from its release the month after."""
     text = _get(ONS + "/generator", format="csv", uri=uri).text
@@ -190,10 +219,12 @@ def unrevised(uri, days):
                          "realtime_start": starts, "realtime_end": pd.NaT})[VINTAGE_COLUMNS]
 
 
-def vintages(series, start=None, days=None):
+def vintages(series, start=None, days=None, cached=None):
     """Every vintage of one ONS series, ALFRED-shaped, from reference date `start` on.
 
     `days` are the release days by month (`release_days`); fetched if not given.
+    `cached`, the vintages already cached, restores releases a triangle has
+    since dropped (`restore_releases`).
     """
     spec = SERIES[series]
     days = release_days(spec["release"]) if days is None else days
@@ -202,6 +233,8 @@ def vintages(series, start=None, days=None):
     else:
         parse = parse_triangle if spec["kind"] == "triangle" else parse_rti
         wide = parse(_current_file(spec["page"]), spec["sheet"])
+        if cached is not None:
+            wide = restore_releases(wide, cached, days)
         drop = pd.PeriodIndex(spec.get("drop_releases", []), freq="M")
         out = vintages_from_triangle(wide[~wide.index.isin(drop)], days)
     if start is not None:

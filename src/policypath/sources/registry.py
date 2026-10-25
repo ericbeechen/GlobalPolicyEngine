@@ -34,7 +34,7 @@ def _databento(live):
     return rates.Settlements(client=rates.live_client() if live else None)
 
 
-def _alfred(series, start):
+def _alfred(series, start, cached=None):
     from policypath.sources import fred
     meta = {**fred.series_info(series), "first_vintage": f"{fred.vintage_dates(series).iloc[0]:%Y-%m-%d}"}
     return fred.vintages(series, start), meta
@@ -43,12 +43,12 @@ def _alfred(series, start):
 _release_days = {}
 
 
-def _ons(series, start):
+def _ons(series, start, cached=None):
     from policypath.sources import ons
     kind = ons.SERIES[series]["release"]
     if kind not in _release_days:
         _release_days[kind] = ons.release_days(kind)
-    v = ons.vintages(series, start, _release_days[kind])
+    v = ons.vintages(series, start, _release_days[kind], cached)
     meta = {"first_vintage": f"{v['realtime_start'].min():%Y-%m-%d}",
             "release_days_by_rule_before": f"{ons.lag_approximated_before(_release_days[kind]):%Y-%m-%d}"}
     return v, meta
@@ -65,7 +65,8 @@ FUTURES = {"databento": _databento}
 # ``sources.estimates``: name -> f(calendar days from the end of a vintage's quarter to its release)
 # -> a Source of one quarterly estimate, one row per vintage.
 ESTIMATES = {"nyfed": _nyfed}
-# ``macro.source``: name -> f(series, start) -> (every vintage, manifest metadata).
+# ``macro.source``: name -> f(series, start, cached) -> (every vintage, manifest metadata). `cached` is
+# what the cache holds (or None): ALFRED keeps its own archive and ignores it, the ONS restores dropped releases from it.
 MACRO = {"alfred": _alfred, "ons": _ons}
 
 

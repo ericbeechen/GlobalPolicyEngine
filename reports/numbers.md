@@ -8,7 +8,7 @@ Every value below is formatted from the JSON or a generated report and found aga
 
 | Item | Value | Source | Sample / definition |
 |---|---|---|---|
-| Book sample | 2014-01-13 to 2026-10-15, 2,988 sessions, 11.8 years | [metrics.md:3](metrics.md:3) | The book runs from 2011-03-04; sessions count from 2014-01-13, the first session it could hold a position ([DECISIONS.md:207](../notes/DECISIONS.md:207)). |
+| Book sample | 2014-01-13 to 2026-10-23, 2,994 sessions, 11.9 years | [metrics.md:3](metrics.md:3) | The book runs from 2011-03-04; sessions count from 2014-01-13, the first session it could hold a position ([DECISIONS.md:207](../notes/DECISIONS.md:207)). |
 | Trades, book | 104 | [metrics.md:27](metrics.md:27) | A run of one side, from the close that opens it. By sleeve: USD outright 19, GBP outright 16, USD 2s10s 34, GBP 2s10s 23, GBP - USD 2y 12. |
 | Entries, book (the carry filter's count) | 104 | [metrics.md:107](metrics.md:107) | An entry is decided at a close and becomes a trade from the next session. Every entry is a trade. |
 
@@ -24,16 +24,16 @@ Every value below is formatted from the JSON or a generated report and found aga
 
 | Item | Value | Source | Sample / definition |
 |---|---|---|---|
-| ZQ: sessions with a market path | 4,128, 0 solver failures | [coverage_USD.md:6](coverage_USD.md:6) | 2010-06-07 to 2026-10-15 ([coverage_USD.md:3](coverage_USD.md:3)) |
+| ZQ: sessions with a market path | 4,134, 0 solver failures | [coverage_USD.md:6](coverage_USD.md:6) | 2010-06-07 to 2026-10-23 ([coverage_USD.md:3](coverage_USD.md:3)) |
 | ZQ: coverage | 99.68% of Fed business days; 13 missing | [coverage_USD.md:7](coverage_USD.md:7), [coverage_USD.md:13](coverage_USD.md:13) | Missing days are listed in the coverage report. |
 | ZQ: front-contract pinning (static) | Error in the implied step: mean 5.8bp → 0.5bp, worst 34bp → 1.6bp | [DECISIONS.md:21](../notes/DECISIONS.md:21) | A one-off study, measured against the actual decision on 46 announcement days since 2021. |
-| ZQ: SR1 cross-check | Implied minus later-realized SOFR - EFFR basis: mean +0.52bp, mean absolute 1.86bp, within 3bp on 80% | [sofr_check_USD.md:10](sofr_check_USD.md:10), [sofr_check_USD.md:11](sofr_check_USD.md:11) | 2,126 sessions, 2018-05-07 to 2026-10-15 |
+| ZQ: SR1 cross-check | Implied minus later-realized SOFR - EFFR basis: mean +0.52bp, mean absolute 1.86bp, within 3bp on 80% | [sofr_check_USD.md:10](sofr_check_USD.md:10), [sofr_check_USD.md:11](sofr_check_USD.md:11) | 2,132 sessions, 2018-05-07 to 2026-10-23 |
 | ZQ: FedWatch (static) | Not compared historically: FedWatch keeps a year per meeting, and CME's paid API history from 2015 | [README.md:258](../README.md:258) | FedWatch prices off the same futures, so it would check the solver, not the data. |
-| BoE OIS: sessions with a market path | 4,347, 0 solver failures | [coverage_GBP.md:6](coverage_GBP.md:6) | 2009-08-03 to 2026-10-15 ([coverage_GBP.md:3](coverage_GBP.md:3)) |
+| BoE OIS: sessions with a market path | 4,352, 0 solver failures | [coverage_GBP.md:6](coverage_GBP.md:6) | 2009-08-03 to 2026-10-22 ([coverage_GBP.md:3](coverage_GBP.md:3)) |
 | MPR conditioning-path check | Mean absolute difference 1.00bp; mean signed -0.46bp; worst 7.22bp | [mpr_check_GBP.md:5](mpr_check_GBP.md:5), [mpr_check_GBP.md:6](mpr_check_GBP.md:6) | 29 reports, August 2019 to July 2026, 87 quarters inside the eight-meeting path |
 | MPR: why the differences have a sign | They correlate -0.59 with the move priced inside the quarter | [mpr_check_GBP.md:9](mpr_check_GBP.md:9) | The Bank averages a smooth spline; the path is a step. |
-| USD model path | 3,939 sessions, 977 on the floor | [model_USD.md:5](model_USD.md:5), [model_USD.md:6](model_USD.md:6) |  |
-| GBP model path | 4,077 sessions, 1,930 on the floor | [model_GBP.md:5](model_GBP.md:5), [model_GBP.md:6](model_GBP.md:6) |  |
+| USD model path | 3,945 sessions, 977 on the floor | [model_USD.md:5](model_USD.md:5), [model_USD.md:6](model_USD.md:6) |  |
+| GBP model path | 4,082 sessions, 1,930 on the floor | [model_GBP.md:5](model_GBP.md:5), [model_GBP.md:6](model_GBP.md:6) |  |
 | Why the USD sample starts when it does | Nowcast from 2011-03-04; CBO natural-rate (NROU) vintages from 2011-02-02 | [nowcast_USD.md:3](nowcast_USD.md:3), [vintages_USD.md:20](vintages_USD.md:20) | The first day every input has an ALFRED vintage. |
 | CPI-to-PCE bridge | RMSE 0.075pp m/m, MAE 0.057pp | [nowcast_USD.md:8](nowcast_USD.md:8), [nowcast_USD.md:17](nowcast_USD.md:17) | Real time, against PCE's first print, 185 months, 60-month fit window |
 | No-lookahead test (static) | The whole chain on inputs truncated at D; everything after D poisoned | [README.md:241](../README.md:241) | Runs per currency. |
@@ -43,20 +43,20 @@ Every value below is formatted from the JSON or a generated report and found aga
 
 | Item | Value | Source | Sample / definition |
 |---|---|---|---|
-| USD below the rule at meeting 4 | 13 of 13 years, -86bp (2020) to -24bp (2026) | [metrics.md:204](metrics.md:204) | 2014 to 2026, outside the ELB state, years with 60 or more sessions. r* the SEP median. |
-| USD by regime, meeting 4 | hiking -37bp (1,373), on hold -53bp (1,024), cutting -62bp (565), ELB +1bp (977) | [metrics.md:187](metrics.md:187) | Mean gap, market minus rule; sessions in brackets. |
-| GBP below the rule at meeting 4 | 8 of 11 years, -122bp (2022) to +104bp (2026) | [metrics.md:206](metrics.md:206) | 2016 to 2026, outside the ELB state, years with 60 or more sessions. r* a constant -1.6%. Above from 2024: +36, +19, +104. |
-| GBP by regime, meeting 4 | hiking -81bp (851), on hold +4bp (788), cutting +28bp (667), ELB -1bp (1,771) | [metrics.md:191](metrics.md:191) | Mean gap, market minus rule; sessions in brackets. |
+| USD below the rule at meeting 4 | 13 of 13 years, -86bp (2020) to -23bp (2026) | [metrics.md:204](metrics.md:204) | 2014 to 2026, outside the ELB state, years with 60 or more sessions. r* the SEP median. |
+| USD by regime, meeting 4 | hiking -37bp (1,379), on hold -53bp (1,024), cutting -62bp (565), ELB +1bp (977) | [metrics.md:187](metrics.md:187) | Mean gap, market minus rule; sessions in brackets. |
+| GBP below the rule at meeting 4 | 8 of 11 years, -122bp (2022) to +105bp (2026) | [metrics.md:206](metrics.md:206) | 2016 to 2026, outside the ELB state, years with 60 or more sessions. r* a constant -1.6%. Above from 2024: +36, +19, +105. |
+| GBP by regime, meeting 4 | hiking -81bp (851), on hold +4bp (793), cutting +28bp (667), ELB -1bp (1,771) | [metrics.md:191](metrics.md:191) | Mean gap, market minus rule; sessions in brackets. |
 
 ## The signal: IC of z against the next h sessions' rate change, outside the ELB
 
 | Sleeve | IC(5) (t) | IC(21) (t) | IC(63) (t) | Sessions (21) | Non-overlapping windows (21) | Implied SE (21) | Non-overlapping IC(21) [range] | Source |
 |---|---|---|---|---|---|---|---|---|
-| USD outright | -0.058 (-1.7) | -0.121 (-1.7) | -0.190 (-1.5) | 2,940 | 139 | 0.070 | -0.120 [-0.19, -0.06] | [metrics.md:160](metrics.md:160) |
-| GBP outright | +0.199 (+4.6) | +0.371 (+4.6) | +0.493 (+4.0) | 2,284 | 108 | 0.081 | +0.369 [+0.30, +0.43] | [metrics.md:164](metrics.md:164) |
-| USD 2s10s | +0.053 (+1.5) | +0.089 (+1.3) | +0.167 (+1.4) | 2,940 | 139 | 0.067 | +0.089 [+0.02, +0.17] | [metrics.md:168](metrics.md:168) |
-| GBP 2s10s | -0.001 (-0.0) | +0.043 (+0.6) | +0.028 (+0.3) | 2,284 | 108 | 0.072 | +0.044 [-0.05, +0.12] | [metrics.md:172](metrics.md:172) |
-| GBP - USD 2y | -0.016 (-0.4) | -0.031 (-0.4) | -0.036 (-0.3) | 2,206 | 104 | 0.078 | -0.028 [-0.09, +0.01] | [metrics.md:176](metrics.md:176) |
+| USD outright | -0.057 (-1.7) | -0.120 (-1.7) | -0.193 (-1.5) | 2,946 | 139 | 0.069 | -0.119 [-0.19, -0.05] | [metrics.md:160](metrics.md:160) |
+| GBP outright | +0.196 (+4.6) | +0.368 (+4.6) | +0.487 (+3.9) | 2,289 | 108 | 0.081 | +0.366 [+0.30, +0.42] | [metrics.md:164](metrics.md:164) |
+| USD 2s10s | +0.050 (+1.4) | +0.089 (+1.3) | +0.167 (+1.4) | 2,946 | 139 | 0.067 | +0.089 [+0.02, +0.17] | [metrics.md:168](metrics.md:168) |
+| GBP 2s10s | -0.000 (-0.0) | +0.042 (+0.6) | +0.027 (+0.2) | 2,289 | 108 | 0.072 | +0.043 [-0.05, +0.12] | [metrics.md:172](metrics.md:172) |
+| GBP - USD 2y | -0.017 (-0.4) | -0.032 (-0.4) | -0.035 (-0.3) | 2,211 | 105 | 0.078 | -0.030 [-0.09, +0.01] | [metrics.md:176](metrics.md:176) |
 
 The t is Newey-West, Bartlett weights to lag h. A persistent z keeps the products autocorrelated past h, so the t overstates the precision. The implied SE is |IC / t|.
 
@@ -65,11 +65,11 @@ The t is Newey-West, Bartlett weights to lag h. A persistent z keeps the product
 |  | Gross SR | Net SR | Net a year | Ex-2022 | Ex-2022-23 | Source |
 |---|---|---|---|---|---|---|
 | book | -0.15 (0.29) | -0.62 (0.32) | -3.27% | -0.99 (0.37) | -1.13 (0.40) | [metrics.md:27](metrics.md:27) |
-| USD outright | -0.50 (0.31) | -0.89 (0.34) | -2.20% | -1.09 (0.38) | -1.23 (0.42) | [metrics.md:28](metrics.md:28) |
-| GBP outright | +0.72 (0.33) | +0.49 (0.31) | +0.97% | +0.14 (0.31) | +0.02 (0.31) | [metrics.md:29](metrics.md:29) |
+| USD outright | -0.49 (0.31) | -0.87 (0.34) | -2.17% | -1.08 (0.38) | -1.22 (0.41) | [metrics.md:28](metrics.md:28) |
+| GBP outright | +0.72 (0.33) | +0.49 (0.31) | +0.97% | +0.14 (0.30) | +0.03 (0.31) | [metrics.md:29](metrics.md:29) |
 | USD 2s10s | -0.00 (0.29) | -0.13 (0.29) | -0.31% | -0.16 (0.31) | -0.20 (0.32) | [metrics.md:30](metrics.md:30) |
 | GBP 2s10s | -0.36 (0.30) | -0.62 (0.32) | -1.14% | -0.73 (0.34) | -0.57 (0.34) | [metrics.md:31](metrics.md:31) |
-| GBP - USD 2y | -0.17 (0.29) | -0.29 (0.30) | -0.59% | -0.51 (0.32) | -0.65 (0.35) | [metrics.md:32](metrics.md:32) |
+| GBP - USD 2y | -0.19 (0.29) | -0.31 (0.30) | -0.62% | -0.52 (0.32) | -0.67 (0.35) | [metrics.md:32](metrics.md:32) |
 
 | Item | Value | Source | Sample / definition |
 |---|---|---|---|
@@ -88,49 +88,49 @@ The t is Newey-West, Bartlett weights to lag h. A persistent z keeps the product
 | Rolls, the part meeting N+4 forces | 0.81% of capital a year, 33% of cost | metrics.json costs[book].cost.roll | The outrights move to the new instrument as each meeting passes. |
 | Re-strikes, the par legs | 0.31% of capital a year, 13% of cost | metrics.json costs[book].cost.restrike | Quarterly, from marking a constant-maturity bond. |
 | USD outright's rolls | 0.58% a year | [metrics.md:11](metrics.md:11) |  |
-| Calendar-spread sensitivity | Rolls at half price save 0.4% a year: net -3.27% → -2.86%; gross stays -0.81% | metrics.json costs[book].cost.roll / 2 | Rolls are charged as two outright one-ways, the conservative end. Gross is before costs, so no cost treatment moves it. |
+| Calendar-spread sensitivity | Rolls at half price save 0.4% a year: net -3.27% → -2.87%; gross stays -0.81% | metrics.json costs[book].cost.roll / 2 | Rolls are charged as two outright one-ways, the conservative end. Gross is before costs, so no cost treatment moves it. |
 | Hand check (static) | USD outright 2018, contract by contract: 58,462 contracts, $1,276,426, the cost charged to the dollar | [DECISIONS.md:228](../notes/DECISIONS.md:228) | Done 2026-09-29, before the 2026-09-30 regeneration. It's not in any report. |
 
 ## Breakeven
 
 | Item | Value | Source | Sample / definition |
 |---|---|---|---|
-| Rate change earned against needed | +1.24% a year against +4.51%: 3.6 times | [metrics.md:10](metrics.md:10) |  |
-| Carry and roll against rate, book | carry and roll -2.05%, rate +1.24% | [metrics.md:8](metrics.md:8) |  |
-| ρ held against ρ* needed, per sleeve | USD outright -0.017 against -0.001; GBP outright +0.036 against +0.022 (clears); USD 2s10s +0.008 against +0.016; GBP 2s10s -0.004 against +0.029; GBP - USD 2y -0.017 against -0.001 | [metrics.md:10](metrics.md:10) | Clears when ρ ≥ ρ*. |
+| Rate change earned against needed | +1.22% a year against +4.49%: 3.7 times | [metrics.md:10](metrics.md:10) |  |
+| Carry and roll against rate, book | carry and roll -2.03%, rate +1.22% | [metrics.md:8](metrics.md:8) |  |
+| ρ held against ρ* needed, per sleeve | USD outright -0.017 against -0.001; GBP outright +0.036 against +0.022 (clears); USD 2s10s +0.008 against +0.016; GBP 2s10s -0.004 against +0.029; GBP - USD 2y -0.018 against -0.001 | [metrics.md:10](metrics.md:10) | Clears when ρ ≥ ρ*. |
 
 ## Carry filter
 
 | Item | Value | Source | Sample / definition |
 |---|---|---|---|
 | Entries skipped | 16 of 104 (15%): USD outright 4 of 19, GBP outright 2 of 16, USD 2s10s 7 of 34, GBP 2s10s 0 of 23, GBP - USD 2y 3 of 12 | [metrics.md:107](metrics.md:107) |  |
-| Effect on the book, common sample | net -0.62 → -0.52 (+0.10, paired SE 0.05) | [robustness.md:34](robustness.md:34) | The grid's common sample: 2,884 sessions from 2014-05-05. |
-| Effect on the book, its own sample | net -0.52 (0.31) | [robustness.md:117](robustness.md:117) | 2,988 sessions |
+| Effect on the book, common sample | net -0.62 → -0.52 (+0.10, paired SE 0.05) | [robustness.md:34](robustness.md:34) | The grid's common sample: 2,890 sessions from 2014-05-05. |
+| Effect on the book, its own sample | net -0.52 (0.31) | [robustness.md:117](robustness.md:117) | 2,994 sessions |
 
 ## Robustness
 
 | Item | Value | Source | Sample / definition |
 |---|---|---|---|
-| Every row loses net | best row slope: raw 8th minus 1st, -0.31; largest move slope: raw 8th minus 1st, +0.316 against one SE 0.323 | [robustness.md:11](robustness.md:11) | 13 rows, one choice at a time, common sample |
-| HLW real-time r* (USD) | net -0.54 (0.31) | [robustness.md:105](robustness.md:105) | 2,988 sessions |
+| Every row loses net | best row slope: raw 8th minus 1st, -0.31; largest move slope: raw 8th minus 1st, +0.314 against one SE 0.323 | [robustness.md:11](robustness.md:11) | 13 rows, one choice at a time, common sample |
+| HLW real-time r* (USD) | net -0.54 (0.31) | [robustness.md:105](robustness.md:105) | 2,994 sessions |
 
 ## Runs: the span each report was generated for
 
 | Report | Span |
 |---|---|
-| [closure.md:3](closure.md:3) | 2011-03-04 .. 2026-10-15 |
-| [costs.md:3](costs.md:3) | 2011-08-26 .. 2026-10-15 |
-| [coverage_GBP.md:3](coverage_GBP.md:3) | 2009-08-03 .. 2026-10-15 |
-| [coverage_USD.md:3](coverage_USD.md:3) | 2010-06-07 .. 2026-10-15 |
+| [closure.md:3](closure.md:3) | 2011-03-04 .. 2026-10-23 |
+| [costs.md:3](costs.md:3) | 2011-08-26 .. 2026-10-23 |
+| [coverage_GBP.md:3](coverage_GBP.md:3) | 2009-08-03 .. 2026-10-22 |
+| [coverage_USD.md:3](coverage_USD.md:3) | 2010-06-07 .. 2026-10-23 |
 | [credit_USD.md:3](credit_USD.md:3) |  |
-| [expression.md:3](expression.md:3) | 2011-08-24 .. 2026-10-15 |
-| [metrics.md:3](metrics.md:3) | 2011-03-04 .. 2026-10-15 |
-| [model_GBP.md:3](model_GBP.md:3) | 2010-08-26 .. 2026-10-15 |
-| [model_USD.md:3](model_USD.md:3) | 2011-03-04 .. 2026-10-15 |
+| [expression.md:3](expression.md:3) | 2011-08-24 .. 2026-10-23 |
+| [metrics.md:3](metrics.md:3) | 2011-03-04 .. 2026-10-23 |
+| [model_GBP.md:3](model_GBP.md:3) | 2010-08-26 .. 2026-10-22 |
+| [model_USD.md:3](model_USD.md:3) | 2011-03-04 .. 2026-10-23 |
 | [mpr_check_GBP.md:3](mpr_check_GBP.md:3) |  |
-| [nowcast_GBP.md:3](nowcast_GBP.md:3) | 2010-08-26 .. 2026-10-16 |
-| [nowcast_USD.md:3](nowcast_USD.md:3) | 2011-03-04 .. 2026-10-16 |
-| [portfolio.md:3](portfolio.md:3) | 2011-03-04 .. 2026-10-15 |
-| [robustness.md:3](robustness.md:3) | 2011-03-04 .. 2026-10-15 |
-| [sofr_check_USD.md:3](sofr_check_USD.md:3) | 2018-05-07 .. 2026-10-15 |
+| [nowcast_GBP.md:3](nowcast_GBP.md:3) | 2010-08-26 .. 2026-10-23 |
+| [nowcast_USD.md:3](nowcast_USD.md:3) | 2011-03-04 .. 2026-10-23 |
+| [portfolio.md:3](portfolio.md:3) | 2011-03-04 .. 2026-10-23 |
+| [robustness.md:3](robustness.md:3) | 2011-03-04 .. 2026-10-23 |
+| [sofr_check_USD.md:3](sofr_check_USD.md:3) | 2018-05-07 .. 2026-10-23 |
 | [vintages_USD.md:3](vintages_USD.md:3) |  |

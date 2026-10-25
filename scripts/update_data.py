@@ -64,6 +64,14 @@ def wanted(series):
     return not args.only or series in args.only
 
 
+def cached_vintages(source, series, ccy):
+    """What the cache holds for a vintaged series, or None: a source whose files forget releases restores them from it."""
+    try:
+        return cache.vintages(source, series, ccy)
+    except FileNotFoundError:
+        return None
+
+
 def update(ccy):
     cfg = config.currency(ccy)
     sources = cfg["sources"]
@@ -113,14 +121,14 @@ def update(ccy):
     for name, series_list in sources.get("vintages", {}).items():
         pull = registry.lookup(registry.MACRO, name)
         for series in filter(wanted, series_list):
-            vintages, meta = pull(series, cfg["history_start"])
+            vintages, meta = pull(series, cfg["history_start"], cached_vintages(name, series, ccy))
             added = cache.write_vintages(vintages, name, series, ccy, meta=meta)
             print(f"{name}/{series:<14} +{added:>6} rows")
 
     macro = cfg["macro"]
     pull = registry.lookup(registry.MACRO, macro["source"])
     for series in [] if args.only else [*macro["series"], *macro["validation"]]:
-        vintages, meta = pull(series, macro["history_start"])
+        vintages, meta = pull(series, macro["history_start"], cached_vintages(macro["source"], series, ccy))
         added = cache.write_vintages(vintages, macro["source"], series, ccy, meta=meta)
         print(f"{macro['source']}/{series:<14} +{added:>6} rows")
 
