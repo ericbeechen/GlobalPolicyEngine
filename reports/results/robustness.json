@@ -7,48 +7,48 @@
   "design": "one at a time"
  },
  "ic_persistence": {
-  "USD outright": 0.315673,
-  "GBP outright": 0.150042,
-  "USD 2s10s": -0.000958104,
-  "GBP 2s10s": -0.0722441,
-  "GBP - USD 2y": -0.0473915
+  "USD outright": 0.307969,
+  "GBP outright": 0.159239,
+  "USD 2s10s": -0.00387385,
+  "GBP 2s10s": -0.0717234,
+  "GBP - USD 2y": -0.0486016
  },
  "sample": {
   "book": {
-   "sessions": 2895,
+   "sessions": 2905,
    "first": "2014-05-05",
-   "last": "2026-10-30",
-   "years": 11.4764
+   "last": "2026-11-13",
+   "years": 11.515
   },
   "USD outright": {
-   "sessions": 2895,
+   "sessions": 2905,
    "first": "2014-05-05",
-   "last": "2026-10-30",
-   "years": 11.4797
+   "last": "2026-11-13",
+   "years": 11.5184
   },
   "GBP outright": {
-   "sessions": 2232,
+   "sessions": 2242,
    "first": "2016-08-05",
-   "last": "2026-10-29",
-   "years": 8.83409
+   "last": "2026-11-12",
+   "years": 8.87294
   },
   "USD 2s10s": {
-   "sessions": 2895,
+   "sessions": 2905,
    "first": "2014-05-05",
-   "last": "2026-10-30",
-   "years": 11.4799
+   "last": "2026-11-13",
+   "years": 11.5185
   },
   "GBP 2s10s": {
-   "sessions": 2232,
+   "sessions": 2242,
    "first": "2016-08-05",
-   "last": "2026-10-29",
-   "years": 8.83138
+   "last": "2026-11-12",
+   "years": 8.87017
   },
   "GBP - USD 2y": {
-   "sessions": 2180,
+   "sessions": 2190,
    "first": "2016-08-05",
-   "last": "2026-10-29",
-   "years": 8.81994
+   "last": "2026-11-12",
+   "years": 8.85911
   }
  },
  "choices": [
@@ -143,130 +143,130 @@
    "label": "the chosen specification",
    "net": {
     "book": {
-     "sr": -0.614303,
-     "se": 0.321833,
-     "sessions": 2895
+     "sr": -0.641574,
+     "se": 0.323599,
+     "sessions": 2905
     },
     "USD outright": {
-     "sr": -0.922434,
-     "se": 0.352378,
-     "sessions": 2895
+     "sr": -0.949803,
+     "se": 0.354934,
+     "sessions": 2905
     },
     "GBP outright": {
-     "sr": 0.659677,
-     "se": 0.371252,
-     "sessions": 2232
+     "sr": 0.632275,
+     "se": 0.367736,
+     "sessions": 2242
     },
     "USD 2s10s": {
-     "sr": -0.103577,
-     "se": 0.295932,
-     "sessions": 2895
+     "sr": -0.101028,
+     "se": 0.295398,
+     "sessions": 2905
     },
     "GBP 2s10s": {
-     "sr": -0.444741,
-     "se": 0.352748,
-     "sessions": 2232
+     "sr": -0.443767,
+     "se": 0.351906,
+     "sessions": 2242
     },
     "GBP - USD 2y": {
-     "sr": -0.253811,
-     "se": 0.342099,
-     "sessions": 2180
+     "sr": -0.253249,
+     "se": 0.341318,
+     "sessions": 2190
     }
    },
    "gross": {
     "book": {
-     "sr": -0.166365,
-     "se": 0.297222,
-     "sessions": 2895
+     "sr": -0.194824,
+     "se": 0.297475,
+     "sessions": 2905
     },
     "USD outright": {
-     "sr": -0.602907,
-     "se": 0.320846,
-     "sessions": 2895
+     "sr": -0.632909,
+     "se": 0.32281,
+     "sessions": 2905
     },
     "GBP outright": {
-     "sr": 0.882265,
-     "se": 0.396553,
-     "sessions": 2232
+     "sr": 0.856005,
+     "se": 0.39242,
+     "sessions": 2242
     },
     "USD 2s10s": {
-     "sr": 0.0162208,
-     "se": 0.295161,
-     "sessions": 2895
+     "sr": 0.0194766,
+     "se": 0.294675,
+     "sessions": 2905
     },
     "GBP 2s10s": {
-     "sr": -0.186972,
-     "se": 0.339429,
-     "sessions": 2232
+     "sr": -0.186563,
+     "se": 0.338673,
+     "sessions": 2242
     },
     "GBP - USD 2y": {
-     "sr": -0.153966,
-     "se": 0.338708,
-     "sessions": 2180
+     "sr": -0.153625,
+     "se": 0.33795,
+     "sessions": 2190
     }
    },
    "own": {
     "book": {
-     "sr": -0.611755,
-     "se": 0.315995,
-     "sessions": 2999
+     "sr": -0.638379,
+     "se": 0.317688,
+     "sessions": 3009
     },
     "USD outright": {
-     "sr": -0.940287,
-     "se": 0.349747,
-     "sessions": 2973
+     "sr": -0.966916,
+     "se": 0.352237,
+     "sessions": 2983
     },
     "GBP outright": {
-     "sr": 0.608287,
-     "se": 0.359393,
-     "sessions": 2318
+     "sr": 0.581867,
+     "se": 0.356248,
+     "sessions": 2328
     },
     "USD 2s10s": {
-     "sr": -0.125219,
-     "se": 0.292383,
-     "sessions": 2973
+     "sr": -0.12268,
+     "se": 0.291861,
+     "sessions": 2983
     },
     "GBP 2s10s": {
-     "sr": -0.543317,
-     "se": 0.353729,
-     "sessions": 2318
+     "sr": -0.542171,
+     "se": 0.352888,
+     "sessions": 2328
     },
     "GBP - USD 2y": {
-     "sr": -0.257426,
-     "se": 0.337712,
-     "sessions": 2239
+     "sr": -0.256872,
+     "se": 0.336962,
+     "sessions": 2249
     }
    },
    "own_gross": {
     "book": {
-     "sr": -0.146154,
-     "se": 0.291568,
-     "sessions": 2999
+     "sr": -0.174072,
+     "se": 0.291739,
+     "sessions": 3009
     },
     "USD outright": {
-     "sr": -0.5505,
-     "se": 0.312534,
-     "sessions": 2973
+     "sr": -0.580381,
+     "se": 0.314305,
+     "sessions": 2983
     },
     "GBP outright": {
-     "sr": 0.850694,
-     "se": 0.385276,
-     "sessions": 2318
+     "sr": 0.825226,
+     "se": 0.38144,
+     "sessions": 2328
     },
     "USD 2s10s": {
-     "sr": -0.00650083,
-     "se": 0.291247,
-     "sessions": 2973
+     "sr": -0.00326324,
+     "se": 0.29077,
+     "sessions": 2983
     },
     "GBP 2s10s": {
-     "sr": -0.281781,
-     "se": 0.33669,
-     "sessions": 2318
+     "sr": -0.281188,
+     "se": 0.335954,
+     "sessions": 2328
     },
     "GBP - USD 2y": {
-     "sr": -0.151572,
-     "se": 0.334156,
-     "sessions": 2239
+     "sr": -0.151246,
+     "se": 0.333428,
+     "sessions": 2249
     }
    },
    "paired_se": {
@@ -295,59 +295,59 @@
    },
    "ic": {
     "USD outright": {
-     "ic": -0.112648,
-     "t": -1.61693,
-     "sessions": 2873
+     "ic": -0.110108,
+     "t": -1.58826,
+     "sessions": 2883
     },
     "GBP outright": {
-     "ic": 0.375983,
-     "t": 4.59294,
-     "sessions": 2210
+     "ic": 0.366897,
+     "t": 4.47233,
+     "sessions": 2220
     },
     "USD 2s10s": {
-     "ic": 0.0981238,
-     "t": 1.44619,
-     "sessions": 2873
+     "ic": 0.091464,
+     "t": 1.35094,
+     "sessions": 2883
     },
     "GBP 2s10s": {
-     "ic": 0.0596748,
-     "t": 0.820747,
-     "sessions": 2210
+     "ic": 0.0608418,
+     "t": 0.840086,
+     "sessions": 2220
     },
     "GBP - USD 2y": {
-     "ic": -0.0276662,
-     "t": -0.354906,
-     "sessions": 2158
+     "ic": -0.0287882,
+     "t": -0.370175,
+     "sessions": 2168
     }
    },
    "ic_offsets": {
     "USD outright": {
-     "mean": -0.111767,
-     "low": -0.190936,
+     "mean": -0.108815,
+     "low": -0.200441,
      "high": -0.0419988,
-     "fewest_sessions": 136
+     "fewest_sessions": 137
     },
     "GBP outright": {
-     "mean": 0.374845,
-     "low": 0.31496,
+     "mean": 0.3658,
+     "low": 0.294405,
      "high": 0.417313,
      "fewest_sessions": 105
     },
     "USD 2s10s": {
-     "mean": 0.0984058,
-     "low": 0.027755,
+     "mean": 0.0919537,
+     "low": 0.0214549,
      "high": 0.187765,
-     "fewest_sessions": 136
+     "fewest_sessions": 137
     },
     "GBP 2s10s": {
-     "mean": 0.0602799,
+     "mean": 0.0622489,
      "low": -0.0484923,
-     "high": 0.132283,
+     "high": 0.131602,
      "fewest_sessions": 105
     },
     "GBP - USD 2y": {
-     "mean": -0.0243927,
-     "low": -0.0885208,
+     "mean": -0.0253887,
+     "low": -0.0906753,
      "high": 0.00898496,
      "fewest_sessions": 102
     }
@@ -385,34 +385,34 @@
    },
    "from_first_estimate": {
     "book": {
-     "sr": -0.338628,
-     "se": 0.34654,
-     "sessions": 2221
+     "sr": -0.375586,
+     "se": 0.347929,
+     "sessions": 2231
     },
     "USD outright": {
-     "sr": -0.924675,
-     "se": 0.355095,
-     "sessions": 2855
+     "sr": -0.95251,
+     "se": 0.35772,
+     "sessions": 2865
     },
     "GBP outright": {
-     "sr": 0.665405,
-     "se": 0.380719,
-     "sessions": 2129
+     "sr": 0.637285,
+     "se": 0.376984,
+     "sessions": 2139
     },
     "USD 2s10s": {
-     "sr": -0.0799107,
-     "se": 0.297676,
-     "sessions": 2855
+     "sr": -0.0773744,
+     "se": 0.297141,
+     "sessions": 2865
     },
     "GBP 2s10s": {
-     "sr": -0.372513,
-     "se": 0.356297,
-     "sessions": 2129
+     "sr": -0.371657,
+     "se": 0.355425,
+     "sessions": 2139
     },
     "GBP - USD 2y": {
-     "sr": -0.203314,
-     "se": 0.348346,
-     "sessions": 2079
+     "sr": -0.202842,
+     "se": 0.34752,
+     "sessions": 2089
     }
    }
   },
@@ -421,262 +421,262 @@
    "label": "HLW, real time",
    "net": {
     "book": {
-     "sr": -0.530523,
-     "se": 0.315274,
-     "sessions": 2895
+     "sr": -0.55853,
+     "se": 0.316842,
+     "sessions": 2905
     },
     "USD outright": {
-     "sr": -0.716739,
-     "se": 0.330885,
-     "sessions": 2895
+     "sr": -0.743488,
+     "se": 0.332886,
+     "sessions": 2905
     },
     "GBP outright": {
-     "sr": 0.659677,
-     "se": 0.371252,
-     "sessions": 2232
+     "sr": 0.632275,
+     "se": 0.367736,
+     "sessions": 2242
     },
     "USD 2s10s": {
-     "sr": -0.160613,
-     "se": 0.297039,
-     "sessions": 2895
+     "sr": -0.158022,
+     "se": 0.296481,
+     "sessions": 2905
     },
     "GBP 2s10s": {
-     "sr": -0.444741,
-     "se": 0.352748,
-     "sessions": 2232
+     "sr": -0.443767,
+     "se": 0.351906,
+     "sessions": 2242
     },
     "GBP - USD 2y": {
-     "sr": -0.178291,
-     "se": 0.339384,
-     "sessions": 2180
+     "sr": -0.177896,
+     "se": 0.338621,
+     "sessions": 2190
     }
    },
    "gross": {
     "book": {
-     "sr": -0.0750082,
-     "se": 0.295602,
-     "sessions": 2895
+     "sr": -0.10427,
+     "se": 0.295491,
+     "sessions": 2905
     },
     "USD outright": {
-     "sr": -0.407199,
-     "se": 0.307135,
-     "sessions": 2895
+     "sr": -0.436168,
+     "se": 0.308344,
+     "sessions": 2905
     },
     "GBP outright": {
-     "sr": 0.882265,
-     "se": 0.396553,
-     "sessions": 2232
+     "sr": 0.856005,
+     "se": 0.39242,
+     "sessions": 2242
     },
     "USD 2s10s": {
-     "sr": -0.0270394,
-     "se": 0.295195,
-     "sessions": 2895
+     "sr": -0.0237821,
+     "se": 0.294689,
+     "sessions": 2905
     },
     "GBP 2s10s": {
-     "sr": -0.186972,
-     "se": 0.339429,
-     "sessions": 2232
+     "sr": -0.186563,
+     "se": 0.338673,
+     "sessions": 2242
     },
     "GBP - USD 2y": {
-     "sr": -0.078161,
-     "se": 0.337233,
-     "sessions": 2180
+     "sr": -0.0779881,
+     "se": 0.336484,
+     "sessions": 2190
     }
    },
    "own": {
     "book": {
-     "sr": -0.530022,
-     "se": 0.309723,
-     "sessions": 2999
+     "sr": -0.557351,
+     "se": 0.311229,
+     "sessions": 3009
     },
     "USD outright": {
-     "sr": -0.736835,
-     "se": 0.328407,
-     "sessions": 2973
+     "sr": -0.762899,
+     "se": 0.330381,
+     "sessions": 2983
     },
     "GBP outright": {
-     "sr": 0.608287,
-     "se": 0.359393,
-     "sessions": 2318
+     "sr": 0.581867,
+     "se": 0.356248,
+     "sessions": 2328
     },
     "USD 2s10s": {
-     "sr": -0.180757,
-     "se": 0.293613,
-     "sessions": 2973
+     "sr": -0.178179,
+     "se": 0.293068,
+     "sessions": 2983
     },
     "GBP 2s10s": {
-     "sr": -0.543317,
-     "se": 0.353729,
-     "sessions": 2318
+     "sr": -0.542171,
+     "se": 0.352888,
+     "sessions": 2328
     },
     "GBP - USD 2y": {
-     "sr": -0.183141,
-     "se": 0.335027,
-     "sessions": 2239
+     "sr": -0.182747,
+     "se": 0.334294,
+     "sessions": 2249
     }
    },
    "own_gross": {
     "book": {
-     "sr": -0.0567332,
-     "se": 0.290257,
-     "sessions": 2999
+     "sr": -0.0854259,
+     "se": 0.290082,
+     "sessions": 3009
     },
     "USD outright": {
-     "sr": -0.362,
-     "se": 0.300637,
-     "sessions": 2973
+     "sr": -0.390795,
+     "se": 0.301669,
+     "sessions": 2983
     },
     "GBP outright": {
-     "sr": 0.850694,
-     "se": 0.385276,
-     "sessions": 2318
+     "sr": 0.825226,
+     "se": 0.38144,
+     "sessions": 2328
     },
     "USD 2s10s": {
-     "sr": -0.0485207,
-     "se": 0.291415,
-     "sessions": 2973
+     "sr": -0.0452839,
+     "se": 0.290919,
+     "sessions": 2983
     },
     "GBP 2s10s": {
-     "sr": -0.281781,
-     "se": 0.33669,
-     "sessions": 2318
+     "sr": -0.281188,
+     "se": 0.335954,
+     "sessions": 2328
     },
     "GBP - USD 2y": {
-     "sr": -0.0768116,
-     "se": 0.332742,
-     "sessions": 2239
+     "sr": -0.0766463,
+     "se": 0.332024,
+     "sessions": 2249
     }
    },
    "paired_se": {
-    "book": 0.139955,
-    "USD outright": 0.181303,
+    "book": 0.139158,
+    "USD outright": 0.179898,
     "GBP outright": 0.0,
-    "USD 2s10s": 0.112484,
+    "USD 2s10s": 0.112292,
     "GBP 2s10s": 0.0,
-    "GBP - USD 2y": 0.0975614
+    "GBP - USD 2y": 0.0973455
    },
    "change": {
-    "book": 0.0837798,
-    "USD outright": 0.205696,
+    "book": 0.0830444,
+    "USD outright": 0.206315,
     "GBP outright": 0.0,
-    "USD 2s10s": -0.0570359,
+    "USD 2s10s": -0.056994,
     "GBP 2s10s": 0.0,
-    "GBP - USD 2y": 0.0755201
+    "GBP - USD 2y": 0.0753529
    },
    "paired_se_newey_west": {
-    "book": 0.122075,
-    "USD outright": 0.164219,
+    "book": 0.121381,
+    "USD outright": 0.162948,
     "GBP outright": 0.0,
-    "USD 2s10s": 0.0847161,
+    "USD 2s10s": 0.0845727,
     "GBP 2s10s": 0.0,
-    "GBP - USD 2y": 0.0877522
+    "GBP - USD 2y": 0.0875597
    },
    "ic": {
     "USD outright": {
-     "ic": -0.106847,
-     "t": -1.55802,
-     "sessions": 2873
+     "ic": -0.10432,
+     "t": -1.52824,
+     "sessions": 2883
     },
     "GBP outright": {
-     "ic": 0.375983,
-     "t": 4.59294,
-     "sessions": 2210
+     "ic": 0.366897,
+     "t": 4.47233,
+     "sessions": 2220
     },
     "USD 2s10s": {
-     "ic": 0.108514,
-     "t": 1.62646,
-     "sessions": 2873
+     "ic": 0.101768,
+     "t": 1.52811,
+     "sessions": 2883
     },
     "GBP 2s10s": {
-     "ic": 0.0596748,
-     "t": 0.820747,
-     "sessions": 2210
+     "ic": 0.0608418,
+     "t": 0.840086,
+     "sessions": 2220
     },
     "GBP - USD 2y": {
-     "ic": -0.0303471,
-     "t": -0.386621,
-     "sessions": 2158
+     "ic": -0.0314059,
+     "t": -0.401114,
+     "sessions": 2168
     }
    },
    "ic_offsets": {
     "USD outright": {
-     "mean": -0.107917,
-     "low": -0.175939,
+     "mean": -0.105013,
+     "low": -0.178347,
      "high": -0.040216,
-     "fewest_sessions": 136
+     "fewest_sessions": 137
     },
     "GBP outright": {
-     "mean": 0.374845,
-     "low": 0.31496,
+     "mean": 0.3658,
+     "low": 0.294405,
      "high": 0.417313,
      "fewest_sessions": 105
     },
     "USD 2s10s": {
-     "mean": 0.110686,
-     "low": 0.0397913,
+     "mean": 0.103989,
+     "low": 0.0390855,
      "high": 0.18769,
-     "fewest_sessions": 136
+     "fewest_sessions": 137
     },
     "GBP 2s10s": {
-     "mean": 0.0602799,
+     "mean": 0.0622489,
      "low": -0.0484923,
-     "high": 0.132283,
+     "high": 0.131602,
      "fewest_sessions": 105
     },
     "GBP - USD 2y": {
-     "mean": -0.0271688,
-     "low": -0.0750121,
+     "mean": -0.0282293,
+     "low": -0.076699,
      "high": 0.0155328,
      "fewest_sessions": 102
     }
    },
    "moves": {
     "USD": {
-     "sessions": 3950,
-     "z_sessions": 3700,
-     "mean_change_bp": 3.87401,
-     "sd_change_bp": 7.97257,
-     "latest": "2026-10-30",
-     "latest_base_bp": 4.92071,
-     "latest_row_bp": 10.2307,
+     "sessions": 3960,
+     "z_sessions": 3710,
+     "mean_change_bp": 3.87763,
+     "sd_change_bp": 7.96282,
+     "latest": "2026-11-13",
+     "latest_base_bp": 24.0694,
+     "latest_row_bp": 29.3794,
      "latest_change_bp": 5.31001,
-     "corr_z": 0.961534,
-     "sign_changes": 0.0775676,
-     "rstar_offset_mean": -0.172067,
-     "rstar_offset_sd": 0.292982,
+     "corr_z": 0.961828,
+     "sign_changes": 0.0773585,
+     "rstar_offset_mean": -0.172115,
+     "rstar_offset_sd": 0.292613,
      "bp_per_pp": -27.75,
-     "floored_base": 0.247342,
-     "floored_row": 0.247342,
+     "floored_base": 0.246717,
+     "floored_row": 0.246717,
      "floored_differ": 0.0,
-     "traded_sessions": 2895,
-     "sign_changes_traded": 0.0991364,
-     "floored_base_traded": 0.000690846,
-     "floored_row_traded": 0.000690846,
-     "floor_free": 1962,
+     "traded_sessions": 2905,
+     "sign_changes_traded": 0.0987952,
+     "floored_base_traded": 0.000688468,
+     "floored_row_traded": 0.000688468,
+     "floor_free": 1972,
      "floor_free_window": "730D",
      "floor_free_max_dz": 2.40133
     }
    },
    "side_changes": {
     "USD outright": {
-     "all": 0.115676,
-     "counted": 0.147841
+     "all": 0.115364,
+     "counted": 0.147332
     },
     "GBP outright": {
      "all": 0.0,
      "counted": 0.0
     },
     "USD 2s10s": {
-     "all": 0.0971014,
-     "counted": 0.115717
+     "all": 0.0968208,
+     "counted": 0.115318
     },
     "GBP 2s10s": {
      "all": 0.0,
      "counted": 0.0
     },
     "GBP - USD 2y": {
-     "all": 0.0361978,
-     "counted": 0.059633
+     "all": 0.0360981,
+     "counted": 0.0593607
     }
    },
    "elb_sessions": {
@@ -693,262 +693,262 @@
    "label": "constant 1.1",
    "net": {
     "book": {
-     "sr": -0.500379,
-     "se": 0.313119,
-     "sessions": 2895
+     "sr": -0.528121,
+     "se": 0.314569,
+     "sessions": 2905
     },
     "USD outright": {
-     "sr": -0.682982,
-     "se": 0.32776,
-     "sessions": 2895
+     "sr": -0.711445,
+     "se": 0.329833,
+     "sessions": 2905
     },
     "GBP outright": {
-     "sr": 0.659677,
-     "se": 0.371252,
-     "sessions": 2232
+     "sr": 0.632275,
+     "se": 0.367736,
+     "sessions": 2242
     },
     "USD 2s10s": {
-     "sr": -0.0839224,
-     "se": 0.295661,
-     "sessions": 2895
+     "sr": -0.0814794,
+     "se": 0.295136,
+     "sessions": 2905
     },
     "GBP 2s10s": {
-     "sr": -0.444741,
-     "se": 0.352748,
-     "sessions": 2232
+     "sr": -0.443767,
+     "se": 0.351906,
+     "sessions": 2242
     },
     "GBP - USD 2y": {
-     "sr": -0.149077,
-     "se": 0.338584,
-     "sessions": 2180
+     "sr": -0.148747,
+     "se": 0.337827,
+     "sessions": 2190
     }
    },
    "gross": {
     "book": {
-     "sr": -0.0390206,
-     "se": 0.295299,
-     "sessions": 2895
+     "sr": -0.068021,
+     "se": 0.295032,
+     "sessions": 2905
     },
     "USD outright": {
-     "sr": -0.340703,
-     "se": 0.303588,
-     "sessions": 2895
+     "sr": -0.371896,
+     "se": 0.304667,
+     "sessions": 2905
     },
     "GBP outright": {
-     "sr": 0.882265,
-     "se": 0.396553,
-     "sessions": 2232
+     "sr": 0.856005,
+     "se": 0.39242,
+     "sessions": 2242
     },
     "USD 2s10s": {
-     "sr": 0.0318224,
-     "se": 0.295216,
-     "sessions": 2895
+     "sr": 0.0349715,
+     "se": 0.294737,
+     "sessions": 2905
     },
     "GBP 2s10s": {
-     "sr": -0.186972,
-     "se": 0.339429,
-     "sessions": 2232
+     "sr": -0.186563,
+     "se": 0.338673,
+     "sessions": 2242
     },
     "GBP - USD 2y": {
-     "sr": -0.0492616,
-     "se": 0.336923,
-     "sessions": 2180
+     "sr": -0.0491526,
+     "se": 0.336176,
+     "sessions": 2190
     }
    },
    "own": {
     "book": {
-     "sr": -0.487724,
-     "se": 0.310855,
-     "sessions": 2921
+     "sr": -0.515318,
+     "se": 0.312252,
+     "sessions": 2931
     },
     "USD outright": {
-     "sr": -0.682982,
-     "se": 0.32776,
-     "sessions": 2895
+     "sr": -0.711445,
+     "se": 0.329833,
+     "sessions": 2905
     },
     "GBP outright": {
-     "sr": 0.608287,
-     "se": 0.359393,
-     "sessions": 2318
+     "sr": 0.581867,
+     "se": 0.356248,
+     "sessions": 2328
     },
     "USD 2s10s": {
-     "sr": -0.0839224,
-     "se": 0.295661,
-     "sessions": 2895
+     "sr": -0.0814794,
+     "se": 0.295136,
+     "sessions": 2905
     },
     "GBP 2s10s": {
-     "sr": -0.543317,
-     "se": 0.353729,
-     "sessions": 2318
+     "sr": -0.542171,
+     "se": 0.352888,
+     "sessions": 2328
     },
     "GBP - USD 2y": {
-     "sr": -0.154432,
-     "se": 0.334228,
-     "sessions": 2239
+     "sr": -0.154099,
+     "se": 0.3335,
+     "sessions": 2249
     }
    },
    "own_gross": {
     "book": {
-     "sr": -0.0246649,
-     "se": 0.293915,
-     "sessions": 2921
+     "sr": -0.0535313,
+     "se": 0.293592,
+     "sessions": 2931
     },
     "USD outright": {
-     "sr": -0.340703,
-     "se": 0.303588,
-     "sessions": 2895
+     "sr": -0.371896,
+     "se": 0.304667,
+     "sessions": 2905
     },
     "GBP outright": {
-     "sr": 0.850694,
-     "se": 0.385276,
-     "sessions": 2318
+     "sr": 0.825226,
+     "se": 0.38144,
+     "sessions": 2328
     },
     "USD 2s10s": {
-     "sr": 0.0318224,
-     "se": 0.295216,
-     "sessions": 2895
+     "sr": 0.0349715,
+     "se": 0.294737,
+     "sessions": 2905
     },
     "GBP 2s10s": {
-     "sr": -0.281781,
-     "se": 0.33669,
-     "sessions": 2318
+     "sr": -0.281188,
+     "se": 0.335954,
+     "sessions": 2328
     },
     "GBP - USD 2y": {
-     "sr": -0.04831,
-     "se": 0.332446,
-     "sessions": 2239
+     "sr": -0.048206,
+     "se": 0.33173,
+     "sessions": 2249
     }
    },
    "paired_se": {
-    "book": 0.147858,
-    "USD outright": 0.143941,
+    "book": 0.147016,
+    "USD outright": 0.142825,
     "GBP outright": 0.0,
-    "USD 2s10s": 0.204456,
+    "USD 2s10s": 0.204108,
     "GBP 2s10s": 0.0,
-    "GBP - USD 2y": 0.115712
+    "GBP - USD 2y": 0.115456
    },
    "change": {
-    "book": 0.113924,
-    "USD outright": 0.239453,
+    "book": 0.113453,
+    "USD outright": 0.238357,
     "GBP outright": 0.0,
-    "USD 2s10s": 0.019655,
+    "USD 2s10s": 0.0195486,
     "GBP 2s10s": 0.0,
-    "GBP - USD 2y": 0.104734
+    "GBP - USD 2y": 0.104502
    },
    "paired_se_newey_west": {
-    "book": 0.115593,
-    "USD outright": 0.143246,
+    "book": 0.114935,
+    "USD outright": 0.14214,
     "GBP outright": 0.0,
-    "USD 2s10s": 0.152165,
+    "USD 2s10s": 0.151907,
     "GBP 2s10s": 0.0,
-    "GBP - USD 2y": 0.122591
+    "GBP - USD 2y": 0.122322
    },
    "ic": {
     "USD outright": {
-     "ic": -0.0564222,
-     "t": -0.799136,
-     "sessions": 2873
+     "ic": -0.0542909,
+     "t": -0.773449,
+     "sessions": 2883
     },
     "GBP outright": {
-     "ic": 0.375983,
-     "t": 4.59294,
-     "sessions": 2210
+     "ic": 0.366897,
+     "t": 4.47233,
+     "sessions": 2220
     },
     "USD 2s10s": {
-     "ic": 0.144462,
-     "t": 2.18799,
-     "sessions": 2873
+     "ic": 0.138,
+     "t": 2.09371,
+     "sessions": 2883
     },
     "GBP 2s10s": {
-     "ic": 0.0596748,
-     "t": 0.820747,
-     "sessions": 2210
+     "ic": 0.0608418,
+     "t": 0.840086,
+     "sessions": 2220
     },
     "GBP - USD 2y": {
-     "ic": -0.0107824,
-     "t": -0.140084,
-     "sessions": 2158
+     "ic": -0.0112872,
+     "t": -0.147007,
+     "sessions": 2168
     }
    },
    "ic_offsets": {
     "USD outright": {
-     "mean": -0.0559336,
-     "low": -0.147612,
+     "mean": -0.0533891,
+     "low": -0.158152,
      "high": 0.0124657,
-     "fewest_sessions": 136
+     "fewest_sessions": 137
     },
     "GBP outright": {
-     "mean": 0.374845,
-     "low": 0.31496,
+     "mean": 0.3658,
+     "low": 0.294405,
      "high": 0.417313,
      "fewest_sessions": 105
     },
     "USD 2s10s": {
-     "mean": 0.144158,
+     "mean": 0.137814,
      "low": 0.048136,
      "high": 0.227729,
-     "fewest_sessions": 136
+     "fewest_sessions": 137
     },
     "GBP 2s10s": {
-     "mean": 0.0602799,
+     "mean": 0.0622489,
      "low": -0.0484923,
-     "high": 0.132283,
+     "high": 0.131602,
      "fewest_sessions": 105
     },
     "GBP - USD 2y": {
-     "mean": -0.0107258,
-     "low": -0.068697,
+     "mean": -0.0112193,
+     "low": -0.0682172,
      "high": 0.0237996,
      "fewest_sessions": 102
     }
    },
    "moves": {
     "USD": {
-     "sessions": 3950,
-     "z_sessions": 3700,
-     "mean_change_bp": -3.33969,
-     "sd_change_bp": 10.4316,
-     "latest": "2026-10-30",
-     "latest_base_bp": 4.92071,
-     "latest_row_bp": 7.69571,
+     "sessions": 3960,
+     "z_sessions": 3710,
+     "mean_change_bp": -3.32425,
+     "sd_change_bp": 10.4229,
+     "latest": "2026-11-13",
+     "latest_base_bp": 24.0694,
+     "latest_row_bp": 26.8444,
      "latest_change_bp": 2.775,
-     "corr_z": 0.910776,
-     "sign_changes": 0.0935135,
-     "rstar_offset_mean": -0.031443,
-     "rstar_offset_sd": 0.605758,
+     "corr_z": 0.911486,
+     "sign_changes": 0.0932615,
+     "rstar_offset_mean": -0.0316162,
+     "rstar_offset_sd": 0.605002,
      "bp_per_pp": -27.75,
-     "floored_base": 0.247342,
-     "floored_row": 0.267089,
-     "floored_differ": 0.0197468,
-     "traded_sessions": 2895,
-     "sign_changes_traded": 0.0936097,
-     "floored_base_traded": 0.000690846,
-     "floored_row_traded": 0.000690846,
-     "floor_free": 1885,
+     "floored_base": 0.246717,
+     "floored_row": 0.266414,
+     "floored_differ": 0.019697,
+     "traded_sessions": 2905,
+     "sign_changes_traded": 0.0932874,
+     "floored_base_traded": 0.000688468,
+     "floored_row_traded": 0.000688468,
+     "floor_free": 1895,
      "floor_free_window": "730D",
      "floor_free_max_dz": 1.90679
     }
    },
    "side_changes": {
     "USD outright": {
-     "all": 0.154324,
-     "counted": 0.182729
+     "all": 0.153908,
+     "counted": 0.1821
     },
     "GBP outright": {
      "all": 0.0,
      "counted": 0.0
     },
     "USD 2s10s": {
-     "all": 0.197971,
-     "counted": 0.225216
+     "all": 0.197399,
+     "counted": 0.224441
     },
     "GBP 2s10s": {
      "all": 0.0,
      "counted": 0.0
     },
     "GBP - USD 2y": {
-     "all": 0.0607903,
-     "counted": 0.100459
+     "all": 0.0606228,
+     "counted": 0.1
     }
    },
    "elb_sessions": {
@@ -965,237 +965,237 @@
    "label": "constant -2.6",
    "net": {
     "book": {
-     "sr": -0.604543,
-     "se": 0.321026,
-     "sessions": 2895
+     "sr": -0.616308,
+     "se": 0.321459,
+     "sessions": 2905
     },
     "USD outright": {
-     "sr": -0.922434,
-     "se": 0.352378,
-     "sessions": 2895
+     "sr": -0.949803,
+     "se": 0.354934,
+     "sessions": 2905
     },
     "GBP outright": {
-     "sr": 0.459681,
-     "se": 0.353776,
-     "sessions": 2232
+     "sr": 0.433214,
+     "se": 0.351109,
+     "sessions": 2242
     },
     "USD 2s10s": {
-     "sr": -0.103577,
-     "se": 0.295932,
-     "sessions": 2895
+     "sr": -0.101028,
+     "se": 0.295398,
+     "sessions": 2905
     },
     "GBP 2s10s": {
-     "sr": -0.517576,
-     "se": 0.358328,
-     "sessions": 2232
+     "sr": -0.513528,
+     "se": 0.357215,
+     "sessions": 2242
     },
     "GBP - USD 2y": {
-     "sr": -0.170705,
-     "se": 0.339163,
-     "sessions": 2180
+     "sr": -0.13908,
+     "se": 0.337594,
+     "sessions": 2190
     }
    },
    "gross": {
     "book": {
-     "sr": -0.135081,
-     "se": 0.29653,
-     "sessions": 2895
+     "sr": -0.146175,
+     "se": 0.296261,
+     "sessions": 2905
     },
     "USD outright": {
-     "sr": -0.602907,
-     "se": 0.320846,
-     "sessions": 2895
+     "sr": -0.632909,
+     "se": 0.32281,
+     "sessions": 2905
     },
     "GBP outright": {
-     "sr": 0.715444,
-     "se": 0.377053,
-     "sessions": 2232
+     "sr": 0.689802,
+     "se": 0.373518,
+     "sessions": 2242
     },
     "USD 2s10s": {
-     "sr": 0.0162208,
-     "se": 0.295161,
-     "sessions": 2895
+     "sr": 0.0194766,
+     "se": 0.294675,
+     "sessions": 2905
     },
     "GBP 2s10s": {
-     "sr": -0.244025,
-     "se": 0.341473,
-     "sessions": 2232
+     "sr": -0.238036,
+     "se": 0.340487,
+     "sessions": 2242
     },
     "GBP - USD 2y": {
-     "sr": -0.0615311,
-     "se": 0.337037,
-     "sessions": 2180
+     "sr": -0.0305729,
+     "se": 0.336052,
+     "sessions": 2190
     }
    },
    "own": {
     "book": {
-     "sr": -0.615903,
-     "se": 0.317714,
-     "sessions": 2973
+     "sr": -0.627427,
+     "se": 0.318149,
+     "sessions": 2983
     },
     "USD outright": {
-     "sr": -0.940287,
-     "se": 0.349747,
-     "sessions": 2973
+     "sr": -0.966916,
+     "se": 0.352237,
+     "sessions": 2983
     },
     "GBP outright": {
-     "sr": 0.459681,
-     "se": 0.353776,
-     "sessions": 2232
+     "sr": 0.433214,
+     "se": 0.351109,
+     "sessions": 2242
     },
     "USD 2s10s": {
-     "sr": -0.125219,
-     "se": 0.292383,
-     "sessions": 2973
+     "sr": -0.12268,
+     "se": 0.291861,
+     "sessions": 2983
     },
     "GBP 2s10s": {
-     "sr": -0.517576,
-     "se": 0.358328,
-     "sessions": 2232
+     "sr": -0.513528,
+     "se": 0.357215,
+     "sessions": 2242
     },
     "GBP - USD 2y": {
-     "sr": -0.170705,
-     "se": 0.339163,
-     "sessions": 2180
+     "sr": -0.13908,
+     "se": 0.337594,
+     "sessions": 2190
     }
    },
    "own_gross": {
     "book": {
-     "sr": -0.130415,
-     "se": 0.292525,
-     "sessions": 2973
+     "sr": -0.141353,
+     "se": 0.292262,
+     "sessions": 2983
     },
     "USD outright": {
-     "sr": -0.5505,
-     "se": 0.312534,
-     "sessions": 2973
+     "sr": -0.580381,
+     "se": 0.314305,
+     "sessions": 2983
     },
     "GBP outright": {
-     "sr": 0.715444,
-     "se": 0.377053,
-     "sessions": 2232
+     "sr": 0.689802,
+     "se": 0.373518,
+     "sessions": 2242
     },
     "USD 2s10s": {
-     "sr": -0.00650083,
-     "se": 0.291247,
-     "sessions": 2973
+     "sr": -0.00326324,
+     "se": 0.29077,
+     "sessions": 2983
     },
     "GBP 2s10s": {
-     "sr": -0.244025,
-     "se": 0.341473,
-     "sessions": 2232
+     "sr": -0.238036,
+     "se": 0.340487,
+     "sessions": 2242
     },
     "GBP - USD 2y": {
-     "sr": -0.0615311,
-     "se": 0.337037,
-     "sessions": 2180
+     "sr": -0.0305729,
+     "se": 0.336052,
+     "sessions": 2190
     }
    },
    "paired_se": {
-    "book": 0.118599,
+    "book": 0.118761,
     "USD outright": 0.0,
-    "GBP outright": 0.252788,
+    "GBP outright": 0.251502,
     "USD 2s10s": 0.0,
-    "GBP 2s10s": 0.164682,
-    "GBP - USD 2y": 0.170143
+    "GBP 2s10s": 0.164679,
+    "GBP - USD 2y": 0.172137
    },
    "change": {
-    "book": 0.0097604,
+    "book": 0.0252664,
     "USD outright": 0.0,
-    "GBP outright": -0.199996,
+    "GBP outright": -0.199061,
     "USD 2s10s": 0.0,
-    "GBP 2s10s": -0.0728351,
-    "GBP - USD 2y": 0.0831056
+    "GBP 2s10s": -0.0697615,
+    "GBP - USD 2y": 0.114169
    },
    "paired_se_newey_west": {
-    "book": 0.146872,
+    "book": 0.14632,
     "USD outright": 0.0,
-    "GBP outright": 0.323133,
+    "GBP outright": 0.321492,
     "USD 2s10s": 0.0,
-    "GBP 2s10s": 0.164225,
-    "GBP - USD 2y": 0.182158
+    "GBP 2s10s": 0.163471,
+    "GBP - USD 2y": 0.182881
    },
    "ic": {
     "USD outright": {
-     "ic": -0.112648,
-     "t": -1.61693,
-     "sessions": 2873
+     "ic": -0.110108,
+     "t": -1.58826,
+     "sessions": 2883
     },
     "GBP outright": {
-     "ic": 0.326414,
-     "t": 3.99383,
-     "sessions": 2210
+     "ic": 0.318004,
+     "t": 3.88318,
+     "sessions": 2220
     },
     "USD 2s10s": {
-     "ic": 0.0981238,
-     "t": 1.44619,
-     "sessions": 2873
+     "ic": 0.091464,
+     "t": 1.35094,
+     "sessions": 2883
     },
     "GBP 2s10s": {
-     "ic": -0.0235496,
-     "t": -0.329394,
-     "sessions": 2210
+     "ic": -0.0273052,
+     "t": -0.383216,
+     "sessions": 2220
     },
     "GBP - USD 2y": {
-     "ic": -0.00143892,
-     "t": -0.018276,
-     "sessions": 2158
+     "ic": -0.00251547,
+     "t": -0.0320192,
+     "sessions": 2168
     }
    },
    "ic_offsets": {
     "USD outright": {
-     "mean": -0.111767,
-     "low": -0.190936,
+     "mean": -0.108815,
+     "low": -0.200441,
      "high": -0.0419988,
-     "fewest_sessions": 136
+     "fewest_sessions": 137
     },
     "GBP outright": {
-     "mean": 0.325459,
-     "low": 0.258345,
+     "mean": 0.317211,
+     "low": 0.24351,
      "high": 0.385186,
      "fewest_sessions": 105
     },
     "USD 2s10s": {
-     "mean": 0.0984058,
-     "low": 0.027755,
+     "mean": 0.0919537,
+     "low": 0.0214549,
      "high": 0.187765,
-     "fewest_sessions": 136
+     "fewest_sessions": 137
     },
     "GBP 2s10s": {
-     "mean": -0.0220878,
+     "mean": -0.0254739,
      "low": -0.15778,
      "high": 0.0518868,
      "fewest_sessions": 105
     },
     "GBP - USD 2y": {
-     "mean": -0.00147545,
-     "low": -0.0706519,
+     "mean": -0.0022971,
+     "low": -0.0721754,
      "high": 0.0407857,
      "fewest_sessions": 102
     }
    },
    "moves": {
     "GBP": {
-     "sessions": 4087,
-     "z_sessions": 3837,
-     "mean_change_bp": 13.4457,
-     "sd_change_bp": 13.3922,
-     "latest": "2026-10-29",
-     "latest_base_bp": 111.486,
-     "latest_row_bp": 139.236,
+     "sessions": 4097,
+     "z_sessions": 3847,
+     "mean_change_bp": 13.4806,
+     "sd_change_bp": 13.3944,
+     "latest": "2026-11-12",
+     "latest_base_bp": 116.638,
+     "latest_row_bp": 144.388,
      "latest_change_bp": 27.75,
-     "corr_z": 0.882846,
-     "sign_changes": 0.124316,
+     "corr_z": 0.883027,
+     "sign_changes": 0.123993,
      "rstar_offset_mean": -1.0,
      "rstar_offset_sd": 0.0,
      "bp_per_pp": -27.75,
-     "floored_base": 0.472229,
-     "floored_row": 0.578175,
-     "floored_differ": 0.105946,
-     "traded_sessions": 2232,
-     "sign_changes_traded": 0.124552,
-     "floored_base_traded": 0.0707885,
-     "floored_row_traded": 0.228047,
+     "floored_base": 0.471076,
+     "floored_row": 0.576763,
+     "floored_differ": 0.105687,
+     "traded_sessions": 2242,
+     "sign_changes_traded": 0.123996,
+     "floored_base_traded": 0.0704728,
+     "floored_row_traded": 0.227029,
      "floor_free": 185,
      "floor_free_window": "730D",
      "floor_free_max_dz": 5.32907e-15
@@ -1207,20 +1207,20 @@
      "counted": 0.0
     },
     "GBP outright": {
-     "all": 0.105291,
-     "counted": 0.166219
+     "all": 0.105017,
+     "counted": 0.165477
     },
     "USD 2s10s": {
      "all": 0.0,
      "counted": 0.0
     },
     "GBP 2s10s": {
-     "all": 0.123502,
-     "counted": 0.177419
+     "all": 0.123436,
+     "counted": 0.177074
     },
     "GBP - USD 2y": {
-     "all": 0.0840011,
-     "counted": 0.134862
+     "all": 0.0862497,
+     "counted": 0.138356
     }
    },
    "elb_sessions": {
@@ -1237,238 +1237,238 @@
    "label": "constant -0.6",
    "net": {
     "book": {
-     "sr": -0.622512,
-     "se": 0.322519,
-     "sessions": 2895
+     "sr": -0.646418,
+     "se": 0.324017,
+     "sessions": 2905
     },
     "USD outright": {
-     "sr": -0.922434,
-     "se": 0.352378,
-     "sessions": 2895
+     "sr": -0.949803,
+     "se": 0.354934,
+     "sessions": 2905
     },
     "GBP outright": {
-     "sr": 0.467327,
-     "se": 0.354343,
-     "sessions": 2232
+     "sr": 0.442061,
+     "se": 0.35173,
+     "sessions": 2242
     },
     "USD 2s10s": {
-     "sr": -0.103577,
-     "se": 0.295932,
-     "sessions": 2895
+     "sr": -0.101028,
+     "se": 0.295398,
+     "sessions": 2905
     },
     "GBP 2s10s": {
-     "sr": -0.369699,
-     "se": 0.347809,
-     "sessions": 2232
+     "sr": -0.360441,
+     "se": 0.346498,
+     "sessions": 2242
     },
     "GBP - USD 2y": {
-     "sr": -0.266412,
-     "se": 0.342641,
-     "sessions": 2180
+     "sr": -0.265822,
+     "se": 0.341857,
+     "sessions": 2190
     }
    },
    "gross": {
     "book": {
-     "sr": -0.168281,
-     "se": 0.297269,
-     "sessions": 2895
+     "sr": -0.192929,
+     "se": 0.297421,
+     "sessions": 2905
     },
     "USD outright": {
-     "sr": -0.602907,
-     "se": 0.320846,
-     "sessions": 2895
+     "sr": -0.632909,
+     "se": 0.32281,
+     "sessions": 2905
     },
     "GBP outright": {
-     "sr": 0.692773,
-     "se": 0.374649,
-     "sessions": 2232
+     "sr": 0.668492,
+     "se": 0.371328,
+     "sessions": 2242
     },
     "USD 2s10s": {
-     "sr": 0.0162208,
-     "se": 0.295161,
-     "sessions": 2895
+     "sr": 0.0194766,
+     "se": 0.294675,
+     "sessions": 2905
     },
     "GBP 2s10s": {
-     "sr": -0.0892503,
-     "se": 0.33717,
-     "sessions": 2232
+     "sr": -0.0807854,
+     "se": 0.336311,
+     "sessions": 2242
     },
     "GBP - USD 2y": {
-     "sr": -0.162873,
-     "se": 0.338944,
-     "sessions": 2180
+     "sr": -0.162513,
+     "se": 0.338184,
+     "sessions": 2190
     }
    },
    "own": {
     "book": {
-     "sr": -0.624238,
-     "se": 0.313793,
-     "sessions": 3061
+     "sr": -0.647229,
+     "se": 0.315207,
+     "sessions": 3071
     },
     "USD outright": {
-     "sr": -0.940287,
-     "se": 0.349747,
-     "sessions": 2973
+     "sr": -0.966916,
+     "se": 0.352237,
+     "sessions": 2983
     },
     "GBP outright": {
-     "sr": 0.394793,
-     "se": 0.336865,
-     "sessions": 2400
+     "sr": 0.371054,
+     "se": 0.334759,
+     "sessions": 2410
     },
     "USD 2s10s": {
-     "sr": -0.125219,
-     "se": 0.292383,
-     "sessions": 2973
+     "sr": -0.12268,
+     "se": 0.291861,
+     "sessions": 2983
     },
     "GBP 2s10s": {
-     "sr": -0.425077,
-     "se": 0.338851,
-     "sessions": 2400
+     "sr": -0.416095,
+     "se": 0.337576,
+     "sessions": 2410
     },
     "GBP - USD 2y": {
-     "sr": -0.30257,
-     "se": 0.338489,
-     "sessions": 2256
+     "sr": -0.301923,
+     "se": 0.337735,
+     "sessions": 2266
     }
    },
    "own_gross": {
     "book": {
-     "sr": -0.151565,
-     "se": 0.288715,
-     "sessions": 3061
+     "sr": -0.175407,
+     "se": 0.288812,
+     "sessions": 3071
     },
     "USD outright": {
-     "sr": -0.5505,
-     "se": 0.312534,
-     "sessions": 2973
+     "sr": -0.580381,
+     "se": 0.314305,
+     "sessions": 2983
     },
     "GBP outright": {
-     "sr": 0.646435,
-     "se": 0.356749,
-     "sessions": 2400
+     "sr": 0.623452,
+     "se": 0.353867,
+     "sessions": 2410
     },
     "USD 2s10s": {
-     "sr": -0.00650083,
-     "se": 0.291247,
-     "sessions": 2973
+     "sr": -0.00326324,
+     "se": 0.29077,
+     "sessions": 2983
     },
     "GBP 2s10s": {
-     "sr": -0.154841,
-     "se": 0.326449,
-     "sessions": 2400
+     "sr": -0.146571,
+     "se": 0.325584,
+     "sessions": 2410
     },
     "GBP - USD 2y": {
-     "sr": -0.198529,
-     "se": 0.334244,
-     "sessions": 2256
+     "sr": -0.198105,
+     "se": 0.333516,
+     "sessions": 2266
     }
    },
    "paired_se": {
-    "book": 0.0824044,
+    "book": 0.0823074,
     "USD outright": 0.0,
-    "GBP outright": 0.14735,
+    "GBP outright": 0.1466,
     "USD 2s10s": 0.0,
-    "GBP 2s10s": 0.184766,
-    "GBP - USD 2y": 0.0795742
+    "GBP 2s10s": 0.185461,
+    "GBP - USD 2y": 0.079398
    },
    "change": {
-    "book": -0.00820854,
+    "book": -0.00484372,
     "USD outright": 0.0,
-    "GBP outright": -0.192349,
+    "GBP outright": -0.190215,
     "USD 2s10s": 0.0,
-    "GBP 2s10s": 0.0750419,
-    "GBP - USD 2y": -0.0126007
+    "GBP 2s10s": 0.0833261,
+    "GBP - USD 2y": -0.0125728
    },
    "paired_se_newey_west": {
-    "book": 0.0697987,
+    "book": 0.0698595,
     "USD outright": 0.0,
-    "GBP outright": 0.126747,
+    "GBP outright": 0.126107,
     "USD 2s10s": 0.0,
-    "GBP 2s10s": 0.172225,
-    "GBP - USD 2y": 0.0498747
+    "GBP 2s10s": 0.172584,
+    "GBP - USD 2y": 0.0497644
    },
    "ic": {
     "USD outright": {
-     "ic": -0.112648,
-     "t": -1.61693,
-     "sessions": 2873
+     "ic": -0.110108,
+     "t": -1.58826,
+     "sessions": 2883
     },
     "GBP outright": {
-     "ic": 0.360157,
-     "t": 4.47088,
-     "sessions": 2210
+     "ic": 0.35105,
+     "t": 4.34877,
+     "sessions": 2220
     },
     "USD 2s10s": {
-     "ic": 0.0981238,
-     "t": 1.44619,
-     "sessions": 2873
+     "ic": 0.091464,
+     "t": 1.35094,
+     "sessions": 2883
     },
     "GBP 2s10s": {
-     "ic": 0.0842852,
-     "t": 1.16997,
-     "sessions": 2210
+     "ic": 0.0890073,
+     "t": 1.23995,
+     "sessions": 2220
     },
     "GBP - USD 2y": {
-     "ic": -0.033748,
-     "t": -0.441457,
-     "sessions": 2158
+     "ic": -0.0352075,
+     "t": -0.461606,
+     "sessions": 2168
     }
    },
    "ic_offsets": {
     "USD outright": {
-     "mean": -0.111767,
-     "low": -0.190936,
+     "mean": -0.108815,
+     "low": -0.200441,
      "high": -0.0419988,
-     "fewest_sessions": 136
+     "fewest_sessions": 137
     },
     "GBP outright": {
-     "mean": 0.359597,
-     "low": 0.313923,
+     "mean": 0.350509,
+     "low": 0.292924,
      "high": 0.39265,
      "fewest_sessions": 105
     },
     "USD 2s10s": {
-     "mean": 0.0984058,
-     "low": 0.027755,
+     "mean": 0.0919537,
+     "low": 0.0214549,
      "high": 0.187765,
-     "fewest_sessions": 136
+     "fewest_sessions": 137
     },
     "GBP 2s10s": {
-     "mean": 0.0861401,
+     "mean": 0.091416,
      "low": -0.0100511,
-     "high": 0.166515,
+     "high": 0.176341,
      "fewest_sessions": 105
     },
     "GBP - USD 2y": {
-     "mean": -0.0320791,
-     "low": -0.0940781,
+     "mean": -0.0335188,
+     "low": -0.0979942,
      "high": -0.00105434,
      "fewest_sessions": 102
     }
    },
    "moves": {
     "GBP": {
-     "sessions": 4087,
-     "z_sessions": 3837,
-     "mean_change_bp": -15.0339,
-     "sd_change_bp": 13.6625,
-     "latest": "2026-10-29",
-     "latest_base_bp": 111.486,
-     "latest_row_bp": 83.7357,
+     "sessions": 4097,
+     "z_sessions": 3847,
+     "mean_change_bp": -15.065,
+     "sd_change_bp": 13.6602,
+     "latest": "2026-11-12",
+     "latest_base_bp": 116.638,
+     "latest_row_bp": 88.8885,
      "latest_change_bp": -27.75,
-     "corr_z": 0.960195,
-     "sign_changes": 0.0344019,
+     "corr_z": 0.960254,
+     "sign_changes": 0.0343125,
      "rstar_offset_mean": 1.0,
      "rstar_offset_sd": 0.0,
      "bp_per_pp": -27.75,
-     "floored_base": 0.472229,
-     "floored_row": 0.440666,
-     "floored_differ": 0.0315635,
-     "traded_sessions": 2232,
-     "sign_changes_traded": 0.0483871,
-     "floored_base_traded": 0.0707885,
-     "floored_row_traded": 0.0506272,
-     "floor_free": 1067,
+     "floored_base": 0.471076,
+     "floored_row": 0.43959,
+     "floored_differ": 0.0314865,
+     "traded_sessions": 2242,
+     "sign_changes_traded": 0.0481713,
+     "floored_base_traded": 0.0704728,
+     "floored_row_traded": 0.0504014,
+     "floor_free": 1077,
      "floor_free_window": "730D",
      "floor_free_max_dz": 8.52651e-14
     }
@@ -1479,20 +1479,20 @@
      "counted": 0.0
     },
     "GBP outright": {
-     "all": 0.0701069,
-     "counted": 0.0878136
+     "all": 0.0699246,
+     "counted": 0.0874219
     },
     "USD 2s10s": {
      "all": 0.0,
      "counted": 0.0
     },
     "GBP 2s10s": {
-     "all": 0.127962,
-     "counted": 0.197133
+     "all": 0.130386,
+     "counted": 0.200714
     },
     "GBP - USD 2y": {
-     "all": 0.0400663,
-     "counted": 0.0412844
+     "all": 0.0399559,
+     "counted": 0.0410959
     }
    },
    "elb_sessions": {
@@ -1509,287 +1509,287 @@
    "label": "estimated",
    "net": {
     "book": {
-     "sr": -0.50703,
-     "se": 0.313585,
-     "sessions": 2895
+     "sr": -0.536825,
+     "se": 0.315208,
+     "sessions": 2905
     },
     "USD outright": {
-     "sr": -1.00706,
-     "se": 0.362329,
-     "sessions": 2895
+     "sr": -1.0324,
+     "se": 0.364809,
+     "sessions": 2905
     },
     "GBP outright": {
-     "sr": 0.139519,
-     "se": 0.338082,
-     "sessions": 2232
+     "sr": 0.114713,
+     "se": 0.336814,
+     "sessions": 2242
     },
     "USD 2s10s": {
-     "sr": -0.0443695,
-     "se": 0.295287,
-     "sessions": 2895
+     "sr": -0.0417652,
+     "se": 0.294776,
+     "sessions": 2905
     },
     "GBP 2s10s": {
-     "sr": -0.235372,
-     "se": 0.341129,
-     "sessions": 2232
+     "sr": -0.234857,
+     "se": 0.340362,
+     "sessions": 2242
     },
     "GBP - USD 2y": {
-     "sr": 0.181947,
-     "se": 0.339494,
-     "sessions": 2180
+     "sr": 0.181545,
+     "se": 0.33873,
+     "sessions": 2190
     }
    },
    "gross": {
     "book": {
-     "sr": -0.0307548,
-     "se": 0.295257,
-     "sessions": 2895
+     "sr": -0.0616126,
+     "se": 0.294971,
+     "sessions": 2905
     },
     "USD outright": {
-     "sr": -0.696807,
-     "se": 0.329025,
-     "sessions": 2895
+     "sr": -0.724464,
+     "se": 0.331061,
+     "sessions": 2905
     },
     "GBP outright": {
-     "sr": 0.395627,
-     "se": 0.349366,
-     "sessions": 2232
+     "sr": 0.371715,
+     "se": 0.347114,
+     "sessions": 2242
     },
     "USD 2s10s": {
-     "sr": 0.0892686,
-     "se": 0.295729,
-     "sessions": 2895
+     "sr": 0.0932408,
+     "se": 0.295287,
+     "sessions": 2905
     },
     "GBP 2s10s": {
-     "sr": 0.0206975,
-     "se": 0.336537,
-     "sessions": 2232
+     "sr": 0.0206522,
+     "se": 0.3358,
+     "sessions": 2242
     },
     "GBP - USD 2y": {
-     "sr": 0.306212,
-     "se": 0.344521,
-     "sessions": 2180
+     "sr": 0.305534,
+     "se": 0.343725,
+     "sessions": 2190
     }
    },
    "own": {
     "book": {
-     "sr": -0.52989,
-     "se": 0.308737,
-     "sessions": 3018
+     "sr": -0.558815,
+     "se": 0.310361,
+     "sessions": 3028
     },
     "USD outright": {
-     "sr": -1.02179,
-     "se": 0.359312,
-     "sessions": 2973
+     "sr": -1.04649,
+     "se": 0.361724,
+     "sessions": 2983
     },
     "GBP outright": {
-     "sr": 0.0889719,
-     "se": 0.328262,
-     "sessions": 2354
+     "sr": 0.0652006,
+     "se": 0.327281,
+     "sessions": 2364
     },
     "USD 2s10s": {
-     "sr": -0.0658845,
-     "se": 0.29156,
-     "sessions": 2973
+     "sr": -0.0632577,
+     "se": 0.29106,
+     "sessions": 2983
     },
     "GBP 2s10s": {
-     "sr": -0.279937,
-     "se": 0.334022,
-     "sessions": 2354
+     "sr": -0.279356,
+     "se": 0.333304,
+     "sessions": 2364
     },
     "GBP - USD 2y": {
-     "sr": 0.134363,
-     "se": 0.332563,
-     "sessions": 2255
+     "sr": 0.134076,
+     "se": 0.331846,
+     "sessions": 2265
     }
    },
    "own_gross": {
     "book": {
-     "sr": -0.0389443,
-     "se": 0.289219,
-     "sessions": 3018
+     "sr": -0.0690268,
+     "se": 0.288988,
+     "sessions": 3028
     },
     "USD outright": {
-     "sr": -0.645705,
-     "se": 0.320168,
-     "sessions": 2973
+     "sr": -0.673242,
+     "se": 0.322038,
+     "sessions": 2983
     },
     "GBP outright": {
-     "sr": 0.3479,
-     "se": 0.337382,
-     "sessions": 2354
+     "sr": 0.324962,
+     "se": 0.335454,
+     "sessions": 2364
     },
     "USD 2s10s": {
-     "sr": 0.0664114,
-     "se": 0.291565,
-     "sessions": 2973
+     "sr": 0.0703898,
+     "se": 0.291129,
+     "sessions": 2983
     },
     "GBP 2s10s": {
-     "sr": -0.0298777,
-     "se": 0.327738,
-     "sessions": 2354
+     "sr": -0.0298158,
+     "se": 0.327058,
+     "sessions": 2364
     },
     "GBP - USD 2y": {
-     "sr": 0.259725,
-     "se": 0.336609,
-     "sessions": 2255
+     "sr": 0.25917,
+     "se": 0.335866,
+     "sessions": 2265
     }
    },
    "paired_se": {
-    "book": 0.212099,
-    "USD outright": 0.236086,
-    "GBP outright": 0.326382,
-    "USD 2s10s": 0.148024,
-    "GBP 2s10s": 0.264426,
-    "GBP - USD 2y": 0.24134
+    "book": 0.21097,
+    "USD outright": 0.234255,
+    "GBP outright": 0.324721,
+    "USD 2s10s": 0.148707,
+    "GBP 2s10s": 0.263847,
+    "GBP - USD 2y": 0.240807
    },
    "change": {
-    "book": 0.107273,
-    "USD outright": -0.0846273,
-    "GBP outright": -0.520158,
-    "USD 2s10s": 0.0592079,
-    "GBP 2s10s": 0.209369,
-    "GBP - USD 2y": 0.435758
+    "book": 0.10475,
+    "USD outright": -0.0825999,
+    "GBP outright": -0.517563,
+    "USD 2s10s": 0.0592628,
+    "GBP 2s10s": 0.20891,
+    "GBP - USD 2y": 0.434794
    },
    "paired_se_newey_west": {
-    "book": 0.227408,
-    "USD outright": 0.228148,
-    "GBP outright": 0.435973,
-    "USD 2s10s": 0.131275,
-    "GBP 2s10s": 0.252911,
-    "GBP - USD 2y": 0.228152
+    "book": 0.226123,
+    "USD outright": 0.22638,
+    "GBP outright": 0.433768,
+    "USD 2s10s": 0.131149,
+    "GBP 2s10s": 0.25236,
+    "GBP - USD 2y": 0.227666
    },
    "ic": {
     "USD outright": {
-     "ic": -0.185584,
-     "t": -2.8535,
-     "sessions": 2873
+     "ic": -0.182531,
+     "t": -2.82232,
+     "sessions": 2883
     },
     "GBP outright": {
-     "ic": 0.125116,
-     "t": 1.64467,
-     "sessions": 2210
+     "ic": 0.118179,
+     "t": 1.55303,
+     "sessions": 2220
     },
     "USD 2s10s": {
-     "ic": 0.0930193,
-     "t": 1.41963,
-     "sessions": 2873
+     "ic": 0.0862448,
+     "t": 1.32014,
+     "sessions": 2883
     },
     "GBP 2s10s": {
-     "ic": 0.134387,
-     "t": 1.86006,
-     "sessions": 2210
+     "ic": 0.133226,
+     "t": 1.85197,
+     "sessions": 2220
     },
     "GBP - USD 2y": {
-     "ic": 0.0606584,
-     "t": 0.830801,
-     "sessions": 2158
+     "ic": 0.0613683,
+     "t": 0.84225,
+     "sessions": 2168
     }
    },
    "ic_offsets": {
     "USD outright": {
-     "mean": -0.187835,
-     "low": -0.291924,
+     "mean": -0.184313,
+     "low": -0.291807,
      "high": -0.117787,
-     "fewest_sessions": 136
+     "fewest_sessions": 137
     },
     "GBP outright": {
-     "mean": 0.123624,
-     "low": 0.0544267,
+     "mean": 0.116909,
+     "low": 0.0489155,
      "high": 0.20538,
      "fewest_sessions": 105
     },
     "USD 2s10s": {
-     "mean": 0.0951493,
+     "mean": 0.0885314,
      "low": 0.00460638,
      "high": 0.207044,
-     "fewest_sessions": 136
+     "fewest_sessions": 137
     },
     "GBP 2s10s": {
-     "mean": 0.131495,
-     "low": 0.0412917,
-     "high": 0.214856,
+     "mean": 0.131111,
+     "low": 0.0429302,
+     "high": 0.21193,
      "fewest_sessions": 105
     },
     "GBP - USD 2y": {
-     "mean": 0.0627719,
-     "low": -0.00232834,
+     "mean": 0.0636989,
+     "low": 0.000970874,
      "high": 0.0982296,
      "fewest_sessions": 102
     }
    },
    "moves": {
     "USD": {
-     "sessions": 3950,
-     "z_sessions": 3700,
-     "mean_change_bp": 9.11345,
-     "sd_change_bp": 28.6707,
-     "latest": "2026-10-30",
-     "latest_base_bp": 4.92071,
-     "latest_row_bp": 13.5351,
-     "latest_change_bp": 8.61443,
-     "corr_z": 0.881717,
-     "sign_changes": 0.132703,
+     "sessions": 3960,
+     "z_sessions": 3710,
+     "mean_change_bp": 9.11495,
+     "sd_change_bp": 28.6345,
+     "latest": "2026-11-13",
+     "latest_base_bp": 24.0694,
+     "latest_row_bp": 34.686,
+     "latest_change_bp": 10.6166,
+     "corr_z": 0.882655,
+     "sign_changes": 0.132345,
      "rstar_offset_mean": 0.0,
      "rstar_offset_sd": 0.0,
      "bp_per_pp": null,
-     "floored_base": 0.247342,
-     "floored_row": 0.247342,
+     "floored_base": 0.246717,
+     "floored_row": 0.246717,
      "floored_differ": 0.0,
-     "traded_sessions": 2895,
-     "sign_changes_traded": 0.169257,
-     "floored_base_traded": 0.000690846,
-     "floored_row_traded": 0.000690846,
-     "floor_free": 1962,
+     "traded_sessions": 2905,
+     "sign_changes_traded": 0.168675,
+     "floored_base_traded": 0.000688468,
+     "floored_row_traded": 0.000688468,
+     "floor_free": 1972,
      "floor_free_window": "730D",
      "floor_free_max_dz": 1.8423
     },
     "GBP": {
-     "sessions": 4087,
-     "z_sessions": 3837,
-     "mean_change_bp": 20.2342,
-     "sd_change_bp": 43.4026,
-     "latest": "2026-10-29",
-     "latest_base_bp": 111.486,
-     "latest_row_bp": 116.719,
+     "sessions": 4097,
+     "z_sessions": 3847,
+     "mean_change_bp": 20.1976,
+     "sd_change_bp": 43.3559,
+     "latest": "2026-11-12",
+     "latest_base_bp": 116.638,
+     "latest_row_bp": 121.872,
      "latest_change_bp": 5.23323,
-     "corr_z": 0.71038,
-     "sign_changes": 0.126661,
+     "corr_z": 0.71086,
+     "sign_changes": 0.126332,
      "rstar_offset_mean": 0.0,
      "rstar_offset_sd": 0.0,
      "bp_per_pp": null,
-     "floored_base": 0.472229,
-     "floored_row": 0.463176,
-     "floored_differ": 0.0090531,
-     "traded_sessions": 2232,
-     "sign_changes_traded": 0.208333,
-     "floored_base_traded": 0.0707885,
-     "floored_row_traded": 0.0707885,
-     "floor_free": 1067,
+     "floored_base": 0.471076,
+     "floored_row": 0.462045,
+     "floored_differ": 0.009031,
+     "traded_sessions": 2242,
+     "sign_changes_traded": 0.207404,
+     "floored_base_traded": 0.0704728,
+     "floored_row_traded": 0.0704728,
+     "floor_free": 1077,
      "floor_free_window": "730D",
      "floor_free_max_dz": 1.16962
     }
    },
    "side_changes": {
     "USD outright": {
-     "all": 0.214054,
-     "counted": 0.27323
+     "all": 0.213477,
+     "counted": 0.272289
     },
     "GBP outright": {
-     "all": 0.249414,
-     "counted": 0.394713
+     "all": 0.248765,
+     "counted": 0.392953
     },
     "USD 2s10s": {
-     "all": 0.16029,
-     "counted": 0.190674
+     "all": 0.160405,
+     "counted": 0.190706
     },
     "GBP 2s10s": {
-     "all": 0.18121,
-     "counted": 0.282706
+     "all": 0.180706,
+     "counted": 0.281445
     },
     "GBP - USD 2y": {
-     "all": 0.205858,
-     "counted": 0.312385
+     "all": 0.205291,
+     "counted": 0.310959
     }
    },
    "elb_sessions": {
@@ -1802,34 +1802,34 @@
    },
    "from_first_estimate": {
     "book": {
-     "sr": -0.188146,
-     "se": 0.339983,
-     "sessions": 2221
+     "sr": -0.228812,
+     "se": 0.340645,
+     "sessions": 2231
     },
     "USD outright": {
-     "sr": -1.01039,
-     "se": 0.365265,
-     "sessions": 2855
+     "sr": -1.03613,
+     "se": 0.367808,
+     "sessions": 2865
     },
     "GBP outright": {
-     "sr": 0.13196,
-     "se": 0.345988,
-     "sessions": 2129
+     "sr": 0.106566,
+     "se": 0.344674,
+     "sessions": 2139
     },
     "USD 2s10s": {
-     "sr": -0.0213166,
-     "se": 0.297236,
-     "sessions": 2855
+     "sr": -0.0187589,
+     "se": 0.296723,
+     "sessions": 2865
     },
     "GBP 2s10s": {
-     "sr": -0.162583,
-     "se": 0.346814,
-     "sessions": 2129
+     "sr": -0.162209,
+     "se": 0.346007,
+     "sessions": 2139
     },
     "GBP - USD 2y": {
-     "sr": 0.255055,
-     "se": 0.350364,
-     "sessions": 2079
+     "sr": 0.254462,
+     "se": 0.349524,
+     "sessions": 2089
     }
    }
   },
@@ -1838,287 +1838,287 @@
    "label": "estimated, 2020Q1 cuts kept",
    "net": {
     "book": {
-     "sr": -0.606106,
-     "se": 0.321155,
-     "sessions": 2895
+     "sr": -0.635269,
+     "se": 0.323058,
+     "sessions": 2905
     },
     "USD outright": {
-     "sr": -1.02806,
-     "se": 0.364889,
-     "sessions": 2895
+     "sr": -1.05329,
+     "se": 0.367392,
+     "sessions": 2905
     },
     "GBP outright": {
-     "sr": 0.117858,
-     "se": 0.337615,
-     "sessions": 2232
+     "sr": 0.0936831,
+     "se": 0.336447,
+     "sessions": 2242
     },
     "USD 2s10s": {
-     "sr": -0.0503814,
-     "se": 0.295329,
-     "sessions": 2895
+     "sr": -0.0477391,
+     "se": 0.294815,
+     "sessions": 2905
     },
     "GBP 2s10s": {
-     "sr": -0.288125,
-     "se": 0.343413,
-     "sessions": 2232
+     "sr": -0.287495,
+     "se": 0.342632,
+     "sessions": 2242
     },
     "GBP - USD 2y": {
-     "sr": 0.0629281,
-     "se": 0.337052,
-     "sessions": 2180
+     "sr": 0.0627889,
+     "se": 0.336304,
+     "sessions": 2190
     }
    },
    "gross": {
     "book": {
-     "sr": -0.122753,
-     "se": 0.296297,
-     "sessions": 2895
+     "sr": -0.153015,
+     "se": 0.296411,
+     "sessions": 2905
     },
     "USD outright": {
-     "sr": -0.713796,
-     "se": 0.330608,
-     "sessions": 2895
+     "sr": -0.741365,
+     "se": 0.332681,
+     "sessions": 2905
     },
     "GBP outright": {
-     "sr": 0.378986,
-     "se": 0.348321,
-     "sessions": 2232
+     "sr": 0.355601,
+     "se": 0.346162,
+     "sessions": 2242
     },
     "USD 2s10s": {
-     "sr": 0.0828468,
-     "se": 0.295647,
-     "sessions": 2895
+     "sr": 0.086871,
+     "se": 0.295203,
+     "sessions": 2905
     },
     "GBP 2s10s": {
-     "sr": -0.0282988,
-     "se": 0.336568,
-     "sessions": 2232
+     "sr": -0.0282369,
+     "se": 0.335831,
+     "sessions": 2242
     },
     "GBP - USD 2y": {
-     "sr": 0.187477,
-     "se": 0.339665,
-     "sessions": 2180
+     "sr": 0.187062,
+     "se": 0.3389,
+     "sessions": 2190
     }
    },
    "own": {
     "book": {
-     "sr": -0.614773,
-     "se": 0.316084,
-     "sessions": 3002
+     "sr": -0.643251,
+     "se": 0.317941,
+     "sessions": 3012
     },
     "USD outright": {
-     "sr": -1.03871,
-     "se": 0.360095,
-     "sessions": 2994
+     "sr": -1.06323,
+     "se": 0.362507,
+     "sessions": 3004
     },
     "GBP outright": {
-     "sr": 0.0801399,
-     "se": 0.330821,
-     "sessions": 2316
+     "sr": 0.0566783,
+     "se": 0.329858,
+     "sessions": 2326
     },
     "USD 2s10s": {
-     "sr": -0.0716999,
-     "se": 0.290594,
-     "sessions": 2994
+     "sr": -0.0690456,
+     "se": 0.290096,
+     "sessions": 3004
     },
     "GBP 2s10s": {
-     "sr": -0.333619,
-     "se": 0.339409,
-     "sessions": 2316
+     "sr": -0.332915,
+     "se": 0.338656,
+     "sessions": 2326
     },
     "GBP - USD 2y": {
-     "sr": 0.0234249,
-     "se": 0.331117,
-     "sessions": 2255
+     "sr": 0.0233749,
+     "se": 0.330409,
+     "sessions": 2265
     }
    },
    "own_gross": {
     "book": {
-     "sr": -0.117641,
-     "se": 0.29088,
-     "sessions": 3002
+     "sr": -0.147306,
+     "se": 0.290975,
+     "sessions": 3012
     },
     "USD outright": {
-     "sr": -0.660025,
-     "se": 0.320275,
-     "sessions": 2994
+     "sr": -0.687388,
+     "se": 0.322167,
+     "sessions": 3004
     },
     "GBP outright": {
-     "sr": 0.341949,
-     "se": 0.339809,
-     "sessions": 2316
+     "sr": 0.319244,
+     "se": 0.337887,
+     "sessions": 2326
     },
     "USD 2s10s": {
-     "sr": 0.0597188,
-     "se": 0.290479,
-     "sessions": 2994
+     "sr": 0.0637354,
+     "se": 0.290045,
+     "sessions": 3004
     },
     "GBP 2s10s": {
-     "sr": -0.077776,
-     "se": 0.330841,
-     "sessions": 2316
+     "sr": -0.0776121,
+     "se": 0.330141,
+     "sessions": 2326
     },
     "GBP - USD 2y": {
-     "sr": 0.147795,
-     "se": 0.332875,
-     "sessions": 2255
+     "sr": 0.147479,
+     "se": 0.332156,
+     "sessions": 2265
     }
    },
    "paired_se": {
-    "book": 0.221356,
-    "USD outright": 0.239276,
-    "GBP outright": 0.337564,
-    "USD 2s10s": 0.146442,
-    "GBP 2s10s": 0.267568,
-    "GBP - USD 2y": 0.244582
+    "book": 0.220171,
+    "USD outright": 0.237421,
+    "GBP outright": 0.335847,
+    "USD 2s10s": 0.147137,
+    "GBP 2s10s": 0.266982,
+    "GBP - USD 2y": 0.244041
    },
    "change": {
-    "book": 0.0081972,
-    "USD outright": -0.10563,
-    "GBP outright": -0.541819,
-    "USD 2s10s": 0.0531961,
-    "GBP 2s10s": 0.156615,
-    "GBP - USD 2y": 0.316739
+    "book": 0.00630505,
+    "USD outright": -0.103486,
+    "GBP outright": -0.538592,
+    "USD 2s10s": 0.0532889,
+    "GBP 2s10s": 0.156272,
+    "GBP - USD 2y": 0.316038
    },
    "paired_se_newey_west": {
-    "book": 0.242171,
-    "USD outright": 0.233891,
-    "GBP outright": 0.427862,
-    "USD 2s10s": 0.131394,
-    "GBP 2s10s": 0.253243,
-    "GBP - USD 2y": 0.22494
+    "book": 0.240797,
+    "USD outright": 0.232079,
+    "GBP outright": 0.425699,
+    "USD 2s10s": 0.131267,
+    "GBP 2s10s": 0.25269,
+    "GBP - USD 2y": 0.224452
    },
    "ic": {
     "USD outright": {
-     "ic": -0.213724,
-     "t": -3.29071,
-     "sessions": 2873
+     "ic": -0.210477,
+     "t": -3.25883,
+     "sessions": 2883
     },
     "GBP outright": {
-     "ic": 0.124092,
-     "t": 1.60887,
-     "sessions": 2210
+     "ic": 0.117087,
+     "t": 1.51746,
+     "sessions": 2220
     },
     "USD 2s10s": {
-     "ic": 0.0871084,
-     "t": 1.33226,
-     "sessions": 2873
+     "ic": 0.0803204,
+     "t": 1.2324,
+     "sessions": 2883
     },
     "GBP 2s10s": {
-     "ic": 0.143044,
-     "t": 1.99375,
-     "sessions": 2210
+     "ic": 0.141782,
+     "t": 1.98505,
+     "sessions": 2220
     },
     "GBP - USD 2y": {
-     "ic": 0.0555247,
-     "t": 0.752157,
-     "sessions": 2158
+     "ic": 0.0565215,
+     "t": 0.767342,
+     "sessions": 2168
     }
    },
    "ic_offsets": {
     "USD outright": {
-     "mean": -0.21552,
-     "low": -0.316688,
+     "mean": -0.211825,
+     "low": -0.322115,
      "high": -0.14809,
-     "fewest_sessions": 136
+     "fewest_sessions": 137
     },
     "GBP outright": {
-     "mean": 0.122144,
-     "low": 0.0577545,
+     "mean": 0.11538,
+     "low": 0.0523314,
      "high": 0.203825,
      "fewest_sessions": 105
     },
     "USD 2s10s": {
-     "mean": 0.0889861,
+     "mean": 0.0823083,
      "low": 0.000630052,
      "high": 0.201841,
-     "fewest_sessions": 136
+     "fewest_sessions": 137
     },
     "GBP 2s10s": {
-     "mean": 0.140488,
-     "low": 0.0462575,
-     "high": 0.21808,
+     "mean": 0.140144,
+     "low": 0.0486233,
+     "high": 0.213694,
      "fewest_sessions": 105
     },
     "GBP - USD 2y": {
-     "mean": 0.058781,
-     "low": -0.0115429,
+     "mean": 0.060003,
+     "low": -0.00764963,
      "high": 0.0923538,
      "fewest_sessions": 102
     }
    },
    "moves": {
     "USD": {
-     "sessions": 3950,
-     "z_sessions": 3700,
-     "mean_change_bp": 9.69343,
-     "sd_change_bp": 34.7147,
-     "latest": "2026-10-30",
-     "latest_base_bp": 4.92071,
-     "latest_row_bp": 13.161,
-     "latest_change_bp": 8.24027,
-     "corr_z": 0.857214,
-     "sign_changes": 0.155135,
+     "sessions": 3960,
+     "z_sessions": 3710,
+     "mean_change_bp": 9.69523,
+     "sd_change_bp": 34.671,
+     "latest": "2026-11-13",
+     "latest_base_bp": 24.0694,
+     "latest_row_bp": 35.9568,
+     "latest_change_bp": 11.8874,
+     "corr_z": 0.858348,
+     "sign_changes": 0.154717,
      "rstar_offset_mean": 0.0,
      "rstar_offset_sd": 0.0,
      "bp_per_pp": null,
-     "floored_base": 0.247342,
-     "floored_row": 0.242025,
-     "floored_differ": 0.00531646,
-     "traded_sessions": 2895,
-     "sign_changes_traded": 0.197927,
-     "floored_base_traded": 0.000690846,
-     "floored_row_traded": 0.000690846,
-     "floor_free": 1962,
+     "floored_base": 0.246717,
+     "floored_row": 0.241414,
+     "floored_differ": 0.00530303,
+     "traded_sessions": 2905,
+     "sign_changes_traded": 0.197246,
+     "floored_base_traded": 0.000688468,
+     "floored_row_traded": 0.000688468,
+     "floor_free": 1972,
      "floor_free_window": "730D",
      "floor_free_max_dz": 1.8423
     },
     "GBP": {
-     "sessions": 4087,
-     "z_sessions": 3837,
-     "mean_change_bp": 20.172,
-     "sd_change_bp": 44.3346,
-     "latest": "2026-10-29",
-     "latest_base_bp": 111.486,
-     "latest_row_bp": 114.027,
+     "sessions": 4097,
+     "z_sessions": 3847,
+     "mean_change_bp": 20.1289,
+     "sd_change_bp": 44.289,
+     "latest": "2026-11-12",
+     "latest_base_bp": 116.638,
+     "latest_row_bp": 119.18,
      "latest_change_bp": 2.54155,
-     "corr_z": 0.697043,
-     "sign_changes": 0.131613,
+     "corr_z": 0.697558,
+     "sign_changes": 0.131271,
      "rstar_offset_mean": 0.0,
      "rstar_offset_sd": 0.0,
      "bp_per_pp": null,
-     "floored_base": 0.472229,
-     "floored_row": 0.472229,
-     "floored_differ": 0.00880842,
-     "traded_sessions": 2232,
-     "sign_changes_traded": 0.218638,
-     "floored_base_traded": 0.0707885,
-     "floored_row_traded": 0.0707885,
-     "floor_free": 1067,
+     "floored_base": 0.471076,
+     "floored_row": 0.471076,
+     "floored_differ": 0.00878692,
+     "traded_sessions": 2242,
+     "sign_changes_traded": 0.217663,
+     "floored_base_traded": 0.0704728,
+     "floored_row_traded": 0.0704728,
+     "floor_free": 1077,
      "floor_free_window": "730D",
      "floor_free_max_dz": 1.37713
     }
    },
    "side_changes": {
     "USD outright": {
-     "all": 0.228378,
-     "counted": 0.291537
+     "all": 0.227763,
+     "counted": 0.290534
     },
     "GBP outright": {
-     "all": 0.263748,
-     "counted": 0.431004
+     "all": 0.263062,
+     "counted": 0.429081
     },
     "USD 2s10s": {
-     "all": 0.16029,
-     "counted": 0.190674
+     "all": 0.160405,
+     "counted": 0.190706
     },
     "GBP 2s10s": {
-     "all": 0.174519,
-     "counted": 0.271505
+     "all": 0.174034,
+     "counted": 0.270294
     },
     "GBP - USD 2y": {
-     "all": 0.205582,
-     "counted": 0.316972
+     "all": 0.205015,
+     "counted": 0.315525
     }
    },
    "elb_sessions": {
@@ -2131,34 +2131,34 @@
    },
    "from_first_estimate": {
     "book": {
-     "sr": -0.316215,
-     "se": 0.345335,
-     "sessions": 2221
+     "sr": -0.355815,
+     "se": 0.346752,
+     "sessions": 2231
     },
     "USD outright": {
-     "sr": -1.03176,
-     "se": 0.367894,
-     "sessions": 2855
+     "sr": -1.05738,
+     "se": 0.370461,
+     "sessions": 2865
     },
     "GBP outright": {
-     "sr": 0.109976,
-     "se": 0.345531,
-     "sessions": 2129
+     "sr": 0.0852302,
+     "se": 0.344323,
+     "sessions": 2139
     },
     "USD 2s10s": {
-     "sr": -0.0272201,
-     "se": 0.297257,
-     "sessions": 2855
+     "sr": -0.0246247,
+     "se": 0.296742,
+     "sessions": 2865
     },
     "GBP 2s10s": {
-     "sr": -0.216431,
-     "se": 0.348556,
-     "sessions": 2129
+     "sr": -0.215934,
+     "se": 0.347737,
+     "sessions": 2139
     },
     "GBP - USD 2y": {
-     "sr": 0.132034,
-     "se": 0.3463,
-     "sessions": 2079
+     "sr": 0.131727,
+     "se": 0.345489,
+     "sessions": 2089
     }
    }
   },
@@ -2167,287 +2167,287 @@
    "label": "365D",
    "net": {
     "book": {
-     "sr": -0.492612,
-     "se": 0.312582,
-     "sessions": 2895
+     "sr": -0.522109,
+     "se": 0.314133,
+     "sessions": 2905
     },
     "USD outright": {
-     "sr": -0.946073,
-     "se": 0.355097,
-     "sessions": 2895
+     "sr": -0.973716,
+     "se": 0.357736,
+     "sessions": 2905
     },
     "GBP outright": {
-     "sr": 0.594355,
-     "se": 0.364955,
-     "sessions": 2232
+     "sr": 0.568167,
+     "se": 0.361792,
+     "sessions": 2242
     },
     "USD 2s10s": {
-     "sr": -0.0113824,
-     "se": 0.295151,
-     "sessions": 2895
+     "sr": -0.00901553,
+     "se": 0.294653,
+     "sessions": 2905
     },
     "GBP 2s10s": {
-     "sr": -0.52858,
-     "se": 0.359237,
-     "sessions": 2232
+     "sr": -0.527422,
+     "se": 0.358354,
+     "sessions": 2242
     },
     "GBP - USD 2y": {
-     "sr": -0.102852,
-     "se": 0.337608,
-     "sessions": 2180
+     "sr": -0.102624,
+     "se": 0.336857,
+     "sessions": 2190
     }
    },
    "gross": {
     "book": {
-     "sr": 0.0508732,
-     "se": 0.295378,
-     "sessions": 2895
+     "sr": 0.0194006,
+     "se": 0.294719,
+     "sessions": 2905
     },
     "USD outright": {
-     "sr": -0.581568,
-     "se": 0.319126,
-     "sessions": 2895
+     "sr": -0.612307,
+     "se": 0.321081,
+     "sessions": 2905
     },
     "GBP outright": {
-     "sr": 0.863762,
-     "se": 0.39424,
-     "sessions": 2232
+     "sr": 0.838412,
+     "se": 0.390273,
+     "sessions": 2242
     },
     "USD 2s10s": {
-     "sr": 0.119418,
-     "se": 0.296192,
-     "sessions": 2895
+     "sr": 0.122471,
+     "se": 0.29575,
+     "sessions": 2905
     },
     "GBP 2s10s": {
-     "sr": -0.214696,
-     "se": 0.340356,
-     "sessions": 2232
+     "sr": -0.214226,
+     "se": 0.339594,
+     "sessions": 2242
     },
     "GBP - USD 2y": {
-     "sr": 0.00720399,
-     "se": 0.336723,
-     "sessions": 2180
+     "sr": 0.00718805,
+     "se": 0.335978,
+     "sessions": 2190
     }
    },
    "own": {
     "book": {
-     "sr": -0.500007,
-     "se": 0.307617,
-     "sessions": 2999
+     "sr": -0.528773,
+     "se": 0.309132,
+     "sessions": 3009
     },
     "USD outright": {
-     "sr": -1.01846,
-     "se": 0.358911,
-     "sessions": 2973
+     "sr": -1.0448,
+     "se": 0.361517,
+     "sessions": 2983
     },
     "GBP outright": {
-     "sr": 0.563235,
-     "se": 0.355369,
-     "sessions": 2318
+     "sr": 0.537864,
+     "se": 0.352475,
+     "sessions": 2328
     },
     "USD 2s10s": {
-     "sr": -0.0343742,
-     "se": 0.29133,
-     "sessions": 2973
+     "sr": -0.0320103,
+     "se": 0.290844,
+     "sessions": 2983
     },
     "GBP 2s10s": {
-     "sr": -0.611887,
-     "se": 0.359781,
-     "sessions": 2318
+     "sr": -0.610596,
+     "se": 0.358904,
+     "sessions": 2328
     },
     "GBP - USD 2y": {
-     "sr": -0.123057,
-     "se": 0.333508,
-     "sessions": 2239
+     "sr": -0.122792,
+     "se": 0.332785,
+     "sessions": 2249
     }
    },
    "own_gross": {
     "book": {
-     "sr": 0.0664325,
-     "se": 0.290343,
-     "sessions": 2999
+     "sr": 0.0355357,
+     "se": 0.289645,
+     "sessions": 3009
     },
     "USD outright": {
-     "sr": -0.595707,
-     "se": 0.31603,
-     "sessions": 2973
+     "sr": -0.62568,
+     "se": 0.317958,
+     "sessions": 2983
     },
     "GBP outright": {
-     "sr": 0.877268,
-     "se": 0.388511,
-     "sessions": 2318
+     "sr": 0.852489,
+     "se": 0.38468,
+     "sessions": 2328
     },
     "USD 2s10s": {
-     "sr": 0.0950822,
-     "se": 0.291902,
-     "sessions": 2973
+     "sr": 0.0981253,
+     "se": 0.291469,
+     "sessions": 2983
     },
     "GBP 2s10s": {
-     "sr": -0.289523,
-     "se": 0.337048,
-     "sessions": 2318
+     "sr": -0.288913,
+     "se": 0.336309,
+     "sessions": 2328
     },
     "GBP - USD 2y": {
-     "sr": -0.00599816,
-     "se": 0.332256,
-     "sessions": 2239
+     "sr": -0.00598525,
+     "se": 0.33154,
+     "sessions": 2249
     }
    },
    "paired_se": {
-    "book": 0.222768,
-    "USD outright": 0.18792,
-    "GBP outright": 0.217202,
-    "USD 2s10s": 0.298302,
-    "GBP 2s10s": 0.327929,
-    "GBP - USD 2y": 0.214332
+    "book": 0.221499,
+    "USD outright": 0.186463,
+    "GBP outright": 0.216096,
+    "USD 2s10s": 0.297795,
+    "GBP 2s10s": 0.32721,
+    "GBP - USD 2y": 0.213858
    },
    "change": {
-    "book": 0.121691,
-    "USD outright": -0.0236384,
-    "GBP outright": -0.0653216,
-    "USD 2s10s": 0.0921951,
-    "GBP 2s10s": -0.0838389,
-    "GBP - USD 2y": 0.150959
+    "book": 0.119466,
+    "USD outright": -0.0239134,
+    "GBP outright": -0.0641083,
+    "USD 2s10s": 0.0920125,
+    "GBP 2s10s": -0.0836549,
+    "GBP - USD 2y": 0.150625
    },
    "paired_se_newey_west": {
-    "book": 0.222067,
-    "USD outright": 0.209836,
-    "GBP outright": 0.244178,
-    "USD 2s10s": 0.239637,
-    "GBP 2s10s": 0.367093,
-    "GBP - USD 2y": 0.168949
+    "book": 0.220796,
+    "USD outright": 0.208209,
+    "GBP outright": 0.242935,
+    "USD 2s10s": 0.23923,
+    "GBP 2s10s": 0.366291,
+    "GBP - USD 2y": 0.168542
    },
    "ic": {
     "USD outright": {
-     "ic": -0.0827463,
-     "t": -1.193,
-     "sessions": 2873
+     "ic": -0.0804916,
+     "t": -1.16702,
+     "sessions": 2883
     },
     "GBP outright": {
-     "ic": 0.35342,
-     "t": 4.25474,
-     "sessions": 2210
+     "ic": 0.347843,
+     "t": 4.18414,
+     "sessions": 2220
     },
     "USD 2s10s": {
-     "ic": 0.0962557,
-     "t": 1.37363,
-     "sessions": 2873
+     "ic": 0.0899052,
+     "t": 1.28605,
+     "sessions": 2883
     },
     "GBP 2s10s": {
-     "ic": 0.128717,
-     "t": 1.76046,
-     "sessions": 2210
+     "ic": 0.130272,
+     "t": 1.78881,
+     "sessions": 2220
     },
     "GBP - USD 2y": {
-     "ic": -0.00377465,
-     "t": -0.0482882,
-     "sessions": 2158
+     "ic": -0.00269756,
+     "t": -0.0345924,
+     "sessions": 2168
     }
    },
    "ic_offsets": {
     "USD outright": {
-     "mean": -0.0807266,
-     "low": -0.175116,
+     "mean": -0.0779441,
+     "low": -0.185193,
      "high": 0.00153079,
-     "fewest_sessions": 136
+     "fewest_sessions": 137
     },
     "GBP outright": {
-     "mean": 0.35107,
-     "low": 0.304302,
+     "mean": 0.34534,
+     "low": 0.297388,
      "high": 0.390826,
      "fewest_sessions": 105
     },
     "USD 2s10s": {
-     "mean": 0.0936693,
-     "low": 0.0334161,
+     "mean": 0.0875113,
+     "low": 0.0220028,
      "high": 0.184549,
-     "fewest_sessions": 136
+     "fewest_sessions": 137
     },
     "GBP 2s10s": {
-     "mean": 0.129953,
+     "mean": 0.132392,
      "low": 0.047918,
-     "high": 0.207008,
+     "high": 0.211789,
      "fewest_sessions": 105
     },
     "GBP - USD 2y": {
-     "mean": -0.000732315,
-     "low": -0.0885867,
+     "mean": 0.000880282,
+     "low": -0.0824283,
      "high": 0.0601085,
      "fewest_sessions": 102
     }
    },
    "moves": {
     "USD": {
-     "sessions": 3950,
-     "z_sessions": 3700,
+     "sessions": 3960,
+     "z_sessions": 3710,
      "mean_change_bp": 0.0,
      "sd_change_bp": 0.0,
-     "latest": "2026-10-30",
-     "latest_base_bp": 4.92071,
-     "latest_row_bp": 4.92071,
+     "latest": "2026-11-13",
+     "latest_base_bp": 24.0694,
+     "latest_row_bp": 24.0694,
      "latest_change_bp": 0.0,
-     "corr_z": 0.836896,
-     "sign_changes": 0.126486,
+     "corr_z": 0.837793,
+     "sign_changes": 0.126146,
      "rstar_offset_mean": 0.0,
      "rstar_offset_sd": 0.0,
      "bp_per_pp": null,
-     "floored_base": 0.247342,
-     "floored_row": 0.247342,
+     "floored_base": 0.246717,
+     "floored_row": 0.246717,
      "floored_differ": 0.0,
-     "traded_sessions": 2895,
-     "sign_changes_traded": 0.146459,
-     "floored_base_traded": 0.000690846,
-     "floored_row_traded": 0.000690846,
-     "floor_free": 2467,
+     "traded_sessions": 2905,
+     "sign_changes_traded": 0.145955,
+     "floored_base_traded": 0.000688468,
+     "floored_row_traded": 0.000688468,
+     "floor_free": 2477,
      "floor_free_window": "365D",
      "floor_free_max_dz": 2.28612
     },
     "GBP": {
-     "sessions": 4087,
-     "z_sessions": 3837,
+     "sessions": 4097,
+     "z_sessions": 3847,
      "mean_change_bp": 0.0,
      "sd_change_bp": 0.0,
-     "latest": "2026-10-29",
-     "latest_base_bp": 111.486,
-     "latest_row_bp": 111.486,
+     "latest": "2026-11-12",
+     "latest_base_bp": 116.638,
+     "latest_row_bp": 116.638,
      "latest_change_bp": 0.0,
-     "corr_z": 0.905805,
-     "sign_changes": 0.131613,
+     "corr_z": 0.905564,
+     "sign_changes": 0.131271,
      "rstar_offset_mean": 0.0,
      "rstar_offset_sd": 0.0,
      "bp_per_pp": null,
-     "floored_base": 0.472229,
-     "floored_row": 0.472229,
+     "floored_base": 0.471076,
+     "floored_row": 0.471076,
      "floored_differ": 0.0,
-     "traded_sessions": 2232,
-     "sign_changes_traded": 0.116039,
-     "floored_base_traded": 0.0707885,
-     "floored_row_traded": 0.0707885,
-     "floor_free": 1571,
+     "traded_sessions": 2242,
+     "sign_changes_traded": 0.115522,
+     "floored_base_traded": 0.0704728,
+     "floored_row_traded": 0.0704728,
+     "floor_free": 1581,
      "floor_free_window": "365D",
      "floor_free_max_dz": 2.09622
     }
    },
    "side_changes": {
     "USD outright": {
-     "all": 0.220811,
-     "counted": 0.270812
+     "all": 0.220216,
+     "counted": 0.26988
     },
     "GBP outright": {
-     "all": 0.166276,
-     "counted": 0.263889
+     "all": 0.165844,
+     "counted": 0.262712
     },
     "USD 2s10s": {
-     "all": 0.312174,
-     "counted": 0.372021
+     "all": 0.311272,
+     "counted": 0.37074
     },
     "GBP 2s10s": {
-     "all": 0.283803,
-     "counted": 0.453853
+     "all": 0.283014,
+     "counted": 0.451829
     },
     "GBP - USD 2y": {
-     "all": 0.205582,
-     "counted": 0.319266
+     "all": 0.205015,
+     "counted": 0.317808
     }
    },
    "elb_sessions": {
@@ -2464,287 +2464,287 @@
    "label": "548D",
    "net": {
     "book": {
-     "sr": -0.358665,
-     "se": 0.304532,
-     "sessions": 2895
+     "sr": -0.390305,
+     "se": 0.305709,
+     "sessions": 2905
     },
     "USD outright": {
-     "sr": -0.702368,
-     "se": 0.32954,
-     "sessions": 2895
+     "sr": -0.72909,
+     "se": 0.331501,
+     "sessions": 2905
     },
     "GBP outright": {
-     "sr": 0.653883,
-     "se": 0.370672,
-     "sessions": 2232
+     "sr": 0.627157,
+     "se": 0.367242,
+     "sessions": 2242
     },
     "USD 2s10s": {
-     "sr": -0.0386101,
-     "se": 0.295251,
-     "sessions": 2895
+     "sr": -0.059916,
+     "se": 0.294912,
+     "sessions": 2905
     },
     "GBP 2s10s": {
-     "sr": -0.138826,
-     "se": 0.338118,
-     "sessions": 2232
+     "sr": -0.126482,
+     "se": 0.337104,
+     "sessions": 2242
     },
     "GBP - USD 2y": {
-     "sr": -0.0798782,
-     "se": 0.337255,
-     "sessions": 2180
+     "sr": -0.0797015,
+     "se": 0.336507,
+     "sessions": 2190
     }
    },
    "gross": {
     "book": {
-     "sr": 0.123344,
-     "se": 0.296307,
-     "sessions": 2895
+     "sr": 0.0914726,
+     "se": 0.295307,
+     "sessions": 2905
     },
     "USD outright": {
-     "sr": -0.391734,
-     "se": 0.306258,
-     "sessions": 2895
+     "sr": -0.420646,
+     "se": 0.307407,
+     "sessions": 2905
     },
     "GBP outright": {
-     "sr": 0.894635,
-     "se": 0.398118,
-     "sessions": 2232
+     "sr": 0.868954,
+     "se": 0.39402,
+     "sessions": 2242
     },
     "USD 2s10s": {
-     "sr": 0.0827604,
-     "se": 0.295646,
-     "sessions": 2895
+     "sr": 0.0618077,
+     "se": 0.294929,
+     "sessions": 2905
     },
     "GBP 2s10s": {
-     "sr": 0.133263,
-     "se": 0.337991,
-     "sessions": 2232
+     "sr": 0.147604,
+     "se": 0.337588,
+     "sessions": 2242
     },
     "GBP - USD 2y": {
-     "sr": 0.0290726,
-     "se": 0.33679,
-     "sessions": 2180
+     "sr": 0.0290083,
+     "se": 0.336044,
+     "sessions": 2190
     }
    },
    "own": {
     "book": {
-     "sr": -0.355097,
-     "se": 0.299026,
-     "sessions": 2999
+     "sr": -0.385986,
+     "se": 0.300145,
+     "sessions": 3009
     },
     "USD outright": {
-     "sr": -0.722631,
-     "se": 0.327066,
-     "sessions": 2973
+     "sr": -0.74867,
+     "se": 0.329003,
+     "sessions": 2983
     },
     "GBP outright": {
-     "sr": 0.660306,
-     "se": 0.364362,
-     "sessions": 2318
+     "sr": 0.634173,
+     "se": 0.36106,
+     "sessions": 2328
     },
     "USD 2s10s": {
-     "sr": -0.0604463,
-     "se": 0.29151,
-     "sessions": 2973
+     "sr": -0.0812885,
+     "se": 0.291249,
+     "sessions": 2983
     },
     "GBP 2s10s": {
-     "sr": -0.234855,
-     "se": 0.334722,
-     "sessions": 2318
+     "sr": -0.222565,
+     "se": 0.333559,
+     "sessions": 2328
     },
     "GBP - USD 2y": {
-     "sr": -0.100172,
-     "se": 0.333085,
-     "sessions": 2239
+     "sr": -0.0999562,
+     "se": 0.332364,
+     "sessions": 2249
     }
    },
    "own_gross": {
     "book": {
-     "sr": 0.146105,
-     "se": 0.291567,
-     "sessions": 2999
+     "sr": 0.114831,
+     "se": 0.290507,
+     "sessions": 3009
     },
     "USD outright": {
-     "sr": -0.347029,
-     "se": 0.299887,
-     "sessions": 2973
+     "sr": -0.375764,
+     "se": 0.30086,
+     "sessions": 2983
     },
     "GBP outright": {
-     "sr": 0.914596,
-     "se": 0.393174,
-     "sessions": 2318
+     "sr": 0.889398,
+     "se": 0.389188,
+     "sessions": 2328
     },
     "USD 2s10s": {
-     "sr": 0.0597967,
-     "se": 0.291504,
-     "sessions": 2973
+     "sr": 0.0393032,
+     "se": 0.290882,
+     "sessions": 2983
     },
     "GBP 2s10s": {
-     "sr": 0.0414785,
-     "se": 0.330341,
-     "sessions": 2318
+     "sr": 0.0556918,
+     "se": 0.329759,
+     "sessions": 2328
     },
     "GBP - USD 2y": {
-     "sr": 0.0156135,
-     "se": 0.332273,
-     "sessions": 2239
+     "sr": 0.0155799,
+     "se": 0.331557,
+     "sessions": 2249
     }
    },
    "paired_se": {
-    "book": 0.161032,
-    "USD outright": 0.172232,
-    "GBP outright": 0.126636,
-    "USD 2s10s": 0.168617,
-    "GBP 2s10s": 0.214129,
-    "GBP - USD 2y": 0.154788
+    "book": 0.160379,
+    "USD outright": 0.170897,
+    "GBP outright": 0.125991,
+    "USD 2s10s": 0.170036,
+    "GBP 2s10s": 0.214291,
+    "GBP - USD 2y": 0.154445
    },
    "change": {
-    "book": 0.255638,
-    "USD outright": 0.220067,
-    "GBP outright": -0.00579335,
-    "USD 2s10s": 0.0649673,
-    "GBP 2s10s": 0.305915,
-    "GBP - USD 2y": 0.173933
+    "book": 0.25127,
+    "USD outright": 0.220712,
+    "GBP outright": -0.00511867,
+    "USD 2s10s": 0.041112,
+    "GBP 2s10s": 0.317285,
+    "GBP - USD 2y": 0.173548
    },
    "paired_se_newey_west": {
-    "book": 0.151121,
-    "USD outright": 0.172863,
-    "GBP outright": 0.124753,
-    "USD 2s10s": 0.125922,
-    "GBP 2s10s": 0.211489,
-    "GBP - USD 2y": 0.145661
+    "book": 0.150317,
+    "USD outright": 0.171524,
+    "GBP outright": 0.124118,
+    "USD 2s10s": 0.127812,
+    "GBP 2s10s": 0.211299,
+    "GBP - USD 2y": 0.145344
    },
    "ic": {
     "USD outright": {
-     "ic": -0.100225,
-     "t": -1.43553,
-     "sessions": 2873
+     "ic": -0.0977784,
+     "t": -1.40767,
+     "sessions": 2883
     },
     "GBP outright": {
-     "ic": 0.372208,
-     "t": 4.46022,
-     "sessions": 2210
+     "ic": 0.363964,
+     "t": 4.35311,
+     "sessions": 2220
     },
     "USD 2s10s": {
-     "ic": 0.0710979,
-     "t": 1.04796,
-     "sessions": 2873
+     "ic": 0.0644402,
+     "t": 0.953028,
+     "sessions": 2883
     },
     "GBP 2s10s": {
-     "ic": 0.109227,
-     "t": 1.47918,
-     "sessions": 2210
+     "ic": 0.113446,
+     "t": 1.54007,
+     "sessions": 2220
     },
     "GBP - USD 2y": {
-     "ic": -0.00324688,
-     "t": -0.0420393,
-     "sessions": 2158
+     "ic": -0.0037527,
+     "t": -0.0486937,
+     "sessions": 2168
     }
    },
    "ic_offsets": {
     "USD outright": {
-     "mean": -0.0990764,
-     "low": -0.189832,
+     "mean": -0.0961487,
+     "low": -0.195143,
      "high": -0.0300558,
-     "fewest_sessions": 136
+     "fewest_sessions": 137
     },
     "GBP outright": {
-     "mean": 0.371445,
-     "low": 0.320827,
+     "mean": 0.362896,
+     "low": 0.300572,
      "high": 0.413951,
      "fewest_sessions": 105
     },
     "USD 2s10s": {
-     "mean": 0.0709385,
-     "low": -0.00572647,
+     "mean": 0.0645339,
+     "low": -0.0183361,
      "high": 0.168513,
-     "fewest_sessions": 136
+     "fewest_sessions": 137
     },
     "GBP 2s10s": {
-     "mean": 0.11073,
+     "mean": 0.115617,
      "low": 0.00744137,
-     "high": 0.159828,
+     "high": 0.16968,
      "fewest_sessions": 105
     },
     "GBP - USD 2y": {
-     "mean": -0.00102182,
-     "low": -0.0654791,
+     "mean": -0.00111238,
+     "low": -0.0643017,
      "high": 0.050279,
      "fewest_sessions": 102
     }
    },
    "moves": {
     "USD": {
-     "sessions": 3950,
-     "z_sessions": 3700,
+     "sessions": 3960,
+     "z_sessions": 3710,
      "mean_change_bp": 0.0,
      "sd_change_bp": 0.0,
-     "latest": "2026-10-30",
-     "latest_base_bp": 4.92071,
-     "latest_row_bp": 4.92071,
+     "latest": "2026-11-13",
+     "latest_base_bp": 24.0694,
+     "latest_row_bp": 24.0694,
      "latest_change_bp": 0.0,
-     "corr_z": 0.974155,
-     "sign_changes": 0.0543243,
+     "corr_z": 0.974262,
+     "sign_changes": 0.0541779,
      "rstar_offset_mean": 0.0,
      "rstar_offset_sd": 0.0,
      "bp_per_pp": null,
-     "floored_base": 0.247342,
-     "floored_row": 0.247342,
+     "floored_base": 0.246717,
+     "floored_row": 0.246717,
      "floored_differ": 0.0,
-     "traded_sessions": 2895,
-     "sign_changes_traded": 0.062867,
-     "floored_base_traded": 0.000690846,
-     "floored_row_traded": 0.000690846,
-     "floor_free": 2213,
+     "traded_sessions": 2905,
+     "sign_changes_traded": 0.0626506,
+     "floored_base_traded": 0.000688468,
+     "floored_row_traded": 0.000688468,
+     "floor_free": 2223,
      "floor_free_window": "548D",
      "floor_free_max_dz": 1.78895
     },
     "GBP": {
-     "sessions": 4087,
-     "z_sessions": 3837,
+     "sessions": 4097,
+     "z_sessions": 3847,
      "mean_change_bp": 0.0,
      "sd_change_bp": 0.0,
-     "latest": "2026-10-29",
-     "latest_base_bp": 111.486,
-     "latest_row_bp": 111.486,
+     "latest": "2026-11-12",
+     "latest_base_bp": 116.638,
+     "latest_row_bp": 116.638,
      "latest_change_bp": 0.0,
-     "corr_z": 0.971251,
-     "sign_changes": 0.0630701,
+     "corr_z": 0.971256,
+     "sign_changes": 0.0629062,
      "rstar_offset_mean": 0.0,
      "rstar_offset_sd": 0.0,
      "bp_per_pp": null,
-     "floored_base": 0.472229,
-     "floored_row": 0.472229,
+     "floored_base": 0.471076,
+     "floored_row": 0.471076,
      "floored_differ": 0.0,
-     "traded_sessions": 2232,
-     "sign_changes_traded": 0.0533154,
-     "floored_base_traded": 0.0707885,
-     "floored_row_traded": 0.0707885,
-     "floor_free": 1318,
+     "traded_sessions": 2242,
+     "sign_changes_traded": 0.0530776,
+     "floored_base_traded": 0.0704728,
+     "floored_row_traded": 0.0704728,
+     "floor_free": 1328,
      "floor_free_window": "548D",
      "floor_free_max_dz": 1.14789
     }
    },
    "side_changes": {
     "USD outright": {
-     "all": 0.104324,
-     "counted": 0.133333
+     "all": 0.104043,
+     "counted": 0.132874
     },
     "GBP outright": {
-     "all": 0.0857441,
-     "counted": 0.133065
+     "all": 0.0855212,
+     "counted": 0.132471
     },
     "USD 2s10s": {
-     "all": 0.233623,
-     "counted": 0.278411
+     "all": 0.235549,
+     "counted": 0.280551
     },
     "GBP 2s10s": {
-     "all": 0.162253,
-     "counted": 0.257616
+     "all": 0.164304,
+     "counted": 0.260482
     },
     "GBP - USD 2y": {
-     "all": 0.114396,
-     "counted": 0.168349
+     "all": 0.114081,
+     "counted": 0.16758
     }
    },
    "elb_sessions": {
@@ -2761,287 +2761,287 @@
    "label": "1095D",
    "net": {
     "book": {
-     "sr": -0.690888,
-     "se": 0.328529,
-     "sessions": 2895
+     "sr": -0.709472,
+     "se": 0.329696,
+     "sessions": 2905
     },
     "USD outright": {
-     "sr": -0.824032,
-     "se": 0.341592,
-     "sessions": 2895
+     "sr": -0.851363,
+     "se": 0.343921,
+     "sessions": 2905
     },
     "GBP outright": {
-     "sr": 0.443115,
-     "se": 0.352578,
-     "sessions": 2232
+     "sr": 0.418067,
+     "se": 0.350073,
+     "sessions": 2242
     },
     "USD 2s10s": {
-     "sr": -0.0855721,
-     "se": 0.295681,
-     "sessions": 2895
+     "sr": -0.106611,
+     "se": 0.295483,
+     "sessions": 2905
     },
     "GBP 2s10s": {
-     "sr": -0.627201,
-     "se": 0.368109,
-     "sessions": 2232
+     "sr": -0.615527,
+     "se": 0.366188,
+     "sessions": 2242
     },
     "GBP - USD 2y": {
-     "sr": -0.225918,
-     "se": 0.340988,
-     "sessions": 2180
+     "sr": -0.196255,
+     "se": 0.339193,
+     "sessions": 2190
     }
    },
    "gross": {
     "book": {
-     "sr": -0.241962,
-     "se": 0.299476,
-     "sessions": 2895
+     "sr": -0.261035,
+     "se": 0.299669,
+     "sessions": 2905
     },
     "USD outright": {
-     "sr": -0.511234,
-     "se": 0.313837,
-     "sessions": 2895
+     "sr": -0.541019,
+     "se": 0.315474,
+     "sessions": 2905
     },
     "GBP outright": {
-     "sr": 0.672772,
-     "se": 0.37258,
-     "sessions": 2232
+     "sr": 0.648669,
+     "se": 0.369342,
+     "sessions": 2242
     },
     "USD 2s10s": {
-     "sr": 0.0275329,
-     "se": 0.295197,
-     "sessions": 2895
+     "sr": 0.00692095,
+     "se": 0.294651,
+     "sessions": 2905
     },
     "GBP 2s10s": {
-     "sr": -0.362136,
-     "se": 0.347358,
-     "sessions": 2232
+     "sr": -0.351233,
+     "se": 0.345964,
+     "sessions": 2242
     },
     "GBP - USD 2y": {
-     "sr": -0.126041,
-     "se": 0.338053,
-     "sessions": 2180
+     "sr": -0.0969429,
+     "se": 0.336762,
+     "sessions": 2190
     }
    },
    "own": {
     "book": {
-     "sr": -0.70529,
-     "se": 0.32409,
-     "sessions": 2999
+     "sr": -0.723379,
+     "se": 0.325235,
+     "sessions": 3009
     },
     "USD outright": {
-     "sr": -0.905276,
-     "se": 0.345807,
-     "sessions": 2973
+     "sr": -0.931327,
+     "se": 0.348159,
+     "sessions": 2983
     },
     "GBP outright": {
-     "sr": 0.402959,
-     "se": 0.343289,
-     "sessions": 2318
+     "sr": 0.37887,
+     "se": 0.34107,
+     "sessions": 2328
     },
     "USD 2s10s": {
-     "sr": -0.10728,
-     "se": 0.293466,
-     "sessions": 2945
+     "sr": -0.127959,
+     "se": 0.293337,
+     "sessions": 2955
     },
     "GBP 2s10s": {
-     "sr": -0.709439,
-     "se": 0.369418,
-     "sessions": 2318
+     "sr": -0.697819,
+     "se": 0.367434,
+     "sessions": 2328
     },
     "GBP - USD 2y": {
-     "sr": -0.245994,
-     "se": 0.337242,
-     "sessions": 2239
+     "sr": -0.216871,
+     "se": 0.335413,
+     "sessions": 2249
     }
    },
    "own_gross": {
     "book": {
-     "sr": -0.235276,
-     "se": 0.29401,
-     "sessions": 2999
+     "sr": -0.253962,
+     "se": 0.294186,
+     "sessions": 3009
     },
     "USD outright": {
-     "sr": -0.532745,
-     "se": 0.311226,
-     "sessions": 2973
+     "sr": -0.561756,
+     "se": 0.312871,
+     "sessions": 2983
     },
     "GBP outright": {
-     "sr": 0.670512,
-     "se": 0.365377,
-     "sessions": 2318
+     "sr": 0.647091,
+     "se": 0.362302,
+     "sessions": 2328
     },
     "USD 2s10s": {
-     "sr": 0.00539699,
-     "se": 0.292627,
-     "sessions": 2945
+     "sr": -0.0148584,
+     "se": 0.29216,
+     "sessions": 2955
     },
     "GBP 2s10s": {
-     "sr": -0.434998,
-     "se": 0.345467,
-     "sessions": 2318
+     "sr": -0.424162,
+     "se": 0.344005,
+     "sessions": 2328
     },
     "GBP - USD 2y": {
-     "sr": -0.138828,
-     "se": 0.33385,
-     "sessions": 2239
+     "sr": -0.110301,
+     "se": 0.332544,
+     "sessions": 2249
     }
    },
    "paired_se": {
-    "book": 0.149067,
-    "USD outright": 0.131088,
-    "GBP outright": 0.136727,
-    "USD 2s10s": 0.206259,
-    "GBP 2s10s": 0.241207,
-    "GBP - USD 2y": 0.144201
+    "book": 0.148417,
+    "USD outright": 0.130072,
+    "GBP outright": 0.136032,
+    "USD 2s10s": 0.207234,
+    "GBP 2s10s": 0.241525,
+    "GBP - USD 2y": 0.146677
    },
    "change": {
-    "book": -0.0765854,
-    "USD outright": 0.098403,
-    "GBP outright": -0.216562,
-    "USD 2s10s": 0.0180053,
-    "GBP 2s10s": -0.18246,
-    "GBP - USD 2y": 0.0278926
+    "book": -0.0678974,
+    "USD outright": 0.0984401,
+    "GBP outright": -0.214209,
+    "USD 2s10s": -0.00558304,
+    "GBP 2s10s": -0.17176,
+    "GBP - USD 2y": 0.0569943
    },
    "paired_se_newey_west": {
-    "book": 0.131756,
-    "USD outright": 0.151,
-    "GBP outright": 0.136254,
-    "USD 2s10s": 0.163586,
-    "GBP 2s10s": 0.225424,
-    "GBP - USD 2y": 0.113783
+    "book": 0.131581,
+    "USD outright": 0.14983,
+    "GBP outright": 0.135567,
+    "USD 2s10s": 0.165055,
+    "GBP 2s10s": 0.225599,
+    "GBP - USD 2y": 0.11542
    },
    "ic": {
     "USD outright": {
-     "ic": -0.127342,
-     "t": -1.82313,
-     "sessions": 2873
+     "ic": -0.124753,
+     "t": -1.79545,
+     "sessions": 2883
     },
     "GBP outright": {
-     "ic": 0.375262,
-     "t": 4.61765,
-     "sessions": 2210
+     "ic": 0.365483,
+     "t": 4.48592,
+     "sessions": 2220
     },
     "USD 2s10s": {
-     "ic": 0.0981241,
-     "t": 1.55553,
-     "sessions": 2873
+     "ic": 0.0913218,
+     "t": 1.45092,
+     "sessions": 2883
     },
     "GBP 2s10s": {
-     "ic": 0.0144458,
-     "t": 0.200129,
-     "sessions": 2210
+     "ic": 0.0181056,
+     "t": 0.251549,
+     "sessions": 2220
     },
     "GBP - USD 2y": {
-     "ic": -0.0376654,
-     "t": -0.476706,
-     "sessions": 2158
+     "ic": -0.0392142,
+     "t": -0.497376,
+     "sessions": 2168
     }
    },
    "ic_offsets": {
     "USD outright": {
-     "mean": -0.127109,
-     "low": -0.200844,
+     "mean": -0.124152,
+     "low": -0.210358,
      "high": -0.0614324,
-     "fewest_sessions": 136
+     "fewest_sessions": 137
     },
     "GBP outright": {
-     "mean": 0.375079,
-     "low": 0.309403,
+     "mean": 0.365627,
+     "low": 0.28707,
      "high": 0.412254,
      "fewest_sessions": 105
     },
     "USD 2s10s": {
-     "mean": 0.0985183,
+     "mean": 0.0917618,
      "low": 0.0131798,
      "high": 0.186351,
-     "fewest_sessions": 136
+     "fewest_sessions": 137
     },
     "GBP 2s10s": {
-     "mean": 0.0157986,
+     "mean": 0.0201148,
      "low": -0.0280273,
-     "high": 0.0933962,
+     "high": 0.10226,
      "fewest_sessions": 105
     },
     "GBP - USD 2y": {
-     "mean": -0.0376915,
-     "low": -0.10617,
+     "mean": -0.0391973,
+     "low": -0.109719,
      "high": -0.00380546,
      "fewest_sessions": 102
     }
    },
    "moves": {
     "USD": {
-     "sessions": 3950,
-     "z_sessions": 3575,
+     "sessions": 3960,
+     "z_sessions": 3585,
      "mean_change_bp": 0.0,
      "sd_change_bp": 0.0,
-     "latest": "2026-10-30",
-     "latest_base_bp": 4.92071,
-     "latest_row_bp": 4.92071,
+     "latest": "2026-11-13",
+     "latest_base_bp": 24.0694,
+     "latest_row_bp": 24.0694,
      "latest_change_bp": 0.0,
-     "corr_z": 0.959377,
-     "sign_changes": 0.0813986,
+     "corr_z": 0.959633,
+     "sign_changes": 0.0811715,
      "rstar_offset_mean": 0.0,
      "rstar_offset_sd": 0.0,
      "bp_per_pp": null,
-     "floored_base": 0.247342,
-     "floored_row": 0.247342,
+     "floored_base": 0.246717,
+     "floored_row": 0.246717,
      "floored_differ": 0.0,
-     "traded_sessions": 2895,
-     "sign_changes_traded": 0.0963731,
-     "floored_base_traded": 0.000690846,
-     "floored_row_traded": 0.000690846,
-     "floor_free": 1460,
+     "traded_sessions": 2905,
+     "sign_changes_traded": 0.0960413,
+     "floored_base_traded": 0.000688468,
+     "floored_row_traded": 0.000688468,
+     "floor_free": 1470,
      "floor_free_window": "1095D",
      "floor_free_max_dz": 1.26228
     },
     "GBP": {
-     "sessions": 4087,
-     "z_sessions": 3712,
+     "sessions": 4097,
+     "z_sessions": 3722,
      "mean_change_bp": 0.0,
      "sd_change_bp": 0.0,
-     "latest": "2026-10-29",
-     "latest_base_bp": 111.486,
-     "latest_row_bp": 111.486,
+     "latest": "2026-11-12",
+     "latest_base_bp": 116.638,
+     "latest_row_bp": 116.638,
      "latest_change_bp": 0.0,
-     "corr_z": 0.961348,
-     "sign_changes": 0.131196,
+     "corr_z": 0.961367,
+     "sign_changes": 0.130844,
      "rstar_offset_mean": 0.0,
      "rstar_offset_sd": 0.0,
      "bp_per_pp": null,
-     "floored_base": 0.472229,
-     "floored_row": 0.472229,
+     "floored_base": 0.471076,
+     "floored_row": 0.471076,
      "floored_differ": 0.0,
-     "traded_sessions": 2232,
-     "sign_changes_traded": 0.12276,
-     "floored_base_traded": 0.0707885,
-     "floored_row_traded": 0.0707885,
-     "floor_free": 561,
+     "traded_sessions": 2242,
+     "sign_changes_traded": 0.122212,
+     "floored_base_traded": 0.0704728,
+     "floored_row_traded": 0.0704728,
+     "floor_free": 571,
      "floor_free_window": "1095D",
      "floor_free_max_dz": 2.62059
     }
    },
    "side_changes": {
     "USD outright": {
-     "all": 0.137902,
-     "counted": 0.158895
+     "all": 0.137517,
+     "counted": 0.158348
     },
     "GBP outright": {
-     "all": 0.123384,
-     "counted": 0.19086
+     "all": 0.123052,
+     "counted": 0.190009
     },
     "USD 2s10s": {
-     "all": 0.271562,
-     "counted": 0.300173
+     "all": 0.273832,
+     "counted": 0.302582
     },
     "GBP 2s10s": {
-     "all": 0.165718,
-     "counted": 0.246864
+     "all": 0.16821,
+     "counted": 0.250223
     },
     "GBP - USD 2y": {
-     "all": 0.135947,
-     "counted": 0.204128
+     "all": 0.138413,
+     "counted": 0.207763
     }
    },
    "elb_sessions": {
@@ -3058,238 +3058,238 @@
    "label": "NSS",
    "net": {
     "book": {
-     "sr": -0.600872,
-     "se": 0.320726,
-     "sessions": 2895
+     "sr": -0.628315,
+     "se": 0.322467,
+     "sessions": 2905
     },
     "USD outright": {
-     "sr": -0.922434,
-     "se": 0.352378,
-     "sessions": 2895
+     "sr": -0.949803,
+     "se": 0.354934,
+     "sessions": 2905
     },
     "GBP outright": {
-     "sr": 0.661545,
-     "se": 0.37144,
-     "sessions": 2232
+     "sr": 0.634128,
+     "se": 0.367916,
+     "sessions": 2242
     },
     "USD 2s10s": {
-     "sr": -0.103577,
-     "se": 0.295932,
-     "sessions": 2895
+     "sr": -0.101028,
+     "se": 0.295398,
+     "sessions": 2905
     },
     "GBP 2s10s": {
-     "sr": -0.481221,
-     "se": 0.355448,
-     "sessions": 2232
+     "sr": -0.480167,
+     "se": 0.35459,
+     "sessions": 2242
     },
     "GBP - USD 2y": {
-     "sr": -0.200087,
-     "se": 0.340072,
-     "sessions": 2180
+     "sr": -0.199644,
+     "se": 0.339305,
+     "sessions": 2190
     }
    },
    "gross": {
     "book": {
-     "sr": -0.149663,
-     "se": 0.296835,
-     "sessions": 2895
+     "sr": -0.178315,
+     "se": 0.297025,
+     "sessions": 2905
     },
     "USD outright": {
-     "sr": -0.602907,
-     "se": 0.320846,
-     "sessions": 2895
+     "sr": -0.632909,
+     "se": 0.32281,
+     "sessions": 2905
     },
     "GBP outright": {
-     "sr": 0.881679,
-     "se": 0.396479,
-     "sessions": 2232
+     "sr": 0.855419,
+     "se": 0.392348,
+     "sessions": 2242
     },
     "USD 2s10s": {
-     "sr": 0.0162208,
-     "se": 0.295161,
-     "sessions": 2895
+     "sr": 0.0194766,
+     "se": 0.294675,
+     "sessions": 2905
     },
     "GBP 2s10s": {
-     "sr": -0.219828,
-     "se": 0.340542,
-     "sessions": 2232
+     "sr": -0.219347,
+     "se": 0.339779,
+     "sessions": 2242
     },
     "GBP - USD 2y": {
-     "sr": -0.102733,
-     "se": 0.337606,
-     "sessions": 2180
+     "sr": -0.102506,
+     "se": 0.336855,
+     "sessions": 2190
     }
    },
    "own": {
     "book": {
-     "sr": -0.59866,
-     "se": 0.314939,
-     "sessions": 2999
+     "sr": -0.625449,
+     "se": 0.316608,
+     "sessions": 3009
     },
     "USD outright": {
-     "sr": -0.940287,
-     "se": 0.349747,
-     "sessions": 2973
+     "sr": -0.966916,
+     "se": 0.352237,
+     "sessions": 2983
     },
     "GBP outright": {
-     "sr": 0.610095,
-     "se": 0.35956,
-     "sessions": 2318
+     "sr": 0.58366,
+     "se": 0.356407,
+     "sessions": 2328
     },
     "USD 2s10s": {
-     "sr": -0.125219,
-     "se": 0.292383,
-     "sessions": 2973
+     "sr": -0.12268,
+     "se": 0.291861,
+     "sessions": 2983
     },
     "GBP 2s10s": {
-     "sr": -0.578413,
-     "se": 0.35675,
-     "sessions": 2318
+     "sr": -0.577193,
+     "se": 0.355891,
+     "sessions": 2328
     },
     "GBP - USD 2y": {
-     "sr": -0.204539,
-     "se": 0.33571,
-     "sessions": 2239
+     "sr": -0.204099,
+     "se": 0.334972,
+     "sessions": 2249
     }
    },
    "own_gross": {
     "book": {
-     "sr": -0.129774,
-     "se": 0.291242,
-     "sessions": 2999
+     "sr": -0.157878,
+     "se": 0.291353,
+     "sessions": 3009
     },
     "USD outright": {
-     "sr": -0.5505,
-     "se": 0.312534,
-     "sessions": 2973
+     "sr": -0.580381,
+     "se": 0.314305,
+     "sessions": 2983
     },
     "GBP outright": {
-     "sr": 0.85012,
-     "se": 0.385207,
-     "sessions": 2318
+     "sr": 0.824651,
+     "se": 0.381372,
+     "sessions": 2328
     },
     "USD 2s10s": {
-     "sr": -0.00650083,
-     "se": 0.291247,
-     "sessions": 2973
+     "sr": -0.00326324,
+     "se": 0.29077,
+     "sessions": 2983
     },
     "GBP 2s10s": {
-     "sr": -0.313459,
-     "se": 0.338213,
-     "sessions": 2318
+     "sr": -0.312798,
+     "se": 0.337467,
+     "sessions": 2328
     },
     "GBP - USD 2y": {
-     "sr": -0.101047,
-     "se": 0.3331,
-     "sessions": 2239
+     "sr": -0.100829,
+     "se": 0.332379,
+     "sessions": 2249
     }
    },
    "paired_se": {
-    "book": 0.0254932,
+    "book": 0.025348,
     "USD outright": 0.0,
-    "GBP outright": 0.00590033,
+    "GBP outright": 0.0058703,
     "USD 2s10s": 0.0,
-    "GBP 2s10s": 0.0471192,
-    "GBP - USD 2y": 0.0565118
+    "GBP 2s10s": 0.047016,
+    "GBP - USD 2y": 0.0563867
    },
    "change": {
-    "book": 0.0134308,
+    "book": 0.0132599,
     "USD outright": 0.0,
-    "GBP outright": 0.00186814,
+    "GBP outright": 0.00185228,
     "USD 2s10s": 0.0,
-    "GBP 2s10s": -0.0364807,
-    "GBP - USD 2y": 0.0537242
+    "GBP 2s10s": -0.0364007,
+    "GBP - USD 2y": 0.0536053
    },
    "paired_se_newey_west": {
-    "book": 0.0239429,
+    "book": 0.0238067,
     "USD outright": 0.0,
-    "GBP outright": 0.00237158,
+    "GBP outright": 0.00235954,
     "USD 2s10s": 0.0,
-    "GBP 2s10s": 0.0629869,
-    "GBP - USD 2y": 0.0594965
+    "GBP 2s10s": 0.0628494,
+    "GBP - USD 2y": 0.0593661
    },
    "ic": {
     "USD outright": {
-     "ic": -0.112648,
-     "t": -1.61693,
-     "sessions": 2873
+     "ic": -0.110108,
+     "t": -1.58826,
+     "sessions": 2883
     },
     "GBP outright": {
-     "ic": 0.375201,
-     "t": 4.58129,
-     "sessions": 2210
+     "ic": 0.366086,
+     "t": 4.46048,
+     "sessions": 2220
     },
     "USD 2s10s": {
-     "ic": 0.0981238,
-     "t": 1.44619,
-     "sessions": 2873
+     "ic": 0.091464,
+     "t": 1.35094,
+     "sessions": 2883
     },
     "GBP 2s10s": {
-     "ic": 0.0517181,
-     "t": 0.706828,
-     "sessions": 2210
+     "ic": 0.0528137,
+     "t": 0.724571,
+     "sessions": 2220
     },
     "GBP - USD 2y": {
-     "ic": -0.0274052,
-     "t": -0.351621,
-     "sessions": 2158
+     "ic": -0.0286359,
+     "t": -0.368279,
+     "sessions": 2168
     }
    },
    "ic_offsets": {
     "USD outright": {
-     "mean": -0.111767,
-     "low": -0.190936,
+     "mean": -0.108815,
+     "low": -0.200441,
      "high": -0.0419988,
-     "fewest_sessions": 136
+     "fewest_sessions": 137
     },
     "GBP outright": {
-     "mean": 0.374079,
-     "low": 0.310979,
+     "mean": 0.365007,
+     "low": 0.290687,
      "high": 0.416224,
      "fewest_sessions": 105
     },
     "USD 2s10s": {
-     "mean": 0.0984058,
-     "low": 0.027755,
+     "mean": 0.0919537,
+     "low": 0.0214549,
      "high": 0.187765,
-     "fewest_sessions": 136
+     "fewest_sessions": 137
     },
     "GBP 2s10s": {
-     "mean": 0.0521373,
+     "mean": 0.0540963,
      "low": -0.0415094,
-     "high": 0.112437,
+     "high": 0.113847,
      "fewest_sessions": 105
     },
     "GBP - USD 2y": {
-     "mean": -0.0247694,
-     "low": -0.0850723,
-     "high": 0.00776479,
+     "mean": -0.0258258,
+     "low": -0.0873146,
+     "high": 0.00555835,
      "fewest_sessions": 102
     }
    },
    "moves": {
     "GBP": {
-     "sessions": 4087,
-     "z_sessions": 3837,
-     "mean_change_bp": -0.195812,
-     "sd_change_bp": 0.805371,
-     "latest": "2026-10-29",
-     "latest_base_bp": 111.486,
-     "latest_row_bp": 112.51,
-     "latest_change_bp": 1.02448,
-     "corr_z": 0.999349,
-     "sign_changes": 0.00755799,
+     "sessions": 4097,
+     "z_sessions": 3847,
+     "mean_change_bp": -0.195018,
+     "sd_change_bp": 0.804779,
+     "latest": "2026-11-12",
+     "latest_base_bp": 116.638,
+     "latest_row_bp": 117.22,
+     "latest_change_bp": 0.581777,
+     "corr_z": 0.99935,
+     "sign_changes": 0.00753834,
      "rstar_offset_mean": 0.0,
      "rstar_offset_sd": 0.0,
      "bp_per_pp": null,
-     "floored_base": 0.472229,
-     "floored_row": 0.472229,
+     "floored_base": 0.471076,
+     "floored_row": 0.471076,
      "floored_differ": 0.0,
-     "traded_sessions": 2232,
-     "sign_changes_traded": 0.00358423,
-     "floored_base_traded": 0.0707885,
-     "floored_row_traded": 0.0707885,
-     "floor_free": 1067,
+     "traded_sessions": 2242,
+     "sign_changes_traded": 0.00356824,
+     "floored_base_traded": 0.0704728,
+     "floored_row_traded": 0.0704728,
+     "floor_free": 1077,
      "floor_free_window": "730D",
      "floor_free_max_dz": 0.0950564
     }
@@ -3300,20 +3300,20 @@
      "counted": 0.0
     },
     "GBP outright": {
-     "all": 0.00443054,
-     "counted": 0.00761649
+     "all": 0.00441903,
+     "counted": 0.00758252
     },
     "USD 2s10s": {
      "all": 0.0,
      "counted": 0.0
     },
     "GBP 2s10s": {
-     "all": 0.00780597,
-     "counted": 0.0125448
+     "all": 0.00778426,
+     "counted": 0.0124888
     },
     "GBP - USD 2y": {
-     "all": 0.0105001,
-     "counted": 0.0174312
+     "all": 0.0104712,
+     "counted": 0.0173516
     }
    },
    "elb_sessions": {
@@ -3330,287 +3330,287 @@
    "label": "converge to target",
    "net": {
     "book": {
-     "sr": -0.4375,
-     "se": 0.308989,
-     "sessions": 2895
+     "sr": -0.466567,
+     "se": 0.310315,
+     "sessions": 2905
     },
     "USD outright": {
-     "sr": -0.752087,
-     "se": 0.334285,
-     "sessions": 2895
+     "sr": -0.778992,
+     "se": 0.336392,
+     "sessions": 2905
     },
     "GBP outright": {
-     "sr": 0.727368,
-     "se": 0.378342,
-     "sessions": 2232
+     "sr": 0.700216,
+     "se": 0.374608,
+     "sessions": 2242
     },
     "USD 2s10s": {
-     "sr": -0.106579,
-     "se": 0.295978,
-     "sessions": 2895
+     "sr": -0.104196,
+     "se": 0.295446,
+     "sessions": 2905
     },
     "GBP 2s10s": {
-     "sr": -0.511644,
-     "se": 0.357846,
-     "sessions": 2232
+     "sr": -0.510523,
+     "se": 0.356972,
+     "sessions": 2242
     },
     "GBP - USD 2y": {
-     "sr": -0.224757,
-     "se": 0.340945,
-     "sessions": 2180
+     "sr": -0.22426,
+     "se": 0.340171,
+     "sessions": 2190
     }
    },
    "gross": {
     "book": {
-     "sr": -0.0053064,
-     "se": 0.295189,
-     "sessions": 2895
+     "sr": -0.0356068,
+     "se": 0.294785,
+     "sessions": 2905
     },
     "USD outright": {
-     "sr": -0.440031,
-     "se": 0.309101,
-     "sessions": 2895
+     "sr": -0.469254,
+     "se": 0.310446,
+     "sessions": 2905
     },
     "GBP outright": {
-     "sr": 0.954463,
-     "se": 0.405906,
-     "sessions": 2232
+     "sr": 0.928411,
+     "se": 0.401589,
+     "sessions": 2242
     },
     "USD 2s10s": {
-     "sr": 0.00475347,
-     "se": 0.295143,
-     "sessions": 2895
+     "sr": 0.00771358,
+     "se": 0.294652,
+     "sessions": 2905
     },
     "GBP 2s10s": {
-     "sr": -0.249438,
-     "se": 0.341695,
-     "sessions": 2232
+     "sr": -0.248892,
+     "se": 0.340924,
+     "sessions": 2242
     },
     "GBP - USD 2y": {
-     "sr": -0.12397,
-     "se": 0.33801,
-     "sessions": 2180
+     "sr": -0.123695,
+     "se": 0.337256,
+     "sessions": 2190
     }
    },
    "own": {
     "book": {
-     "sr": -0.515768,
-     "se": 0.284666,
-     "sessions": 3527
+     "sr": -0.54101,
+     "se": 0.285944,
+     "sessions": 3537
     },
     "USD outright": {
-     "sr": -0.968843,
-     "se": 0.325282,
-     "sessions": 3502
+     "sr": -0.990151,
+     "se": 0.327132,
+     "sessions": 3512
     },
     "GBP outright": {
-     "sr": 0.680035,
-     "se": 0.364999,
-     "sessions": 2335
+     "sr": 0.653926,
+     "se": 0.361649,
+     "sessions": 2345
     },
     "USD 2s10s": {
-     "sr": -0.0960112,
-     "se": 0.279112,
-     "sessions": 3252
+     "sr": -0.0938543,
+     "se": 0.278668,
+     "sessions": 3262
     },
     "GBP 2s10s": {
-     "sr": -0.555499,
-     "se": 0.353465,
-     "sessions": 2335
+     "sr": -0.554336,
+     "se": 0.352628,
+     "sessions": 2345
     },
     "GBP - USD 2y": {
-     "sr": -0.245204,
-     "se": 0.336011,
-     "sessions": 2255
+     "sr": -0.24468,
+     "se": 0.335272,
+     "sessions": 2265
     }
    },
    "own_gross": {
     "book": {
-     "sr": -0.00718229,
-     "se": 0.267439,
-     "sessions": 3527
+     "sr": -0.034064,
+     "se": 0.267146,
+     "sessions": 3537
     },
     "USD outright": {
-     "sr": -0.434902,
-     "se": 0.280751,
-     "sessions": 3502
+     "sr": -0.459908,
+     "se": 0.281793,
+     "sessions": 3512
     },
     "GBP outright": {
-     "sr": 0.915348,
-     "se": 0.391835,
-     "sessions": 2335
+     "sr": 0.890237,
+     "se": 0.387879,
+     "sessions": 2345
     },
     "USD 2s10s": {
-     "sr": 0.0129378,
-     "se": 0.278482,
-     "sessions": 3252
+     "sr": 0.0156319,
+     "se": 0.278074,
+     "sessions": 3262
     },
     "GBP 2s10s": {
-     "sr": -0.289066,
-     "se": 0.335797,
-     "sessions": 2335
+     "sr": -0.288462,
+     "se": 0.335067,
+     "sessions": 2345
     },
     "GBP - USD 2y": {
-     "sr": -0.144135,
-     "se": 0.332787,
-     "sessions": 2255
+     "sr": -0.143827,
+     "se": 0.332068,
+     "sessions": 2265
     }
    },
    "paired_se": {
-    "book": 0.149997,
-    "USD outright": 0.152488,
-    "GBP outright": 0.135375,
-    "USD 2s10s": 0.210608,
-    "GBP 2s10s": 0.206276,
-    "GBP - USD 2y": 0.0786368
+    "book": 0.149257,
+    "USD outright": 0.151306,
+    "GBP outright": 0.134686,
+    "USD 2s10s": 0.210916,
+    "GBP 2s10s": 0.205824,
+    "GBP - USD 2y": 0.0784627
    },
    "change": {
-    "book": 0.176803,
-    "USD outright": 0.170347,
-    "GBP outright": 0.0676915,
-    "USD 2s10s": -0.00300108,
-    "GBP 2s10s": -0.0669033,
-    "GBP - USD 2y": 0.0290539
+    "book": 0.175007,
+    "USD outright": 0.17081,
+    "GBP outright": 0.0679409,
+    "USD 2s10s": -0.00316787,
+    "GBP 2s10s": -0.0667565,
+    "GBP - USD 2y": 0.0289896
    },
    "paired_se_newey_west": {
-    "book": 0.144532,
-    "USD outright": 0.156233,
-    "GBP outright": 0.144833,
-    "USD 2s10s": 0.193117,
-    "GBP 2s10s": 0.186631,
-    "GBP - USD 2y": 0.0643294
+    "book": 0.143726,
+    "USD outright": 0.155023,
+    "GBP outright": 0.144097,
+    "USD 2s10s": 0.192849,
+    "GBP 2s10s": 0.186223,
+    "GBP - USD 2y": 0.0641873
    },
    "ic": {
     "USD outright": {
-     "ic": -0.179891,
-     "t": -2.62482,
-     "sessions": 2873
+     "ic": -0.17687,
+     "t": -2.59195,
+     "sessions": 2883
     },
     "GBP outright": {
-     "ic": 0.377743,
-     "t": 4.5946,
-     "sessions": 2210
+     "ic": 0.368702,
+     "t": 4.47525,
+     "sessions": 2220
     },
     "USD 2s10s": {
-     "ic": 0.0327913,
-     "t": 0.511975,
-     "sessions": 2873
+     "ic": 0.0267545,
+     "t": 0.419195,
+     "sessions": 2883
     },
     "GBP 2s10s": {
-     "ic": 0.0871606,
-     "t": 1.21112,
-     "sessions": 2210
+     "ic": 0.0888094,
+     "t": 1.23916,
+     "sessions": 2220
     },
     "GBP - USD 2y": {
-     "ic": -0.0183753,
-     "t": -0.237757,
-     "sessions": 2158
+     "ic": -0.0193855,
+     "t": -0.251426,
+     "sessions": 2168
     }
    },
    "ic_offsets": {
     "USD outright": {
-     "mean": -0.181235,
-     "low": -0.250918,
+     "mean": -0.177798,
+     "low": -0.259357,
      "high": -0.11845,
-     "fewest_sessions": 136
+     "fewest_sessions": 137
     },
     "GBP outright": {
-     "mean": 0.377681,
-     "low": 0.32063,
+     "mean": 0.368678,
+     "low": 0.300068,
      "high": 0.425586,
      "fewest_sessions": 105
     },
     "USD 2s10s": {
-     "mean": 0.0343852,
+     "mean": 0.0285356,
      "low": -0.0177021,
      "high": 0.103436,
-     "fewest_sessions": 136
+     "fewest_sessions": 137
     },
     "GBP 2s10s": {
-     "mean": 0.0876987,
-     "low": -0.0220402,
-     "high": 0.180002,
+     "mean": 0.0900711,
+     "low": -0.0154117,
+     "high": 0.182518,
      "fewest_sessions": 105
     },
     "GBP - USD 2y": {
-     "mean": -0.0177104,
-     "low": -0.0686531,
-     "high": 0.0169683,
+     "mean": -0.0185844,
+     "low": -0.070351,
+     "high": 0.0136883,
      "fewest_sessions": 102
     }
    },
    "moves": {
     "USD": {
-     "sessions": 3950,
-     "z_sessions": 3700,
-     "mean_change_bp": 4.08298,
-     "sd_change_bp": 9.807,
-     "latest": "2026-10-30",
-     "latest_base_bp": 4.92071,
-     "latest_row_bp": 16.1553,
-     "latest_change_bp": 11.2346,
-     "corr_z": 0.944086,
-     "sign_changes": 0.0640541,
+     "sessions": 3960,
+     "z_sessions": 3710,
+     "mean_change_bp": 4.10138,
+     "sd_change_bp": 9.80147,
+     "latest": "2026-11-13",
+     "latest_base_bp": 24.0694,
+     "latest_row_bp": 35.7702,
+     "latest_change_bp": 11.7008,
+     "corr_z": 0.944514,
+     "sign_changes": 0.0638814,
      "rstar_offset_mean": 0.0,
      "rstar_offset_sd": 0.0,
      "bp_per_pp": null,
-     "floored_base": 0.247342,
-     "floored_row": 0.100506,
-     "floored_differ": 0.146835,
-     "traded_sessions": 2895,
-     "sign_changes_traded": 0.0635579,
-     "floored_base_traded": 0.000690846,
-     "floored_row_traded": 0.000690846,
-     "floor_free": 1962,
+     "floored_base": 0.246717,
+     "floored_row": 0.100253,
+     "floored_differ": 0.146465,
+     "traded_sessions": 2905,
+     "sign_changes_traded": 0.0633391,
+     "floored_base_traded": 0.000688468,
+     "floored_row_traded": 0.000688468,
+     "floor_free": 1972,
      "floor_free_window": "730D",
      "floor_free_max_dz": 0.786974
     },
     "GBP": {
-     "sessions": 4087,
-     "z_sessions": 3837,
-     "mean_change_bp": 8.30376,
-     "sd_change_bp": 16.6209,
-     "latest": "2026-10-29",
-     "latest_base_bp": 111.486,
-     "latest_row_bp": 118.215,
-     "latest_change_bp": 6.72979,
-     "corr_z": 0.987471,
-     "sign_changes": 0.0252802,
+     "sessions": 4097,
+     "z_sessions": 3847,
+     "mean_change_bp": 8.30346,
+     "sd_change_bp": 16.6008,
+     "latest": "2026-11-12",
+     "latest_base_bp": 116.638,
+     "latest_row_bp": 125.761,
+     "latest_change_bp": 9.12231,
+     "corr_z": 0.987482,
+     "sign_changes": 0.0252145,
      "rstar_offset_mean": 0.0,
      "rstar_offset_sd": 0.0,
      "bp_per_pp": null,
-     "floored_base": 0.472229,
-     "floored_row": 0.467825,
-     "floored_differ": 0.00440421,
-     "traded_sessions": 2232,
-     "sign_changes_traded": 0.0434588,
-     "floored_base_traded": 0.0707885,
-     "floored_row_traded": 0.0707885,
-     "floor_free": 1067,
+     "floored_base": 0.471076,
+     "floored_row": 0.466683,
+     "floored_differ": 0.00439346,
+     "traded_sessions": 2242,
+     "sign_changes_traded": 0.0432649,
+     "floored_base_traded": 0.0704728,
+     "floored_row_traded": 0.0704728,
+     "floor_free": 1077,
      "floor_free_window": "730D",
      "floor_free_max_dz": 0.385892
     }
    },
    "side_changes": {
     "USD outright": {
-     "all": 0.223243,
-     "counted": 0.118826
+     "all": 0.222642,
+     "counted": 0.118417
     },
     "GBP outright": {
-     "all": 0.0557727,
-     "counted": 0.0815412
+     "all": 0.0556278,
+     "counted": 0.0811775
     },
     "USD 2s10s": {
-     "all": 0.27942,
-     "counted": 0.277375
+     "all": 0.280347,
+     "counted": 0.278485
     },
     "GBP 2s10s": {
-     "all": 0.15138,
-     "counted": 0.224014
+     "all": 0.150959,
+     "counted": 0.223015
     },
     "GBP - USD 2y": {
-     "all": 0.032882,
-     "counted": 0.046789
+     "all": 0.0327914,
+     "counted": 0.0465753
     }
    },
    "elb_sessions": {
@@ -3627,211 +3627,211 @@
    "label": "raw 8th minus 1st",
    "net": {
     "book": {
-     "sr": -0.305444,
-     "se": 0.301993,
-     "sessions": 2895
+     "sr": -0.331828,
+     "se": 0.302695,
+     "sessions": 2905
     },
     "USD outright": {
-     "sr": -0.922434,
-     "se": 0.352378,
-     "sessions": 2895
+     "sr": -0.949803,
+     "se": 0.354934,
+     "sessions": 2905
     },
     "GBP outright": {
-     "sr": 0.659677,
-     "se": 0.371252,
-     "sessions": 2232
+     "sr": 0.632275,
+     "se": 0.367736,
+     "sessions": 2242
     },
     "USD 2s10s": {
-     "sr": 0.237878,
-     "se": 0.299288,
-     "sessions": 2895
+     "sr": 0.214446,
+     "se": 0.298015,
+     "sessions": 2905
     },
     "GBP 2s10s": {
-     "sr": 0.0292521,
-     "se": 0.336573,
-     "sessions": 2232
+     "sr": 0.0200724,
+     "se": 0.335798,
+     "sessions": 2242
     },
     "GBP - USD 2y": {
-     "sr": -0.253811,
-     "se": 0.342099,
-     "sessions": 2180
+     "sr": -0.253249,
+     "se": 0.341318,
+     "sessions": 2190
     }
    },
    "gross": {
     "book": {
-     "sr": 0.109528,
-     "se": 0.296071,
-     "sessions": 2895
+     "sr": 0.0816875,
+     "se": 0.295183,
+     "sessions": 2905
     },
     "USD outright": {
-     "sr": -0.602907,
-     "se": 0.320846,
-     "sessions": 2895
+     "sr": -0.632909,
+     "se": 0.32281,
+     "sessions": 2905
     },
     "GBP outright": {
-     "sr": 0.882265,
-     "se": 0.396553,
-     "sessions": 2232
+     "sr": 0.856005,
+     "se": 0.39242,
+     "sessions": 2242
     },
     "USD 2s10s": {
-     "sr": 0.357024,
-     "se": 0.304401,
-     "sessions": 2895
+     "sr": 0.333086,
+     "se": 0.302709,
+     "sessions": 2905
     },
     "GBP 2s10s": {
-     "sr": 0.272245,
-     "se": 0.342679,
-     "sessions": 2232
+     "sr": 0.262378,
+     "se": 0.341494,
+     "sessions": 2242
     },
     "GBP - USD 2y": {
-     "sr": -0.153966,
-     "se": 0.338708,
-     "sessions": 2180
+     "sr": -0.153625,
+     "se": 0.33795,
+     "sessions": 2190
     }
    },
    "own": {
     "book": {
-     "sr": -0.318958,
-     "se": 0.297308,
-     "sessions": 2999
+     "sr": -0.344642,
+     "se": 0.298028,
+     "sessions": 3009
     },
     "USD outright": {
-     "sr": -0.940287,
-     "se": 0.349747,
-     "sessions": 2973
+     "sr": -0.966916,
+     "se": 0.352237,
+     "sessions": 2983
     },
     "GBP outright": {
-     "sr": 0.608287,
-     "se": 0.359393,
-     "sessions": 2318
+     "sr": 0.581867,
+     "se": 0.356248,
+     "sessions": 2328
     },
     "USD 2s10s": {
-     "sr": 0.221246,
-     "se": 0.294787,
-     "sessions": 2973
+     "sr": 0.198376,
+     "se": 0.293616,
+     "sessions": 2983
     },
     "GBP 2s10s": {
-     "sr": -0.0824613,
-     "se": 0.33076,
-     "sessions": 2318
+     "sr": -0.0909332,
+     "se": 0.330184,
+     "sessions": 2328
     },
     "GBP - USD 2y": {
-     "sr": -0.257426,
-     "se": 0.337712,
-     "sessions": 2239
+     "sr": -0.256872,
+     "se": 0.336962,
+     "sessions": 2249
     }
    },
    "own_gross": {
     "book": {
-     "sr": 0.119935,
-     "se": 0.291064,
-     "sessions": 2999
+     "sr": 0.0926884,
+     "se": 0.290175,
+     "sessions": 3009
     },
     "USD outright": {
-     "sr": -0.5505,
-     "se": 0.312534,
-     "sessions": 2973
+     "sr": -0.580381,
+     "se": 0.314305,
+     "sessions": 2983
     },
     "GBP outright": {
-     "sr": 0.850694,
-     "se": 0.385276,
-     "sessions": 2318
+     "sr": 0.825226,
+     "se": 0.38144,
+     "sessions": 2328
     },
     "USD 2s10s": {
-     "sr": 0.343573,
-     "se": 0.299716,
-     "sessions": 2973
+     "sr": 0.320195,
+     "se": 0.298129,
+     "sessions": 2983
     },
     "GBP 2s10s": {
-     "sr": 0.170011,
-     "se": 0.332577,
-     "sessions": 2318
+     "sr": 0.160845,
+     "se": 0.331628,
+     "sessions": 2328
     },
     "GBP - USD 2y": {
-     "sr": -0.151572,
-     "se": 0.334156,
-     "sessions": 2239
+     "sr": -0.151246,
+     "se": 0.333428,
+     "sessions": 2249
     }
    },
    "paired_se": {
-    "book": 0.169097,
+    "book": 0.168362,
     "USD outright": 0.0,
     "GBP outright": 0.0,
-    "USD 2s10s": 0.331372,
-    "GBP 2s10s": 0.397391,
+    "USD 2s10s": 0.33166,
+    "GBP 2s10s": 0.397034,
     "GBP - USD 2y": 0.0
    },
    "change": {
-    "book": 0.308859,
+    "book": 0.309747,
     "USD outright": 0.0,
     "GBP outright": 0.0,
-    "USD 2s10s": 0.341455,
-    "GBP 2s10s": 0.473993,
+    "USD 2s10s": 0.315474,
+    "GBP 2s10s": 0.463839,
     "GBP - USD 2y": 0.0
    },
    "paired_se_newey_west": {
-    "book": 0.151029,
+    "book": 0.150223,
     "USD outright": 0.0,
     "GBP outright": 0.0,
-    "USD 2s10s": 0.285778,
-    "GBP 2s10s": 0.357306,
+    "USD 2s10s": 0.286378,
+    "GBP 2s10s": 0.357215,
     "GBP - USD 2y": 0.0
    },
    "ic": {
     "USD outright": {
-     "ic": -0.112648,
-     "t": -1.61693,
-     "sessions": 2873
+     "ic": -0.110108,
+     "t": -1.58826,
+     "sessions": 2883
     },
     "GBP outright": {
-     "ic": 0.375983,
-     "t": 4.59294,
-     "sessions": 2210
+     "ic": 0.366897,
+     "t": 4.47233,
+     "sessions": 2220
     },
     "USD 2s10s": {
-     "ic": 0.137841,
-     "t": 2.05577,
-     "sessions": 2873
+     "ic": 0.130499,
+     "t": 1.95369,
+     "sessions": 2883
     },
     "GBP 2s10s": {
-     "ic": 0.1626,
-     "t": 2.26389,
-     "sessions": 2210
+     "ic": 0.152435,
+     "t": 2.11861,
+     "sessions": 2220
     },
     "GBP - USD 2y": {
-     "ic": -0.0276662,
-     "t": -0.354906,
-     "sessions": 2158
+     "ic": -0.0287882,
+     "t": -0.370175,
+     "sessions": 2168
     }
    },
    "ic_offsets": {
     "USD outright": {
-     "mean": -0.111767,
-     "low": -0.190936,
+     "mean": -0.108815,
+     "low": -0.200441,
      "high": -0.0419988,
-     "fewest_sessions": 136
+     "fewest_sessions": 137
     },
     "GBP outright": {
-     "mean": 0.374845,
-     "low": 0.31496,
+     "mean": 0.3658,
+     "low": 0.294405,
      "high": 0.417313,
      "fewest_sessions": 105
     },
     "USD 2s10s": {
-     "mean": 0.134206,
-     "low": 0.103828,
+     "mean": 0.126838,
+     "low": 0.0911142,
      "high": 0.169657,
-     "fewest_sessions": 136
+     "fewest_sessions": 137
     },
     "GBP 2s10s": {
-     "mean": 0.160992,
-     "low": 0.113249,
+     "mean": 0.151412,
+     "low": 0.0919112,
      "high": 0.209278,
      "fewest_sessions": 105
     },
     "GBP - USD 2y": {
-     "mean": -0.0243927,
-     "low": -0.0885208,
+     "mean": -0.0253887,
+     "low": -0.0906753,
      "high": 0.00898496,
      "fewest_sessions": 102
     }
@@ -3847,12 +3847,12 @@
      "counted": 0.0
     },
     "USD 2s10s": {
-     "all": 0.411304,
-     "counted": 0.476339
+     "all": 0.413006,
+     "counted": 0.478141
     },
     "GBP 2s10s": {
-     "all": 0.344856,
-     "counted": 0.545699
+     "all": 0.346678,
+     "counted": 0.547725
     },
     "GBP - USD 2y": {
      "all": 0.0,
@@ -3873,211 +3873,211 @@
    "label": "on",
    "net": {
     "book": {
-     "sr": -0.515106,
-     "se": 0.314158,
-     "sessions": 2895
+     "sr": -0.543038,
+     "se": 0.31567,
+     "sessions": 2905
     },
     "USD outright": {
-     "sr": -0.816505,
-     "se": 0.340804,
-     "sessions": 2895
+     "sr": -0.845324,
+     "se": 0.343274,
+     "sessions": 2905
     },
     "GBP outright": {
-     "sr": 0.735903,
-     "se": 0.379275,
-     "sessions": 2232
+     "sr": 0.707854,
+     "se": 0.375416,
+     "sessions": 2242
     },
     "USD 2s10s": {
-     "sr": -0.103374,
-     "se": 0.295929,
-     "sessions": 2895
+     "sr": -0.101209,
+     "se": 0.295401,
+     "sessions": 2905
     },
     "GBP 2s10s": {
-     "sr": -0.444741,
-     "se": 0.352748,
-     "sessions": 2232
+     "sr": -0.443767,
+     "se": 0.351906,
+     "sessions": 2242
     },
     "GBP - USD 2y": {
-     "sr": -0.206923,
-     "se": 0.340304,
-     "sessions": 2180
+     "sr": -0.206466,
+     "se": 0.339535,
+     "sessions": 2190
     }
    },
    "gross": {
     "book": {
-     "sr": -0.0797747,
-     "se": 0.295656,
-     "sessions": 2895
+     "sr": -0.109334,
+     "se": 0.295571,
+     "sessions": 2905
     },
     "USD outright": {
-     "sr": -0.50581,
-     "se": 0.313454,
-     "sessions": 2895
+     "sr": -0.537332,
+     "se": 0.3152,
+     "sessions": 2905
     },
     "GBP outright": {
-     "sr": 0.957037,
-     "se": 0.406249,
-     "sessions": 2232
+     "sr": 0.930168,
+     "se": 0.401818,
+     "sessions": 2242
     },
     "USD 2s10s": {
-     "sr": 0.0131363,
-     "se": 0.295154,
-     "sessions": 2895
+     "sr": 0.0151062,
+     "se": 0.294664,
+     "sessions": 2905
     },
     "GBP 2s10s": {
-     "sr": -0.186972,
-     "se": 0.339429,
-     "sessions": 2232
+     "sr": -0.186563,
+     "se": 0.338673,
+     "sessions": 2242
     },
     "GBP - USD 2y": {
-     "sr": -0.113749,
-     "se": 0.337806,
-     "sessions": 2180
+     "sr": -0.113497,
+     "se": 0.337054,
+     "sessions": 2190
     }
    },
    "own": {
     "book": {
-     "sr": -0.514886,
-     "se": 0.308647,
-     "sessions": 2999
+     "sr": -0.542147,
+     "se": 0.310102,
+     "sessions": 3009
     },
     "USD outright": {
-     "sr": -0.837265,
-     "se": 0.338461,
-     "sessions": 2973
+     "sr": -0.865274,
+     "se": 0.340879,
+     "sessions": 2983
     },
     "GBP outright": {
-     "sr": 0.682066,
-     "se": 0.36654,
-     "sessions": 2318
+     "sr": 0.655034,
+     "se": 0.363076,
+     "sessions": 2328
     },
     "USD 2s10s": {
-     "sr": -0.125385,
-     "se": 0.292386,
-     "sessions": 2973
+     "sr": -0.123224,
+     "se": 0.291871,
+     "sessions": 2983
     },
     "GBP 2s10s": {
-     "sr": -0.543317,
-     "se": 0.353729,
-     "sessions": 2318
+     "sr": -0.542171,
+     "se": 0.352888,
+     "sessions": 2328
     },
     "GBP - USD 2y": {
-     "sr": -0.211229,
-     "se": 0.335938,
-     "sessions": 2239
+     "sr": -0.210774,
+     "se": 0.335199,
+     "sessions": 2249
     }
    },
    "own_gross": {
     "book": {
-     "sr": -0.0616253,
-     "se": 0.290299,
-     "sessions": 2999
+     "sr": -0.090611,
+     "se": 0.290148,
+     "sessions": 3009
     },
     "USD outright": {
-     "sr": -0.453812,
-     "se": 0.305874,
-     "sessions": 2973
+     "sr": -0.485201,
+     "se": 0.307408,
+     "sessions": 2983
     },
     "GBP outright": {
-     "sr": 0.92343,
-     "se": 0.394298,
-     "sessions": 2318
+     "sr": 0.897383,
+     "se": 0.390182,
+     "sessions": 2328
     },
     "USD 2s10s": {
-     "sr": -0.00991026,
-     "se": 0.291251,
-     "sessions": 2973
+     "sr": -0.00793641,
+     "se": 0.290774,
+     "sessions": 2983
     },
     "GBP 2s10s": {
-     "sr": -0.281781,
-     "se": 0.33669,
-     "sessions": 2318
+     "sr": -0.281188,
+     "se": 0.335954,
+     "sessions": 2328
     },
     "GBP - USD 2y": {
-     "sr": -0.111912,
-     "se": 0.333291,
-     "sessions": 2239
+     "sr": -0.111671,
+     "se": 0.332569,
+     "sessions": 2249
     }
    },
    "paired_se": {
-    "book": 0.052125,
-    "USD outright": 0.0675528,
-    "GBP outright": 0.0448026,
-    "USD 2s10s": 0.0551954,
+    "book": 0.0518375,
+    "USD outright": 0.0670292,
+    "GBP outright": 0.0445747,
+    "USD 2s10s": 0.0551326,
     "GBP 2s10s": 0.0,
-    "GBP - USD 2y": 0.039459
+    "GBP - USD 2y": 0.0393717
    },
    "change": {
-    "book": 0.0991975,
-    "USD outright": 0.10593,
-    "GBP outright": 0.0762267,
-    "USD 2s10s": 0.000203779,
+    "book": 0.0985366,
+    "USD outright": 0.104479,
+    "GBP outright": 0.0755788,
+    "USD 2s10s": -0.000181307,
     "GBP 2s10s": 0.0,
-    "GBP - USD 2y": 0.0468875
+    "GBP - USD 2y": 0.0467837
    },
    "paired_se_newey_west": {
-    "book": 0.0431445,
-    "USD outright": 0.0784332,
-    "GBP outright": 0.0567084,
-    "USD 2s10s": 0.0340391,
+    "book": 0.0429052,
+    "USD outright": 0.0778278,
+    "GBP outright": 0.0564217,
+    "USD 2s10s": 0.0339857,
     "GBP 2s10s": 0.0,
-    "GBP - USD 2y": 0.0336165
+    "GBP - USD 2y": 0.0335437
    },
    "ic": {
     "USD outright": {
-     "ic": -0.112648,
-     "t": -1.61693,
-     "sessions": 2873
+     "ic": -0.110108,
+     "t": -1.58826,
+     "sessions": 2883
     },
     "GBP outright": {
-     "ic": 0.375983,
-     "t": 4.59294,
-     "sessions": 2210
+     "ic": 0.366897,
+     "t": 4.47233,
+     "sessions": 2220
     },
     "USD 2s10s": {
-     "ic": 0.0981238,
-     "t": 1.44619,
-     "sessions": 2873
+     "ic": 0.091464,
+     "t": 1.35094,
+     "sessions": 2883
     },
     "GBP 2s10s": {
-     "ic": 0.0596748,
-     "t": 0.820747,
-     "sessions": 2210
+     "ic": 0.0608418,
+     "t": 0.840086,
+     "sessions": 2220
     },
     "GBP - USD 2y": {
-     "ic": -0.0276662,
-     "t": -0.354906,
-     "sessions": 2158
+     "ic": -0.0287882,
+     "t": -0.370175,
+     "sessions": 2168
     }
    },
    "ic_offsets": {
     "USD outright": {
-     "mean": -0.111767,
-     "low": -0.190936,
+     "mean": -0.108815,
+     "low": -0.200441,
      "high": -0.0419988,
-     "fewest_sessions": 136
+     "fewest_sessions": 137
     },
     "GBP outright": {
-     "mean": 0.374845,
-     "low": 0.31496,
+     "mean": 0.3658,
+     "low": 0.294405,
      "high": 0.417313,
      "fewest_sessions": 105
     },
     "USD 2s10s": {
-     "mean": 0.0984058,
-     "low": 0.027755,
+     "mean": 0.0919537,
+     "low": 0.0214549,
      "high": 0.187765,
-     "fewest_sessions": 136
+     "fewest_sessions": 137
     },
     "GBP 2s10s": {
-     "mean": 0.0602799,
+     "mean": 0.0622489,
      "low": -0.0484923,
-     "high": 0.132283,
+     "high": 0.131602,
      "fewest_sessions": 105
     },
     "GBP - USD 2y": {
-     "mean": -0.0243927,
-     "low": -0.0885208,
+     "mean": -0.0253887,
+     "low": -0.0906753,
      "high": 0.00898496,
      "fewest_sessions": 102
     }
@@ -4085,24 +4085,24 @@
    "moves": {},
    "side_changes": {
     "USD outright": {
-     "all": 0.0227027,
-     "counted": 0.0290155
+     "all": 0.0226415,
+     "counted": 0.0289157
     },
     "GBP outright": {
-     "all": 0.00364868,
-     "counted": 0.0062724
+     "all": 0.0036392,
+     "counted": 0.00624442
     },
     "USD 2s10s": {
-     "all": 0.0255072,
-     "counted": 0.0303972
+     "all": 0.0265896,
+     "counted": 0.0316695
     },
     "GBP 2s10s": {
      "all": 0.0,
      "counted": 0.0
     },
     "GBP - USD 2y": {
-     "all": 0.0105001,
-     "counted": 0.0174312
+     "all": 0.0104712,
+     "counted": 0.0173516
     }
    },
    "elb_sessions": {
