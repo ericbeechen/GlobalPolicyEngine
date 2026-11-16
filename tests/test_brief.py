@@ -1,5 +1,6 @@
 """The brief: the footer reads only the blocks the brief reads, the trades table is point in time and carries
-each sleeve's round trip, and "what changed" says so when there is nothing newer.
+each sleeve's round trip, and "what changed" says so when there is nothing newer, and never calls a bridged
+month printed.
 """
 
 import pandas as pd
@@ -56,3 +57,36 @@ def test_what_changed_says_so_when_there_is_no_newer_session():
     snap = {"session": pd.Timestamp("2026-09-21")}
     assert brief.changed("AAA", snap, snap, 4, {"report": {"labels": {}}}) == (
         "AAA: no session since 21 Sep, so nothing to compare yet.")
+
+
+def _read(session, market, model, gap_bp, z, inflation, macro):
+    """A read as `brief.read` returns it, with only the fields "what changed" uses."""
+    meetings = pd.DataFrame({"k": [4], "market": [market], "model": [model], "gap_bp": [gap_bp], "z": [z],
+                             "effective_date": [pd.Timestamp("2027-04-29")],
+                             "announcement_date": [pd.Timestamp("2027-04-28")]})
+    rule = {"r0": 3.88, "inflation": inflation, "u_gap": -0.29, "rstar": 3.0}
+    return {"session": pd.Timestamp(session), "meetings": meetings, "rule": rule, "macro": pd.Series(macro)}
+
+
+def test_what_changed_calls_a_bridged_month_bridged_and_a_print_printed():
+    cfg = {"report": {"labels": {"inflation": "Core PCE", "inflation_bridge": "core CPI", "policy": "fed funds",
+                                 "unemployment_period": "for {month:%B}"}},
+           "rule": {"coefficients": {"inflation_gap": 0.5, "unemployment_gap": 2.0}, "rstar": {}}}
+    october = pd.Timestamp("2026-10-01")
+    before = _read("2026-11-06", 3.94, 4.00, -6.0, 1.4, 3.12, {"infl_month": pd.Timestamp("2026-09-01"), "n_bridged": 0})
+    head = ("AAA, 6 Nov to 13 Nov: the gap at the fourth meeting went from -6bp to +24bp (z +1.4 to +2.6). "
+            "The market moved +35bp, and the rule +4bp because ")
+    for n, why in [(1, "core PCE for October, bridged from core CPI, is 3.2% (from 3.1%)."),
+                   (2, "core PCE for October, bridged from core CPI, is 3.2% (from 3.1%)."),
+                   (0, "core PCE for October printed 3.2% (from 3.1%).")]:
+        now = _read("2026-11-13", 4.29, 4.04, 24.0, 2.6, 3.23, {"infl_month": october, "n_bridged": n})
+        assert brief.changed("AAA", now, before, 4, cfg) == head + why
+    # The week the month prints, last week's figure for it was the bridge's, not an earlier print.
+    bridge = _read("2026-11-06", 3.94, 4.00, -6.0, 1.4, 3.23, {"infl_month": october, "n_bridged": 1})
+    now = _read("2026-11-13", 4.29, 4.04, 24.0, 2.6, 3.31, {"infl_month": october, "n_bridged": 0})
+    assert brief.changed("AAA", now, bridge, 4, cfg) == head + "core PCE for October printed 3.3% (the bridge had 3.2%)."
+    # A published 12-month rate (macro.inflation.rate) has no bridge column and no label for one.
+    labels = {k: v for k, v in cfg["report"]["labels"].items() if k != "inflation_bridge"}
+    now = _read("2026-11-13", 4.29, 4.04, 24.0, 2.6, 3.23, {"infl_month": october})
+    assert brief.changed("AAA", now, before, 4, {**cfg, "report": {"labels": labels}}) == (
+        head + "core PCE for October printed 3.2% (from 3.1%).")

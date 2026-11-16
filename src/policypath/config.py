@@ -328,11 +328,13 @@ EXTRACTOR_SCHEMA = {
 }
 
 # By the shape of ``macro.inflation``: a 12-month rate the statistics office publishes
-# (``rate``), or an index bridged from an earlier-printing proxy (``target``).
+# (``rate``), or an index bridged from an earlier-printing proxy (``target``), which the
+# brief names (``report.labels.inflation_bridge``) when the latest month is bridged.
 INFLATION_SCHEMA = {
     "rate": {"macro.inflation.rate": str},
     "target": {"macro.inflation.target": str, "macro.inflation.bridge": str,
-               "macro.inflation.bridge_window": int, "macro.inflation.wages": str},
+               "macro.inflation.bridge_window": int, "macro.inflation.wages": str,
+               "report.labels.inflation_bridge": str},
 }
 
 # By the shape of ``rule.rstar``: a constant, or a published longer-run rate.

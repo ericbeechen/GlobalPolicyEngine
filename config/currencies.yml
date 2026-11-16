@@ -265,6 +265,8 @@ USD:
     labels: {market: ZQ, rate: EFFR, rule: "Fed's own rule", policy: fed funds, meetings: FOMC, bank: the Fed,
              inflation: Core PCE, policy_rate: Midpoint, nowcast_start: "which needs a vintaged u*",
              calendar: Fed,
+             # What a bridged month comes from (macro.inflation.bridge), as the brief names it.
+             inflation_bridge: core CPI,
              # How the brief names the month an unemployment print is for: UNRATE is one month.
              unemployment_period: "for {month:%B}"}
     onepager: true                       # the original one-page note (report/onepager.py): USD prose throughout

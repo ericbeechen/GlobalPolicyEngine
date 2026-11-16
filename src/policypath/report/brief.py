@@ -198,6 +198,13 @@ def _mid(label):
     return label[0].lower() + label[1:] if len(label) > 1 and label[1].islower() else label
 
 
+def _bridged(macro):
+    """Whether the inflation input's latest month is the bridge's estimate: its target has not printed it yet.
+    A measure published as a rate (``macro.inflation.rate``) has no ``n_bridged`` and is never bridged."""
+    n = macro.get("n_bridged", 0)
+    return bool(pd.notna(n) and n > 0)
+
+
 def typeset(text):
     """The page's typography: a true minus on negative numbers and between currencies ("GBP − USD")."""
     return re.sub(r"(?<![\w.])-(?=\d)", "−", text.replace(" - ", " − "))
@@ -223,9 +230,17 @@ def changed(ccy, now, before, k, cfg):
     if rn["r0"] != rb["r0"]:
         reasons.append((abs(rn["r0"] - rb["r0"]) * 100, f"{w['policy']} moved to {rn['r0']:.2f}%"))
     if rn["inflation"] != rb["inflation"]:
+        # A month the target has not printed yet is the bridge's estimate (macro.inflation.bridge), not a print;
+        # the week it prints, last week's figure for that month was the bridge's.
+        month, level, prior = now["macro"]["infl_month"], f"{rn['inflation']:.1f}%", f"{rb['inflation']:.1f}%"
+        if _bridged(now["macro"]):
+            what = f"for {month:%B}, bridged from {w['inflation_bridge']}, is {level} (from {prior})"
+        elif _bridged(before["macro"]) and before["macro"]["infl_month"] == month:
+            what = f"for {month:%B} printed {level} (the bridge had {prior})"
+        else:
+            what = f"for {month:%B} printed {level} (from {prior})"
         reasons.append((abs(rn["inflation"] - rb["inflation"]) * (1 + c["inflation_gap"]) * 100,
-                        (f"{_mid(w['inflation'])} for {now['macro']['infl_month']:%B} printed "
-                         f"{rn['inflation']:.1f}% (from {rb['inflation']:.1f}%)")))
+                        f"{_mid(w['inflation'])} {what}"))
     if rn["u_gap"] != rb["u_gap"]:
         reasons.append((abs(rn["u_gap"] - rb["u_gap"]) * c["unemployment_gap"] * 100,
                         "unemployment " + w["unemployment_period"].format(month=now["macro"]["gap_month"])
