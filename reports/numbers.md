@@ -8,7 +8,7 @@ Every value below is formatted from the JSON or a generated report and found aga
 
 | Item | Value | Source | Sample / definition |
 |---|---|---|---|
-| Book sample | 2014-01-13 to 2026-11-20, 3,014 sessions, 11.9 years | [metrics.md:3](metrics.md:3) | The book runs from 2011-03-04; sessions count from 2014-01-13, the first session it could hold a position ([DECISIONS.md:207](../notes/DECISIONS.md:207)). |
+| Book sample | 2014-01-13 to 2026-11-20, 3,014 sessions, 11.9 years | [metrics.md:3](metrics.md:3) | The book runs from 2011-03-04; sessions count from 2014-01-13, the first session it could hold a position ([DECISIONS.md:208](../notes/DECISIONS.md:208)). |
 | Trades, book | 105 | [metrics.md:27](metrics.md:27) | A run of one side, from the close that opens it. By sleeve: USD outright 19, GBP outright 16, USD 2s10s 35, GBP 2s10s 23, GBP - USD 2y 12. |
 | Entries, book (the carry filter's count) | 105 | [metrics.md:107](metrics.md:107) | An entry is decided at a close and becomes a trade from the next session. Every entry is a trade. |
 
@@ -89,7 +89,7 @@ The t is Newey-West, Bartlett weights to lag h. A persistent z keeps the product
 | Re-strikes, the par legs | 0.31% of capital a year, 13% of cost | metrics.json costs[book].cost.restrike | Quarterly, from marking a constant-maturity bond. |
 | USD outright's rolls | 0.58% a year | [metrics.md:11](metrics.md:11) |  |
 | Calendar-spread sensitivity | Rolls at half price save 0.4% a year: net -3.34% → -2.93%; gross stays -0.88% | metrics.json costs[book].cost.roll / 2 | Rolls are charged as two outright one-ways, the conservative end. Gross is before costs, so no cost treatment moves it. |
-| Hand check (static) | USD outright 2018, contract by contract: 58,462 contracts, $1,276,426, the cost charged to the dollar | [DECISIONS.md:228](../notes/DECISIONS.md:228) | Done 2026-09-29, before the 2026-09-30 regeneration. It's not in any report. |
+| Hand check (static) | USD outright 2018, contract by contract: 58,462 contracts, $1,276,426, the cost charged to the dollar | [DECISIONS.md:229](../notes/DECISIONS.md:229) | Done 2026-09-29, before the 2026-09-30 regeneration. It's not in any report. |
 
 ## Breakeven
 
